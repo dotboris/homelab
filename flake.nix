@@ -11,23 +11,24 @@
   }: let
     system = "x86_64-linux";
     pkgs = import nixpkgs {inherit system;};
-  in rec {
+  in {
     formatter.${system} = pkgs.alejandra;
     devShells.${system}.default =
       pkgs.mkShell {
         packages = [];
       };
 
-    packages.${system}.vm = nixosConfigurations.homelab.config.system.build.vm;
+    packages.${system}.vm = self.nixosConfigurations.homelab.config.system.build.vm;
     apps.${system}.vm = {
       type = "app";
-      program = "${packages.${system}.vm}/bin/run-nixos-vm";
+      program = "${self.packages.${system}.vm}/bin/run-homelab-vm";
     };
     
     nixosConfigurations.homelab = nixpkgs.lib.nixosSystem {
       inherit system;
       modules = [
         ./configuration.nix
+        ./modules/openssh.nix
       ];
     };
   };
