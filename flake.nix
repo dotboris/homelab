@@ -18,11 +18,11 @@
         packages = [];
       };
 
+    packages.${system}.vm = nixosConfigurations.homelab.config.system.build.vm;
     apps.${system}.vm = {
       type = "app";
       program = "${packages.${system}.vm}/bin/run-nixos-vm";
     };
-    packages.${system}.vm = nixosConfigurations.homelab.config.system.build.vm;
     
     nixosConfigurations.homelab = nixpkgs.lib.nixosSystem {
       inherit system;
