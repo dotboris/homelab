@@ -31,7 +31,7 @@
     nixosConfigurations.homelab = nixpkgs.lib.nixosSystem {
       inherit system;
       modules = [
-        nixos-generators.nixosModules.vagrant-virtualbox
+        # nixos-generators.nixosModules.vagrant-virtualbox
         ./configuration.nix
         ./modules/openssh.nix
       ];
