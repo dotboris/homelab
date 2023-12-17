@@ -30,3 +30,4 @@ this home lab.
 - [ ] Monitoring stack.
 - [ ] Cloud file storage. Something to replace Google Drive. (maybe)
 - [ ] Landing page that links to all the services.
+- [ ] RSS Feed aggregation.
