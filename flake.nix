@@ -32,7 +32,8 @@
         ];
       };
 
-      homelab-vm = nixpkgs.lib.nixosSystem {
+      # VM meant to test changes to the real homelab
+      homelab-test = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = {inherit inputs;};
         modules = [
@@ -44,12 +45,22 @@
     };
 
     # Build & Run the test VM
-    packages.${system}.vm = self.nixosConfigurations.homelab-vm.config.system.build.vm;
+    packages.${system} = {
+      run-vm = let
+        vm = self.nixosConfigurations.homelab-test;
+      in
+        vm.config.system.build.vm;
+    };
+
     apps.${system} = {
+      # Starts the homelab-test VM in QEMU
       vm = {
         type = "app";
-        program = "${self.packages.${system}.vm}/bin/run-homelab-test-vm";
+        program = "${self.packages.${system}.run-vm}/bin/run-homelab-test-vm";
       };
+
+      # Connects to the homelab-test VM through SSH
+      # This requires the right private key on your system to work
       ssh-vm = {
         type = "app";
         program = let
