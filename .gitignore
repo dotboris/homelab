@@ -1,2 +1,6 @@
+# Nix result
 /result
+
+# VM artifacts
 *.qcow2
+*-efi-vars.fd
