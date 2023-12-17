@@ -5,7 +5,7 @@
 }: {
   imports = [];
 
-  # When Nix builds a VM, it uses well-defined labels, we reuse those. 
+  # When Nix builds a VM, it uses well-defined labels, we reuse those.
   # See: https://github.com/NixOS/nixpkgs/blob/4c501306af1ab6c19491fdafebb30fd097eb42c5/nixos/modules/virtualisation/qemu-vm.nix#L264-L267
   fileSystems = {
     "/" = {
