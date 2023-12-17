@@ -1,8 +1,4 @@
-{
-  inputs,
-  pkgs,
-  ...
-}: {
+{inputs, ...}: {
   imports = [
     inputs.nixos-generators.nixosModules.vm
     # inputs.nixos-generators.nixosModules.vm-nogui
