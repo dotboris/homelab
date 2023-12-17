@@ -18,3 +18,15 @@ version of this home lab. Here's how:
     ```sh
     nix run .#ssh-vm
     ```
+
+## Todo
+
+This is a work in progress. This is a list of things that I want / need from
+this home lab.
+
+- [ ] Network wide ad blocking. Something like pi-hole.
+- [ ] Password manager. Something like bitwarden.
+- [ ] Backup system. Doesn't have to be fancy. They should run automatically.
+- [ ] Monitoring stack.
+- [ ] Cloud file storage. Something to replace Google Drive. (maybe)
+- [ ] Landing page that links to all the services.
