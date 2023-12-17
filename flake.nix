@@ -9,7 +9,7 @@
     };
   };
 
-  outputs = {
+  outputs = inputs @ {
     self,
     nixpkgs,
     nixos-generators,
@@ -22,19 +22,48 @@
       packages = [];
     };
 
-    packages.${system}.vm = self.nixosConfigurations.homelab.config.system.build.vm;
-    apps.${system}.vm = {
-      type = "app";
-      program = "${self.packages.${system}.vm}/bin/run-homelab-vm";
+    nixosConfigurations = {
+      homelab = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = {inherit inputs;};
+        modules = [
+          ./hosts/homelab/configuration.nix
+          ./hosts/homelab/hardward-configuration.nix
+        ];
+      };
+
+      homelab-vm = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = {inherit inputs;};
+        modules = [
+          ./hosts/homelab/configuration.nix
+          ./hosts/vm/configuration.nix
+          ./hosts/vm/hardward-configuration.nix
+        ];
+      };
     };
 
-    nixosConfigurations.homelab = nixpkgs.lib.nixosSystem {
-      inherit system;
-      modules = [
-        # nixos-generators.nixosModules.vagrant-virtualbox
-        ./configuration.nix
-        ./modules/openssh.nix
-      ];
+    # Build & Run the test VM
+    packages.${system}.vm = self.nixosConfigurations.homelab-vm.config.system.build.vm;
+    apps.${system} = {
+      vm = {
+        type = "app";
+        program = "${self.packages.${system}.vm}/bin/run-homelab-test-vm";
+      };
+      ssh-vm = {
+        type = "app";
+        program = let
+          script =
+            pkgs.writeShellScript "ssh-vm"
+            ''
+              ${pkgs.openssh}/bin/ssh \
+                -o "UserKnownHostsFile=/dev/null" \
+                -o "StrictHostKeyChecking=no" \
+                -p 10022 \
+                dotboris@localhost
+            '';
+        in "${script}";
+      };
     };
   };
 }

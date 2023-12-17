@@ -1,8 +1,16 @@
 {pkgs, ...}: {
-  system.stateVersion = "23.11";
+  services.openssh = {
+    enable = true;
+    allowSFTP = false;
+    settings = {
+      # Auth hardening
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+      PermitRootLogin = "no";
 
-  # boot.loader.systemd-boot.enable = true;
-  # boot.loader.efi.canTouchEfiVariables = true;
+      X11Forwarding = false;
+    };
+  };
 
   users.users.dotboris = {
     isNormalUser = true;
@@ -19,10 +27,5 @@
     ];
   };
 
-  programs.fish.enable = true;
-
-  networking = {
-    hostName = "homelab";
-    useDHCP = true; # TODO: probably a bad idea for prod
-  };
+  programs.fish.enable = true; # shell for dotboris
 }
