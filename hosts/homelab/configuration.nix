@@ -3,6 +3,9 @@
 
   imports = [
     ../../modules/remote-access
+    ../../modules/reverse-proxy
+
+    ../../modules/home-page
   ];
 
   networking = {

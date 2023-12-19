@@ -56,7 +56,15 @@
       # Starts the homelab-test VM in QEMU
       vm = {
         type = "app";
-        program = "${self.packages.${system}.run-vm}/bin/run-homelab-test-vm";
+        program = let
+          runVm = self.packages.${system}.run-vm;
+          script = pkgs.writeShellScript "start-vm" ''
+            set -x
+            rm ./homelab-test-efi-vars.fd
+            rm ./homelab-test.qcow2
+            exec ${runVm}/bin/run-homelab-test-vm
+          '';
+        in "${script}";
       };
 
       # Connects to the homelab-test VM through SSH
@@ -70,7 +78,7 @@
               ${pkgs.openssh}/bin/ssh \
                 -o "UserKnownHostsFile=/dev/null" \
                 -o "StrictHostKeyChecking=no" \
-                -p 10022 \
+                -p 2022 \
                 dotboris@localhost
             '';
         in "${script}";

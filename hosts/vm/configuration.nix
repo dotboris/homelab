@@ -25,7 +25,17 @@
     {
       from = "host";
       guest.port = 22;
-      host.port = 10022;
+      host.port = 2022;
+    }
+    {
+      from = "host";
+      guest.port = 80;
+      host.port = 8000;
+    }
+    {
+      from = "host";
+      guest.port = 443;
+      host.port = 8443;
     }
   ];
 }
