@@ -19,17 +19,6 @@
           rule = "Host(`traefik.dotboris.io`) && PathPrefix(`/dashboard`, `/api`)";
           service = "api@internal";
         };
-
-        routers.homePage = {
-          rule = "Host(`home.dotboris.io`)";
-          service = "homePage";
-        };
-
-        services.homePage = {
-          loadBalancer = {
-            servers = [{url = "http://localhost:8001";}];
-          };
-        };
       };
     };
   };
