@@ -4,22 +4,24 @@
 
     staticConfigOptions = {
       entryPoints.web.address = ":80";
-
-      # TODO: full blown TLS
-      entryPoints.websecure.address = ":443";
+      entryPoints.websecure.address = ":443"; # TODO: full blown TLS
 
       api.dashboard = true;
+
+      # Logs
+      # accessLog = {};
+      # log.level = "INFO";
     };
 
     dynamicConfigOptions = {
       http = {
         routers.traefikDashboard = {
-          rule = "Host(`localhost`) && PathPrefix(`/dashboard`, `/api`)";
+          rule = "Host(`traefik.dotboris.io`) && PathPrefix(`/dashboard`, `/api`)";
           service = "api@internal";
         };
 
         routers.homePage = {
-          rule = "Host(`localhost`)";
+          rule = "Host(`home.dotboris.io`)";
           service = "homePage";
         };
 
