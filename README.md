@@ -24,7 +24,7 @@ version of this home lab. Here's how:
 This is a work in progress. This is a list of things that I want / need from
 this home lab.
 
-- [ ] Network wide ad blocking. Something like pi-hole.
+- [x] Network wide ad blocking. Something like pi-hole.
 - [ ] Password manager. Something like bitwarden.
 - [ ] Backup system. Doesn't have to be fancy. They should run automatically.
 - [ ] Monitoring stack.
