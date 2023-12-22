@@ -29,6 +29,12 @@
     }
     {
       from = "host";
+      proto = "udp";
+      guest.port = 53;
+      host.port = 5053;
+    }
+    {
+      from = "host";
       guest.port = 80;
       host.port = 8000;
     }

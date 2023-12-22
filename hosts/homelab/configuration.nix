@@ -6,6 +6,7 @@
     ../../modules/reverse-proxy
 
     ../../modules/home-page
+    ../../modules/adblock
   ];
 
   networking = {
