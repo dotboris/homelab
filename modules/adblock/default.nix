@@ -1,4 +1,4 @@
-{...}: let
+{pkgs, ...}: let
   dnsPort = 53;
 in {
   services.blocky = {
@@ -28,12 +28,33 @@ in {
         }
       ];
 
-      blocking = {
+      blocking = let
+        stevenblackBlocklist = let
+          version = "3.14.40";
+        in
+          pkgs.fetchFromGitHub {
+            name = "stevenback-blocklist-${version}";
+            owner = "StevenBlack";
+            repo = "hosts";
+            rev = version;
+            sha256 = "sha256-hTFIG1a/PNgDo5U57VmXDJvR3VWd8TKVinnLfJRlQGo=";
+          };
+        anudeepndAllowlist = let
+          version = "2.0.1";
+        in
+          pkgs.fetchFromGitHub {
+            name = "anudeepnd-allowlist-${version}";
+            owner = "anudeepND";
+            repo = "whitelist";
+            rev = "v${version}";
+            sha256 = "sha256-TWtYNxMU5gpe5Y4Th6tQaiOA09DBV7iJFPr9P7CAfag=";
+          };
+      in {
         blackLists.ads = [
-          "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+          "${stevenblackBlocklist}/hosts"
         ];
         whiteLists.ads = [
-          "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt"
+          "${anudeepndAllowlist}/domains/whitelist.txt"
         ];
 
         clientGroupsBlock.default = ["ads"];
