@@ -2,11 +2,11 @@
   system.stateVersion = "23.11";
 
   imports = [
+    ../../modules/adblock
+    ../../modules/home-page
+    ../../modules/monitoring
     ../../modules/remote-access
     ../../modules/reverse-proxy
-
-    ../../modules/home-page
-    ../../modules/adblock
   ];
 
   networking = {
