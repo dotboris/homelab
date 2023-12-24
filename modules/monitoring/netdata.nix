@@ -1,31 +1,45 @@
-{...}: let
-  httpPort = 8004;
-  httpHost = "netdata.dotboris.io";
+{
+  lib,
+  config,
+  ...
+}: let
+  cfg = config.homelab.monitoring.netdata;
 in {
-  services.netdata = {
-    enable = true;
-
-    config = {
-      global = {
-        "default port" = httpPort;
-      };
-
-      # Enables persistent storage
-      db.mode = "dbengine";
+  options.homelab.monitoring.netdata = {
+    port = lib.mkOption {
+      type = lib.types.int;
     };
-
-    enableAnalyticsReporting = false;
+    host = lib.mkOption {
+      type = lib.types.str;
+    };
   };
 
-  services.traefik.dynamicConfigOptions.http = {
-    routers.netdata = {
-      rule = "Host(`${httpHost}`)";
-      service = "netdata";
+  config = {
+    services.netdata = {
+      enable = true;
+
+      config = {
+        global = {
+          "default port" = cfg.port;
+        };
+
+        # Enables persistent storage
+        db.mode = "dbengine";
+      };
+
+      enableAnalyticsReporting = false;
     };
 
-    services.netdata = {
-      loadBalancer = {
-        servers = [{url = "http://localhost:${toString httpPort}";}];
+    services.traefik.dynamicConfigOptions.http = {
+      routers.netdata = {
+        rule = "Host(`${cfg.host}`)";
+        service = "netdata";
+      };
+
+      services.netdata = {
+        loadBalancer = {
+          servers = [{url = "http://localhost:${toString cfg.port}";}];
+        };
       };
     };
   };
