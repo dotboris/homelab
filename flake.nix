@@ -24,7 +24,7 @@
 
     nixosConfigurations = {
       homelab = nixpkgs.lib.nixosSystem {
-        inherit system;
+        inherit system pkgs;
         specialArgs = {inherit inputs;};
         modules = [
           ./hosts/homelab/configuration.nix
@@ -34,7 +34,7 @@
 
       # VM meant to test changes to the real homelab
       homelab-test = nixpkgs.lib.nixosSystem {
-        inherit system;
+        inherit system pkgs;
         specialArgs = {inherit inputs;};
         modules = [
           ./hosts/homelab/configuration.nix
