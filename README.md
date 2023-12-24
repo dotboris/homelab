@@ -29,5 +29,5 @@ this home lab.
 - [ ] Backup system. Doesn't have to be fancy. They should run automatically.
 - [x] Monitoring stack.
 - [ ] Cloud file storage. Something to replace Google Drive. (maybe)
-- [ ] Landing page that links to all the services.
+- [x] Landing page that links to all the services.
 - [ ] RSS Feed aggregation.
