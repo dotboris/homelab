@@ -52,6 +52,12 @@ in {
         {
           System = [
             {
+              "Monitoring (NetData)" = {
+                icon = "netdata.svg";
+                href = "http://netdata.dotboris.io";
+              };
+            }
+            {
               "Traefik Dashboard" = {
                 icon = "traefik.svg";
                 href = "http://traefik.dotboris.io/dashboard/";
