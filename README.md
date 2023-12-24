@@ -27,7 +27,7 @@ this home lab.
 - [x] Network wide ad blocking. Something like pi-hole.
 - [ ] Password manager. Something like bitwarden.
 - [ ] Backup system. Doesn't have to be fancy. They should run automatically.
-- [ ] Monitoring stack.
+- [x] Monitoring stack.
 - [ ] Cloud file storage. Something to replace Google Drive. (maybe)
 - [ ] Landing page that links to all the services.
 - [ ] RSS Feed aggregation.
