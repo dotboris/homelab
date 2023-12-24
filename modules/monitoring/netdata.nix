@@ -9,6 +9,9 @@ in {
       global = {
         "default port" = httpPort;
       };
+
+      # Enables persistent storage
+      db.mode = "dbengine";
     };
 
     enableAnalyticsReporting = false;
