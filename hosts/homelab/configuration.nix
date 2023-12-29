@@ -3,6 +3,7 @@
 
   imports = [
     ../../modules/adblock
+    ../../modules/feeds
     ../../modules/home-page
     ../../modules/monitoring
     ../../modules/remote-access
@@ -23,6 +24,11 @@
         host = "netdata.dotboris.io";
       };
       traefik.exporterPort = 8003;
+    };
+
+    feeds = {
+      httpPort = 8004;
+      host = "feeds.dotboris.io";
     };
   };
 

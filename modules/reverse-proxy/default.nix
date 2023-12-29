@@ -5,6 +5,10 @@
 }: let
   cfg = config.homelab.reverseProxy;
 in {
+  imports = [
+    ./fastcgi-stopgap.nix
+  ];
+
   options.homelab.reverseProxy = {
     traefikDashboardHost = lib.mkOption {
       type = lib.types.str;
