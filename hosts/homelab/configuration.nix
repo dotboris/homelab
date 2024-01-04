@@ -1,7 +1,9 @@
-{...}: {
+{inputs, ...}: {
   system.stateVersion = "23.11";
 
   imports = [
+    inputs.sops-nix.nixosModules.sops
+
     ../../modules/adblock
     ../../modules/feeds
     ../../modules/home-page
@@ -30,6 +32,14 @@
       httpPort = 8004;
       host = "feeds.dotboris.io";
     };
+  };
+
+  sops = {
+    # TODO: real secret
+
+    # Generate an age key based on our SSH host key.
+    age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+    gnupg.sshKeyPaths = []; # Turn off GPG key gen
   };
 
   networking = {

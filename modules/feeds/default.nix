@@ -4,6 +4,7 @@
   ...
 }: let
   cfg = config.homelab.feeds;
+  user = "freshrss";
 in {
   options.homelab.feeds = {
     httpPort = lib.mkOption {
@@ -15,10 +16,17 @@ in {
   };
 
   config = {
+    sops.secrets."freshrss/admin" = {
+      owner = user;
+    };
+
     services.freshrss = {
+      inherit user;
+
       enable = true;
 
-      authType = "none"; # TODO: feeds auth
+      authType = "form";
+      passwordFile = config.sops.secrets."freshrss/admin".path;
 
       baseUrl = "http://${cfg.host}"; # TODO: ssl
       virtualHost = cfg.host;

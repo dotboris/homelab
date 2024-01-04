@@ -7,19 +7,29 @@
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
     self,
     nixpkgs,
     nixos-generators,
+    ...
   }: let
     system = "x86_64-linux";
     pkgs = import nixpkgs {inherit system;};
   in {
     formatter.${system} = pkgs.alejandra;
     devShells.${system}.default = pkgs.mkShell {
-      packages = [];
+      packages = [
+        # Secrets management
+        pkgs.sops
+        pkgs.age
+        pkgs.ssh-to-age
+      ];
     };
 
     nixosConfigurations = {

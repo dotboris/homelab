@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{config, pkgs, ...}: {
   services.openssh = {
     enable = true;
     allowSFTP = false;
@@ -12,12 +12,14 @@
     };
   };
 
+  sops.secrets."users/dotboris".neededForUsers = true;
+
   users.users.dotboris = {
     isNormalUser = true;
     extraGroups = [
       "wheel" # allow sudo
     ];
-    initialPassword = "supersecret"; # TODO: don't store cleartext password
+    hashedPasswordFile = config.sops.secrets."users/dotboris".path;
 
     shell = pkgs.fish;
 

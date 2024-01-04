@@ -1,4 +1,8 @@
-{inputs, ...}: {
+{
+  inputs,
+  lib,
+  ...
+}: {
   imports = [
     inputs.nixos-generators.nixosModules.vm
   ];
@@ -19,6 +23,17 @@
 
     # Skip the menu
     timeout = 0;
+  };
+
+  sops = {
+    defaultSopsFile = lib.mkForce ../../secrets/vm.sops.yaml;
+
+    # Instead of generating an age key from the SSH host key, we just specify
+    # the age key directly. This key is hard-coded in the repo and used for
+    # testing. It's obviously not secure at all since it's public but the
+    # secreds it protects are all bogus.
+    age.sshKeyPaths = lib.mkForce [];
+    age.keyFile = lib.mkForce ../../secrets/dummy-vm.age.txt;
   };
 
   virtualisation.forwardPorts = [

@@ -1,0 +1,15 @@
+# Keys:
+# dotboris@desktop: (for development & writing secrets)
+#   age16lldqqyqqy6rw4zerw6kxr5x8dygt8apag8ve7n42n6me74mk4nseyvm3l
+# VM:
+#   age1d20urx7rzkhk3kppcsyjpkj5vt4pgjvmv0y8qajtp4lvrwvm5a2qh0e5dg
+
+creation_rules:
+  - path_regex: '^secrets/vm\.sops\.yaml$'
+    age: >-
+      age16lldqqyqqy6rw4zerw6kxr5x8dygt8apag8ve7n42n6me74mk4nseyvm3l,
+      age1d20urx7rzkhk3kppcsyjpkj5vt4pgjvmv0y8qajtp4lvrwvm5a2qh0e5dg
+
+stores:
+  yaml:
+    indent: 2
