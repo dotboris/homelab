@@ -21,6 +21,7 @@
   }: let
     system = "x86_64-linux";
     pkgs = import nixpkgs {inherit system;};
+    callPackage = path: overrides: pkgs.callPackage path {inherit inputs;} // overrides;
   in {
     formatter.${system} = pkgs.alejandra;
     devShells.${system}.default = pkgs.mkShell {
@@ -66,32 +67,14 @@
       # Starts the homelab-test VM in QEMU
       vm = {
         type = "app";
-        program = let
-          runVm = self.packages.${system}.run-vm;
-          script = pkgs.writeShellScript "start-vm" ''
-            set -x
-            rm ./homelab-test-efi-vars.fd
-            rm ./homelab-test.qcow2
-            exec ${runVm}/bin/run-homelab-test-vm
-          '';
-        in "${script}";
+        program = "${callPackage ./scripts/start-vm.nix {}}";
       };
 
       # Connects to the homelab-test VM through SSH
       # This requires the right private key on your system to work
       ssh-vm = {
         type = "app";
-        program = let
-          script =
-            pkgs.writeShellScript "ssh-vm"
-            ''
-              ${pkgs.openssh}/bin/ssh \
-                -o "UserKnownHostsFile=/dev/null" \
-                -o "StrictHostKeyChecking=no" \
-                -p 2022 \
-                dotboris@localhost
-            '';
-        in "${script}";
+        program = "${callPackage ./scripts/ssh-vm.nix {}}";
       };
     };
   };
