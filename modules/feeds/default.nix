@@ -28,7 +28,7 @@ in {
       authType = "form";
       passwordFile = config.sops.secrets."freshrss/admin".path;
 
-      baseUrl = "http://${cfg.host}"; # TODO: ssl
+      baseUrl = "https://${cfg.host}";
       virtualHost = cfg.host;
     };
 
@@ -43,6 +43,7 @@ in {
       routers.feeds = {
         rule = "Host(`${cfg.host}`)";
         service = "feeds";
+        tls = {};
       };
 
       services.feeds = {

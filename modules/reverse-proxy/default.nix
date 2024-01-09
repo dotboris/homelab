@@ -7,6 +7,7 @@
 in {
   imports = [
     ./fastcgi-stopgap.nix
+    ./tls-snakeoil.nix
   ];
 
   options.homelab.reverseProxy = {
@@ -20,14 +21,21 @@ in {
       enable = true;
 
       staticConfigOptions = {
-        entryPoints.web.address = ":80";
-        entryPoints.websecure.address = ":443"; # TODO: full blown TLS
+        entryPoints.web = {
+          address = ":80";
+          http.redirections.entryPoint = {
+            to = "websecure";
+            scheme = "https";
+            permanent = true;
+          };
+        };
+        entryPoints.websecure.address = ":443";
 
         api.dashboard = true;
 
         # Logs
-        # accessLog = {};
-        # log.level = "INFO";
+        accessLog = {};
+        log.level = "INFO";
       };
 
       dynamicConfigOptions = {
@@ -35,6 +43,7 @@ in {
           routers.traefikDashboard = {
             rule = "Host(`${cfg.traefikDashboardHost}`) && PathPrefix(`/dashboard`, `/api`)";
             service = "api@internal";
+            tls = {};
           };
         };
       };

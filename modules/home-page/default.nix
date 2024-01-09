@@ -28,6 +28,7 @@ in {
       routers.homePage = {
         rule = "Host(`${cfg.host}`)";
         service = "homePage";
+        tls = {};
       };
 
       services.homePage = {

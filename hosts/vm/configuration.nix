@@ -7,6 +7,8 @@
     inputs.nixos-generators.nixosModules.vm
   ];
 
+  homelab.reverseProxy.tls.snakeOil.enable = true;
+
   virtualisation.useBootLoader = true;
   virtualisation.useEFIBoot = true;
 

@@ -49,13 +49,13 @@ in {
             {
               "Monitoring (NetData)" = {
                 icon = "netdata.svg";
-                href = "http://${cfg.monitoring.netdata.host}";
+                href = "https://${cfg.monitoring.netdata.host}";
               };
             }
             {
               "Traefik Dashboard" = {
                 icon = "traefik.svg";
-                href = "http://${cfg.reverseProxy.traefikDashboardHost}/dashboard/";
+                href = "https://${cfg.reverseProxy.traefikDashboardHost}/dashboard/";
               };
             }
           ];

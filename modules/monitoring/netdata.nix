@@ -34,6 +34,7 @@ in {
       routers.netdata = {
         rule = "Host(`${cfg.host}`)";
         service = "netdata";
+        tls = {};
       };
 
       services.netdata = {
