@@ -45,6 +45,16 @@ in {
       };
       "services.yaml" = format.generate "services.yaml" [
         {
+          Services = [
+            {
+              "Feed Aggregator" = {
+                icon = "freshrss.svg";
+                href = "https://${cfg.feeds.host}";
+              };
+            }
+          ];
+        }
+        {
           System = [
             {
               "Monitoring (NetData)" = {
