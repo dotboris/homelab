@@ -7,17 +7,35 @@ My personal Home Lab / Home Server powered by Nix
 This configuration comes with a test VM that can be used to test a standalone
 version of this home lab. Here's how:
 
-1. Start the VM
+You can start the VM with:
 
-    ```sh
-    nix run .#vm
-    ```
+```sh
+nix run .#vm
+```
 
-1. SSH into the VM (in another terminal)
+You can SSH into the VM with:
 
-    ```sh
-    nix run .#ssh-vm
-    ```
+```sh
+nix run .#ssh-vm
+```
+
+### Testing web apps
+
+Open you system `/etc/hosts` file and add the following values:
+
+```
+# Homelab dev
+127.0.0.1 home.dotboris.io
+127.0.0.1 traefik.dotboris.io
+127.0.0.1 feeds.dotboris.io
+127.0.0.1 netdata.dotboris.io
+```
+
+From there, you'll be able to access the various web apps by pointing your
+browser to `https://{host}.dotboris.io:8443`. You'll need to accept the
+self-signed HTTPS certificate.
+
+Once you're done remember to comment out the entries in your hosts file.
 
 ## Todo
 
