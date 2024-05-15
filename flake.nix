@@ -7,6 +7,11 @@
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-images = {
+      url = "github:nix-community/nixos-images";
+      inputs.nixos-unstable.follows = "nixpkgs";
+      inputs.nixos-2311.follows = "nixpkgs";
+    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -17,6 +22,7 @@
     self,
     nixpkgs,
     nixos-generators,
+    nixos-images,
     ...
   }: let
     system = "x86_64-linux";
@@ -55,12 +61,13 @@
       };
     };
 
-    # Build & Run the test VM
     packages.${system} = {
+      # Build & Run the test VM
       run-vm = let
         vm = self.nixosConfigurations.homelab-test;
       in
         vm.config.system.build.vm;
+      installer-iso = nixos-images.packages.${system}.image-installer-nixos-unstable;
     };
 
     apps.${system} = {
