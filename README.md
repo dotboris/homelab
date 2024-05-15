@@ -4,36 +4,45 @@ My personal Home Lab / Home Server powered by Nix
 
 ## Test VM
 
-This configuration comes with a test VM that can be used to test a standalone
-version of this home lab. Here's how:
+To test things out, you can install the Home Lab config into a test VM. 
 
-You can start the VM with:
+### Setup
 
-```sh
-nix run .#vm
-```
+These instructions will guide you on how to create a test VM and install a test
+version of the Home Lab to it.
 
-You can SSH into the VM with:
+1. Build an installer iso: `nix build -L .#installer-iso`
+1. In `libvirt`, create a Linux VM. Most of the default settings should just
+   work. Make sure you set the boot ISO to
+   `./result/iso/nixos-installer-x86_64-linux.iso`.
+1. Boot the VM. It'll eventually land on a page showing you network information
+1. Install NixOS using `nixos-anywhere`: 
 
-```sh
-nix run .#ssh-vm
-```
+    ```sh
+    nixos-anywhere --flake .#homelab-test root@nixos-installer.local
+    ```
 
 ### Testing web apps
+
+First, figure out the IP address of your VM:
+
+```sh
+virsh -c qemu:///system net-dhcp-leases default
+```
 
 Open you system `/etc/hosts` file and add the following values:
 
 ```
 # Homelab dev
-127.0.0.1 home.dotboris.io
-127.0.0.1 traefik.dotboris.io
-127.0.0.1 feeds.dotboris.io
-127.0.0.1 netdata.dotboris.io
+{VM IP Address} home.dotboris.io
+{VM IP Address} traefik.dotboris.io
+{VM IP Address} feeds.dotboris.io
+{VM IP Address} netdata.dotboris.io
 ```
 
 From there, you'll be able to access the various web apps by pointing your
-browser to `https://{host}.dotboris.io:8443`. You'll need to accept the
-self-signed HTTPS certificate.
+browser to `https://{host}.dotboris.io`. You'll need to accept the self-signed
+HTTPS certificate.
 
 Once you're done remember to comment out the entries in your hosts file.
 

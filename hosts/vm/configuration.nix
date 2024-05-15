@@ -4,61 +4,22 @@
   ...
 }: {
   imports = [
-    inputs.nixos-generators.nixosModules.vm
+    inputs.disko.nixosModules.disko
+    ./disk-config.nix
   ];
 
   homelab.reverseProxy.tls.snakeOil.enable = true;
 
-  virtualisation.useBootLoader = true;
-  virtualisation.useEFIBoot = true;
-
   boot.loader = {
-    # EFI Boot
-    efi = {
-      canTouchEfiVariables = true;
-      efiSysMountPoint = "/boot";
-    };
-
-    # Use systemd boot
-    grub.enable = false;
-    systemd-boot.enable = true;
-
-    # Skip the menu
-    timeout = 0;
+    grub.enable = true;
+    timeout = 0; # Skip the menu
   };
 
   sops = {
     defaultSopsFile = lib.mkForce ../../secrets/vm.sops.yaml;
 
-    # Instead of generating an age key from the SSH host key, we just specify
-    # the age key directly. This key is hard-coded in the repo and used for
-    # testing. It's obviously not secure at all since it's public but the
-    # secreds it protects are all bogus.
-    age.sshKeyPaths = lib.mkForce [];
-    age.keyFile = lib.mkForce ../../secrets/dummy-vm.age.txt;
+    # Generate an age key based on our SSH host key.
+    age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+    gnupg.sshKeyPaths = []; # Turn off GPG key gen
   };
-
-  virtualisation.forwardPorts = [
-    {
-      from = "host";
-      guest.port = 22;
-      host.port = 2022;
-    }
-    {
-      from = "host";
-      proto = "udp";
-      guest.port = 53;
-      host.port = 5053;
-    }
-    {
-      from = "host";
-      guest.port = 80;
-      host.port = 8000;
-    }
-    {
-      from = "host";
-      guest.port = 443;
-      host.port = 8443;
-    }
-  ];
 }

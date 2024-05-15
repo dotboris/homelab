@@ -3,14 +3,21 @@
 
   inputs = {
     nixpkgs.url = "github:NixOs/nixpkgs/nixos-23.11";
-    nixos-generators = {
-      url = "github:nix-community/nixos-generators";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nixos-images = {
       url = "github:nix-community/nixos-images";
       inputs.nixos-unstable.follows = "nixpkgs";
       inputs.nixos-2311.follows = "nixpkgs";
+    };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixos-anywhere = {
+      url = "github:nix-community/nixos-anywhere";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixos-stable.follows = "nixpkgs";
+      inputs.nixos-images.follows = "nixos-images";
+      inputs.disko.follows = "disko";
     };
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -22,7 +29,7 @@
     self,
     nixpkgs,
     nixos-generators,
-    nixos-images,
+    nixos-anywhere,
     ...
   }: let
     system = "x86_64-linux";
@@ -36,6 +43,7 @@
         pkgs.sops
         pkgs.age
         pkgs.ssh-to-age
+        nixos-anywhere.packages.${system}.default
       ];
     };
 
@@ -62,27 +70,7 @@
     };
 
     packages.${system} = {
-      # Build & Run the test VM
-      run-vm = let
-        vm = self.nixosConfigurations.homelab-test;
-      in
-        vm.config.system.build.vm;
-      installer-iso = nixos-images.packages.${system}.image-installer-nixos-unstable;
-    };
-
-    apps.${system} = {
-      # Starts the homelab-test VM in QEMU
-      vm = {
-        type = "app";
-        program = "${callPackage ./scripts/start-vm.nix {}}";
-      };
-
-      # Connects to the homelab-test VM through SSH
-      # This requires the right private key on your system to work
-      ssh-vm = {
-        type = "app";
-        program = "${callPackage ./scripts/ssh-vm.nix {}}";
-      };
+      installer-iso = callPackage ./packages/installer-iso.nix {};
     };
   };
 }

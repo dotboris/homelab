@@ -1,4 +1,10 @@
-{config, pkgs, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: let
+  consts = import ../../consts.nix;
+in {
   services.openssh = {
     enable = true;
     allowSFTP = false;
@@ -23,10 +29,7 @@
 
     shell = pkgs.fish;
 
-    openssh.authorizedKeys.keys = [
-      # dotboris@desktop
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAOrL2lDUwOQ9K98de3YQqscdLAHqoZJCuCocL6TZYZq"
-    ];
+    openssh.authorizedKeys.keys = [consts.dotborisSshPubkey];
   };
 
   programs.fish.enable = true; # shell for dotboris

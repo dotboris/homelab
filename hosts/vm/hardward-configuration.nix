@@ -1,21 +1,20 @@
 {
   lib,
   config,
+  modulesPath,
   ...
 }: {
-  imports = [];
+  imports = [
+    (modulesPath + "/profiles/qemu-guest.nix")
+  ];
 
-  # When Nix builds a VM, it uses well-defined labels, we reuse those.
-  # See: https://github.com/NixOS/nixpkgs/blob/4c501306af1ab6c19491fdafebb30fd097eb42c5/nixos/modules/virtualisation/qemu-vm.nix#L264-L267
-  fileSystems = {
-    "/" = {
-      device = "/dev/disk/by-label/nixos";
-      fsType = "ext4";
+  boot = {
+    initrd = {
+      availableKernelModules = ["ahci" "xhci_pci" "virtio_pci" "sr_mod" "virtio_blk"];
+      kernelModules = [];
     };
-    "/boot" = {
-      device = "/dev/disk/by-label/EFI";
-      fsType = "vfat";
-    };
+    kernelModules = ["kvm-amd"];
+    extraModulePackages = [];
   };
 
   swapDevices = [];
