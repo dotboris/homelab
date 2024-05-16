@@ -28,7 +28,6 @@
   outputs = inputs @ {
     self,
     nixpkgs,
-    nixos-generators,
     nixos-anywhere,
     ...
   }: let
