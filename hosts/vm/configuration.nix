@@ -22,4 +22,18 @@
     age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
     gnupg.sshKeyPaths = []; # Turn off GPG key gen
   };
+
+  networking = {
+    hostName = lib.mkForce "homelab-test";
+    interfaces = {
+      enp1s0.ipv4.addresses = [
+        {
+          address = "10.0.42.3";
+          prefixLength = 24;
+        }
+      ];
+    };
+    defaultGateway = "10.0.42.1";
+    nameservers = ["1.1.1.1"];
+  };
 }

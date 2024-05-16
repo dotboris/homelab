@@ -19,10 +19,5 @@
 
   swapDevices = [];
 
-  networking = {
-    useDHCP = true;
-    hostName = lib.mkForce "homelab-test";
-  };
-
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
