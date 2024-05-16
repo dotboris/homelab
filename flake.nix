@@ -56,14 +56,13 @@
         ];
       };
 
-      # VM meant to test changes to the real homelab
       homelab-test = nixpkgs.lib.nixosSystem {
         inherit system pkgs;
         specialArgs = {inherit inputs;};
         modules = [
           ./hosts/homelab/configuration.nix
-          ./hosts/vm/configuration.nix
-          ./hosts/vm/hardward-configuration.nix
+          ./hosts/homelab-test/configuration.nix
+          ./hosts/homelab-test/hardward-configuration.nix
         ];
       };
     };
