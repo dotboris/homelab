@@ -20,35 +20,37 @@ in {
       owner = user;
     };
 
-    services.freshrss = {
-      inherit user;
+    services = {
+      freshrss = {
+        inherit user;
 
-      enable = true;
+        enable = true;
 
-      authType = "form";
-      passwordFile = config.sops.secrets."freshrss/admin".path;
+        authType = "form";
+        passwordFile = config.sops.secrets."freshrss/admin".path;
 
-      baseUrl = "https://${cfg.host}";
-      virtualHost = cfg.host;
-    };
-
-    services.nginx.virtualHosts.${cfg.host}.listen = [
-      {
-        port = cfg.httpPort;
-        addr = "127.0.0.1";
-      }
-    ];
-
-    services.traefik.dynamicConfigOptions.http = {
-      routers.feeds = {
-        rule = "Host(`${cfg.host}`)";
-        service = "feeds";
-        tls = {};
+        baseUrl = "https://${cfg.host}";
+        virtualHost = cfg.host;
       };
 
-      services.feeds = {
-        loadBalancer = {
-          servers = [{url = "http://localhost:${toString cfg.httpPort}";}];
+      nginx.virtualHosts.${cfg.host}.listen = [
+        {
+          port = cfg.httpPort;
+          addr = "127.0.0.1";
+        }
+      ];
+
+      traefik.dynamicConfigOptions.http = {
+        routers.feeds = {
+          rule = "Host(`${cfg.host}`)";
+          service = "feeds";
+          tls = {};
+        };
+
+        services.feeds = {
+          loadBalancer = {
+            servers = [{url = "http://localhost:${toString cfg.httpPort}";}];
+          };
         };
       };
     };

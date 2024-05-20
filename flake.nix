@@ -9,8 +9,10 @@
     nixpkgs.url = "github:NixOs/nixpkgs/nixos-23.11";
     nixos-images = {
       url = "github:nix-community/nixos-images";
-      inputs.nixos-unstable.follows = "nixpkgs";
-      inputs.nixos-2311.follows = "nixpkgs";
+      inputs = {
+        nixos-unstable.follows = "nixpkgs";
+        nixos-2311.follows = "nixpkgs";
+      };
     };
     disko = {
       url = "github:nix-community/disko";
@@ -18,10 +20,12 @@
     };
     nixos-anywhere = {
       url = "github:nix-community/nixos-anywhere";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixos-stable.follows = "nixpkgs";
-      inputs.nixos-images.follows = "nixos-images";
-      inputs.disko.follows = "disko";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        nixos-stable.follows = "nixpkgs";
+        nixos-images.follows = "nixos-images";
+        disko.follows = "disko";
+      };
     };
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -45,6 +49,8 @@
     formatter.${system} = pkgs.alejandra;
     devShells.${system}.default = pkgs.mkShell {
       packages = [
+        pkgs.statix
+
         # Secrets management
         pkgs.sops
         pkgs.age
@@ -106,6 +112,13 @@
       installer-iso = callPackage ./packages/installer-iso.nix {};
     };
 
-    checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+    checks.${system} =
+      {
+        statix = pkgs.runCommand "statix" {buildInputs = [pkgs.statix];} ''
+          statix check -c ${./statix.toml} ${./.}
+          touch $out
+        '';
+      }
+      // deploy-rs.lib.${system}.deployChecks self.deploy;
   };
 }
