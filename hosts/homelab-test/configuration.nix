@@ -1,30 +1,51 @@
-{
-  inputs,
-  lib,
-  ...
-}: {
+{...}: {
   imports = [
-    inputs.disko.nixosModules.disko
     ./disk-config.nix
+    ./hardware-configuration.nix
   ];
 
-  homelab.reverseProxy.tls.snakeOil.enable = true;
+  system.stateVersion = "23.11";
 
-  boot.loader = {
-    grub.enable = true;
-    timeout = 0; # Skip the menu
+  homelab = {
+    homepage = {
+      port = 8001;
+      host = "home-test.dotboris.io";
+    };
+
+    reverseProxy = {
+      traefikDashboardHost = "traefik-test.dotboris.io";
+      tls.snakeOil.enable = true;
+    };
+
+    monitoring = {
+      netdata = {
+        port = 8002;
+        host = "netdata-test.dotboris.io";
+      };
+      traefik.exporterPort = 8003;
+    };
+
+    feeds = {
+      httpPort = 8004;
+      host = "feeds-test.dotboris.io";
+    };
   };
 
   sops = {
-    defaultSopsFile = lib.mkForce ../../secrets/vm.sops.yaml;
+    defaultSopsFile = ./secrets.sops.yaml;
 
     # Generate an age key based on our SSH host key.
     age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
     gnupg.sshKeyPaths = []; # Turn off GPG key gen
   };
 
+  boot.loader = {
+    grub.enable = true;
+    timeout = 0; # Skip the menu
+  };
+
   networking = {
-    hostName = lib.mkForce "homelab-test";
+    hostName = "homelab-test";
     interfaces = {
       enp1s0.ipv4.addresses = [
         {

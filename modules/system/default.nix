@@ -9,6 +9,8 @@
 
       cores = 0; # use all cores
       max-jobs = "auto"; # use all cores
+
+      trusted-users = ["root" "@wheel"];
     };
 
     gc.automatic = true;

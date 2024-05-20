@@ -1,16 +1,5 @@
-{inputs, ...}: {
+{...}: {
   system.stateVersion = "23.11";
-
-  imports = [
-    inputs.sops-nix.nixosModules.sops
-
-    ../../modules/adblock
-    ../../modules/feeds
-    ../../modules/home-page
-    ../../modules/monitoring
-    ../../modules/system
-    ../../modules/reverse-proxy
-  ];
 
   homelab = {
     homepage = {
@@ -35,7 +24,8 @@
   };
 
   sops = {
-    # TODO: real secret
+    # TODO: Change this!
+    defaultSopsFile = ../../secrets/vm.sops.yaml;
 
     # Generate an age key based on our SSH host key.
     age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
