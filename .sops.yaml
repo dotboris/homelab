@@ -1,6 +1,6 @@
 keys:
   - &admin-dotboris age16lldqqyqqy6rw4zerw6kxr5x8dygt8apag8ve7n42n6me74mk4nseyvm3l
-  - &host-homelab age1k6y7mzx6tpj9g0aqwww4zgtxjkk5ja5dw68nc26528296eyykq5qahk2yt
+  - &host-homelab age1drttm3pedzu63pwahgfjk0f2za0ywu57dec0e5sh3nc59vfm55xqzph4zm
   - &host-homelab-test age1uxn8hz7fv4h05l4uhtshpxkylv4krfmekc8ancuur682djmnm9asmgs8ma
 
 creation_rules:

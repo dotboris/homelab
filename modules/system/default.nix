@@ -9,6 +9,11 @@
     ];
   };
 
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  networking.useNetworkd = true;
+  systemd.network.enable = true;
+
   nix = {
     settings = {
       experimental-features = ["nix-command" "flakes"];

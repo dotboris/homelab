@@ -129,7 +129,7 @@ sops = {
 ## Perform the Install
 
 The actual installation process is handled by
-[nixos-anywhere](https://github.com/nix-community/nixos-anywhere). 
+[nixos-anywhere](https://github.com/nix-community/nixos-anywhere).
 
 ```sh
 git add --intent-to-add . # make sure nix knows about your new files
@@ -149,18 +149,21 @@ changes to it.
 Add the following to your `flake.nix`:
 
 ```nix
-deploy.nodes = {
-  {your-host} = {
-    hostname = "{your-host-ip}";
-    profiles.system = {
+{...}: {
+  deploy.nodes = let
+    inherit (deploy-rs.lib.x86_64-linux.activate) nixos;
+  in {
+    {your-host} = {
+      hostname = "10.0.42.2";
       user = "root";
       sshUser = "dotboris";
       interactiveSudo = true;
       fastConnection = true;
-      path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.{your-host};
+      magicRollback = false;
+      profiles.system.path = nixos self.nixosConfigurations.{your-host};
     };
   };
-};
+}
 ```
 
 Once that's done, simply run:

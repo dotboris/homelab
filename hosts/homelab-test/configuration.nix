@@ -54,7 +54,10 @@
         }
       ];
     };
-    defaultGateway = "10.0.42.1";
+    defaultGateway = {
+      address = "10.0.42.1";
+      interface = "enp1s0";
+    };
     nameservers = ["1.1.1.1"];
   };
 }

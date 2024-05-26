@@ -94,26 +94,26 @@
       };
     };
 
-    deploy.nodes = {
+    deploy.nodes = let
+      inherit (deploy-rs.lib.x86_64-linux.activate) nixos;
+    in {
       homelab = {
         hostname = "10.0.42.2";
-        profiles.system = {
-          user = "root";
-          sshUser = "dotboris";
-          interactiveSudo = true;
-          fastConnection = true;
-          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.homelab;
-        };
+        user = "root";
+        sshUser = "dotboris";
+        interactiveSudo = true;
+        fastConnection = true;
+        magicRollback = false;
+        profiles.system.path = nixos self.nixosConfigurations.homelab;
       };
       homelab-test = {
         hostname = "10.0.42.3";
-        profiles.system = {
-          user = "root";
-          sshUser = "dotboris";
-          interactiveSudo = true;
-          fastConnection = true;
-          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.homelab-test;
-        };
+        user = "root";
+        sshUser = "dotboris";
+        interactiveSudo = true;
+        fastConnection = true;
+        magicRollback = false;
+        profiles.system.path = nixos self.nixosConfigurations.homelab-test;
       };
     };
 
