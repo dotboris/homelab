@@ -1,4 +1,9 @@
-{...}: {
+{config, ...}: {
+  imports = [
+    ./disk-config.nix
+    ./hardware-configuration.nix
+  ];
+
   system.stateVersion = "23.11";
 
   homelab = {
@@ -24,16 +29,35 @@
   };
 
   sops = {
-    # TODO: Change this!
-    defaultSopsFile = ../../secrets/vm.sops.yaml;
+    defaultSopsFile = ./secrets.sops.yaml;
 
     # Generate an age key based on our SSH host key.
     age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
     gnupg.sshKeyPaths = []; # Turn off GPG key gen
   };
 
+  # Use the GRUB 2 boot loader.
+  boot.loader.grub.enable = true;
+
+  sops.secrets."networking/wireless/env" = {};
   networking = {
     hostName = "homelab";
-    useDHCP = true; # TODO: probably a bad idea for prod
+    wireless = {
+      enable = true;
+      environmentFile = config.sops.secrets."networking/wireless/env".path;
+      networks = {
+        romeo = {psk = "@romeo_psk@";};
+      };
+    };
+    interfaces = {
+      wlan0.ipv4.addresses = [
+        {
+          address = "10.0.42.2";
+          prefixLength = 24;
+        }
+      ];
+    };
+    defaultGateway = "10.0.42.1";
+    nameservers = ["1.1.1.1"];
   };
 }

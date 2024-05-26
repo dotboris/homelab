@@ -76,15 +76,14 @@
     };
 
     nixosConfigurations = {
-      # homelab = nixpkgs.lib.nixosSystem {
-      #   inherit system pkgs;
-      #   specialArgs = {inherit inputs;};
-      #   modules = [
-      #     ./hosts/homelab/configuration.nix
-      #     # ./hosts/homelab/hardward-configuration.nix
-      #   ];
-      # };
-
+      homelab = nixpkgs.lib.nixosSystem {
+        inherit system pkgs;
+        specialArgs = {inherit inputs;};
+        modules = [
+          self.nixosModules.default
+          ./hosts/homelab/configuration.nix
+        ];
+      };
       homelab-test = nixpkgs.lib.nixosSystem {
         inherit system pkgs;
         specialArgs = {inherit inputs;};
@@ -96,6 +95,16 @@
     };
 
     deploy.nodes = {
+      homelab = {
+        hostname = "10.0.42.2";
+        profiles.system = {
+          user = "root";
+          sshUser = "dotboris";
+          interactiveSudo = true;
+          fastConnection = true;
+          path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.homelab;
+        };
+      };
       homelab-test = {
         hostname = "10.0.42.3";
         profiles.system = {

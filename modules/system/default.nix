@@ -1,7 +1,13 @@
-{...}: {
+{pkgs, ...}: {
   imports = [
     ./admin.nix
   ];
+
+  environment = {
+    systemPackages = [
+      pkgs.busybox # most of the base utilities
+    ];
+  };
 
   nix = {
     settings = {
