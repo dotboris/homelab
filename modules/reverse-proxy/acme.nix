@@ -17,17 +17,6 @@ in {
       certResolver = "main";
     };
 
-    sops = {
-      secrets = {
-        "acme/cloudflare/zone-api-token" = {};
-        "acme/cloudflare/dns-api-token" = {};
-      };
-      templates."traefik-acme.env".content = ''
-        CLOUDFLARE_ZONE_API_TOKEN=${config.sops.placeholder."acme/cloudflare/zone-api-token"}
-        CLOUDFLARE_DNS_API_TOKEN=${config.sops.placeholder."acme/cloudflare/dns-api-token"}
-      '';
-    };
-
     systemd.services."create-traefik-acme-json" = {
       description = "Create the acme.json store file for traefik";
 
@@ -49,6 +38,17 @@ in {
         RemainAfterExit = true;
         StateDirectory = acmeStoreRelDir;
       };
+    };
+
+    sops = {
+      secrets = {
+        "acme/cloudflare/zone-api-token" = {};
+        "acme/cloudflare/dns-api-token" = {};
+      };
+      templates."traefik-acme.env".content = ''
+        CLOUDFLARE_ZONE_API_TOKEN=${config.sops.placeholder."acme/cloudflare/zone-api-token"}
+        CLOUDFLARE_DNS_API_TOKEN=${config.sops.placeholder."acme/cloudflare/dns-api-token"}
+      '';
     };
 
     services.traefik = {
