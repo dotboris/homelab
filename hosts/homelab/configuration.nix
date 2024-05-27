@@ -15,7 +15,7 @@
 
     reverseProxy = {
       traefikDashboardHost = "traefik.dotboris.io";
-      tls.snakeOil.enable = true;
+      tls.acme.enable = true;
     };
 
     monitoring = {
