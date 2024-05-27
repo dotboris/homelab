@@ -44,7 +44,7 @@ in {
         routers.feeds = {
           rule = "Host(`${cfg.host}`)";
           service = "feeds";
-          tls = {};
+          tls = config.homelab.reverseProxy.tls.value;
         };
 
         services.feeds = {

@@ -7,12 +7,16 @@
 in {
   imports = [
     ./fastcgi-stopgap.nix
+    ./acme.nix
     ./tls-snakeoil.nix
   ];
 
   options.homelab.reverseProxy = {
     traefikDashboardHost = lib.mkOption {
       type = lib.types.str;
+    };
+    tls.value = lib.mkOption {
+      type = lib.types.attrs;
     };
   };
 
@@ -43,7 +47,7 @@ in {
           routers.traefikDashboard = {
             rule = "Host(`${cfg.traefikDashboardHost}`) && PathPrefix(`/dashboard`, `/api`)";
             service = "api@internal";
-            tls = {};
+            tls = cfg.tls.value;
           };
         };
       };

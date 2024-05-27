@@ -28,7 +28,7 @@ in {
       routers.homePage = {
         rule = "Host(`${cfg.host}`)";
         service = "homePage";
-        tls = {};
+        tls = config.homelab.reverseProxy.tls.value;
       };
 
       services.homePage = {

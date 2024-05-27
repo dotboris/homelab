@@ -15,6 +15,8 @@ in {
     absStateDir = "/var/lib/${relStateDir}";
   in
     lib.mkIf cfg.enable {
+      homelab.reverseProxy.tls.value = {};
+
       systemd.services."create-traefik-snaekoil-cert" = {
         description = "Create a snakeoil certificate for traefik";
 

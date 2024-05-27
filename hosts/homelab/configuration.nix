@@ -13,7 +13,10 @@
       host = "home.dotboris.io";
     };
 
-    reverseProxy.traefikDashboardHost = "traefik.dotboris.io";
+    reverseProxy = {
+      traefikDashboardHost = "traefik.dotboris.io";
+      tls.snakeOil.enable = true;
+    };
 
     monitoring = {
       netdata = {

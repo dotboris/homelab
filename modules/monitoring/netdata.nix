@@ -34,7 +34,7 @@ in {
       routers.netdata = {
         rule = "Host(`${cfg.host}`)";
         service = "netdata";
-        tls = {};
+        tls = config.homelab.reverseProxy.tls.value;
       };
 
       services.netdata = {
