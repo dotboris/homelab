@@ -57,7 +57,8 @@ in {
       ];
       staticConfigOptions = {
         certificatesResolvers.main.acme = {
-          caServer = "https://acme-staging-v02.api.letsencrypt.org/directory";
+          # Remember to empty `acme.json` when switching from stg to prod or vise versa
+          # caServer = "https://acme-staging-v02.api.letsencrypt.org/directory";
           email = "beraboris+homelab-acme@gmail.com";
           storage = acmeStoreFile;
           dnsChallenge = {
