@@ -118,7 +118,9 @@
     };
 
     packages.${system} = {
+      anudeepnd-allowlist = callPackage ./packages/anudeepnd-allowlist.nix {};
       installer-iso = callPackage ./packages/installer-iso.nix {};
+      stevenblack-blocklist = callPackage ./packages/stevenblack-blocklist.nix {};
     };
 
     checks.${system} = let

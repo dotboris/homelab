@@ -1,4 +1,9 @@
-{pkgs, ...}: let
+{
+  inputs,
+  pkgs,
+  ...
+}: let
+  inherit (inputs.self.packages.${pkgs.system}) anudeepnd-allowlist stevenblack-blocklist;
   dnsPort = 53;
 in {
   services.blocky = {
@@ -28,33 +33,12 @@ in {
         }
       ];
 
-      blocking = let
-        stevenblackBlocklist = let
-          version = "3.14.40";
-        in
-          pkgs.fetchFromGitHub {
-            name = "stevenback-blocklist-${version}";
-            owner = "StevenBlack";
-            repo = "hosts";
-            rev = version;
-            sha256 = "sha256-hTFIG1a/PNgDo5U57VmXDJvR3VWd8TKVinnLfJRlQGo=";
-          };
-        anudeepndAllowlist = let
-          version = "2.0.1";
-        in
-          pkgs.fetchFromGitHub {
-            name = "anudeepnd-allowlist-${version}";
-            owner = "anudeepND";
-            repo = "whitelist";
-            rev = "v${version}";
-            sha256 = "sha256-TWtYNxMU5gpe5Y4Th6tQaiOA09DBV7iJFPr9P7CAfag=";
-          };
-      in {
+      blocking = {
         blackLists.ads = [
-          "${stevenblackBlocklist}/hosts"
+          "${stevenblack-blocklist}/hosts"
         ];
         whiteLists.ads = [
-          "${anudeepndAllowlist}/domains/whitelist.txt"
+          "${anudeepnd-allowlist}/domains/whitelist.txt"
         ];
 
         clientGroupsBlock.default = ["ads"];
