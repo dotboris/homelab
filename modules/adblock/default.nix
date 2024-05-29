@@ -59,8 +59,27 @@ in {
 
         clientGroupsBlock.default = ["ads"];
       };
+
+      # TODO: manage this dynamically with information from elsewhere
+      customDNS.mapping = let
+        homelab = "10.0.42.2";
+        homelab-test = "10.0.42.3";
+      in {
+        "homelab.lan" = homelab;
+        "home.dotboris.io" = homelab;
+        "feeds.dotboris.io" = homelab;
+        "netdata.dotboris.io" = homelab;
+        "traefik.dotboris.io" = homelab;
+        "homelab-test.lan" = homelab-test;
+        "home-test.dotboris.io" = homelab-test;
+        "feeds-test.dotboris.io" = homelab-test;
+        "netdata-test.dotboris.io" = homelab-test;
+        "traefik-test.dotboris.io" = homelab-test;
+      };
     };
   };
 
+  services.resolved.enable = false;
+  networking.nameservers = ["127.0.0.1:${dnsPort}"];
   networking.firewall.allowedUDPPorts = [dnsPort];
 }
