@@ -6,12 +6,12 @@
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs.url = "github:NixOs/nixpkgs/nixos-23.11";
+    nixpkgs.url = "github:NixOs/nixpkgs/nixos-24.05";
     nixos-images = {
       url = "github:nix-community/nixos-images";
       inputs = {
         nixos-unstable.follows = "nixpkgs";
-        nixos-2311.follows = "nixpkgs";
+        nixos-stable.follows = "nixpkgs";
       };
     };
     disko = {
@@ -30,6 +30,7 @@
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-stable.follows = "nixpkgs";
     };
   };
 
