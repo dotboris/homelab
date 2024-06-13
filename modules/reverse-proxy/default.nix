@@ -38,14 +38,17 @@ in {
         api.dashboard = true;
 
         # Logs
-        accessLog = {};
+        # accessLog = {};
         log.level = "INFO";
       };
 
       dynamicConfigOptions = {
         http = {
           routers.traefikDashboard = {
-            rule = "Host(`${cfg.traefikDashboardHost}`) && PathPrefix(`/dashboard`, `/api`)";
+            rule = ''
+              Host(`${cfg.traefikDashboardHost}`) &&
+              (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+            '';
             service = "api@internal";
             tls = cfg.tls.value;
           };
