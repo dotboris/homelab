@@ -38,7 +38,7 @@ in {
         api.dashboard = true;
 
         # Logs
-        accessLog = {};
+        # accessLog = {};
         log.level = "INFO";
       };
 
