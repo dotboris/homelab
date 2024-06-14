@@ -51,11 +51,13 @@ in {
       in {
         "homelab.lan" = homelab;
         "home.dotboris.io" = homelab;
+        "archive.dotboris.io" = homelab;
         "feeds.dotboris.io" = homelab;
         "netdata.dotboris.io" = homelab;
         "traefik.dotboris.io" = homelab;
         "homelab-test.lan" = homelab-test;
         "home-test.dotboris.io" = homelab-test;
+        "archive-test.dotboris.io" = homelab-test;
         "feeds-test.dotboris.io" = homelab-test;
         "netdata-test.dotboris.io" = homelab-test;
         "traefik-test.dotboris.io" = homelab-test;

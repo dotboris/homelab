@@ -30,6 +30,11 @@
       httpPort = 8004;
       host = "feeds.dotboris.io";
     };
+
+    documents-archive = {
+      port = 8005;
+      host = "archive.dotboris.io";
+    };
   };
 
   sops = {
