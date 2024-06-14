@@ -42,6 +42,14 @@ in {
             "Feed Aggregator" = {
               icon = "freshrss.svg";
               href = "https://${cfg.feeds.host}";
+              description = "FreshRSS";
+            };
+          }
+          {
+            "Documents Archive" = {
+              icon = "paperless-ngx.svg";
+              href = "https://${cfg.documents-archive.host}";
+              description = "paperless-ngx";
             };
           }
         ];
@@ -49,9 +57,10 @@ in {
       {
         System = [
           {
-            "Monitoring (NetData)" = {
+            "Monitoring" = {
               icon = "netdata.svg";
               href = "https://${cfg.monitoring.netdata.host}";
+              description = "NetData";
             };
           }
           {
