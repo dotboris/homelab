@@ -4,13 +4,11 @@
   ...
 }: let
   cfg = config.homelab.documents-archive;
+  vhost = config.homelab.reverseProxy.vhosts.archive;
 in {
   options.homelab.documents-archive = {
     port = lib.mkOption {
       type = lib.types.int;
-    };
-    host = lib.mkOption {
-      type = lib.types.str;
     };
   };
 
@@ -25,9 +23,10 @@ in {
       passwordFile = config.sops.secrets."paperless/admin".path;
     };
 
+    homelab.reverseProxy.vhosts.archive = {};
     services.traefik.dynamicConfigOptions.http = {
       routers.documentsArchive = {
-        rule = "Host(`${cfg.host}`)";
+        rule = "Host(`${vhost.fqdn}`)";
         service = "documentsArchive";
         tls = config.homelab.reverseProxy.tls.value;
       };

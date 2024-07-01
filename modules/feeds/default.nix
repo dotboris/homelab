@@ -4,14 +4,12 @@
   ...
 }: let
   cfg = config.homelab.feeds;
+  vhost = config.homelab.reverseProxy.vhosts.feeds;
   user = "freshrss";
 in {
   options.homelab.feeds = {
     httpPort = lib.mkOption {
       type = lib.types.int;
-    };
-    host = lib.mkOption {
-      type = lib.types.str;
     };
   };
 
@@ -20,6 +18,7 @@ in {
       owner = user;
     };
 
+    homelab.reverseProxy.vhosts.feeds = {};
     services = {
       freshrss = {
         inherit user;
@@ -29,20 +28,19 @@ in {
         authType = "form";
         passwordFile = config.sops.secrets."freshrss/admin".path;
 
-        baseUrl = "https://${cfg.host}";
-        virtualHost = cfg.host;
+        baseUrl = "https://${vhost.fqdn}";
+        virtualHost = vhost.fqdn;
       };
 
-      nginx.virtualHosts.${cfg.host}.listen = [
+      nginx.virtualHosts.${vhost.fqdn}.listen = [
         {
           port = cfg.httpPort;
           addr = "127.0.0.1";
         }
       ];
-
       traefik.dynamicConfigOptions.http = {
         routers.feeds = {
-          rule = "Host(`${cfg.host}`)";
+          rule = "Host(`${vhost.fqdn}`)";
           service = "feeds";
           tls = config.homelab.reverseProxy.tls.value;
         };

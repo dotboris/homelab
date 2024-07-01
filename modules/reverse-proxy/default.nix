@@ -1,20 +1,13 @@
-{
-  lib,
-  config,
-  ...
-}: let
-  cfg = config.homelab.reverseProxy;
-in {
+{lib, ...}: {
   imports = [
+    ./vhosts.nix
     ./fastcgi-stopgap.nix
     ./acme.nix
     ./tls-snakeoil.nix
+    ./dashboard.nix
   ];
 
   options.homelab.reverseProxy = {
-    traefikDashboardHost = lib.mkOption {
-      type = lib.types.str;
-    };
     tls.value = lib.mkOption {
       type = lib.types.attrs;
     };
@@ -35,24 +28,9 @@ in {
         };
         entryPoints.websecure.address = ":443";
 
-        api.dashboard = true;
-
         # Logs
         # accessLog = {};
         log.level = "INFO";
-      };
-
-      dynamicConfigOptions = {
-        http = {
-          routers.traefikDashboard = {
-            rule = ''
-              Host(`${cfg.traefikDashboardHost}`) &&
-              (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
-            '';
-            service = "api@internal";
-            tls = cfg.tls.value;
-          };
-        };
       };
     };
 

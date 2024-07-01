@@ -4,6 +4,7 @@
   ...
 }: let
   cfg = config.homelab.homepage;
+  vhost = config.homelab.reverseProxy.vhosts.home;
 in {
   imports = [
     ./config.nix
@@ -13,9 +14,6 @@ in {
     port = lib.mkOption {
       type = lib.types.int;
     };
-    host = lib.mkOption {
-      type = lib.types.str;
-    };
   };
 
   config = {
@@ -24,9 +22,10 @@ in {
       listenPort = cfg.port;
     };
 
+    homelab.reverseProxy.vhosts.home = {};
     services.traefik.dynamicConfigOptions.http = {
       routers.homePage = {
-        rule = "Host(`${cfg.host}`)";
+        rule = "Host(`${vhost.fqdn}`)";
         service = "homePage";
         tls = config.homelab.reverseProxy.tls.value;
       };

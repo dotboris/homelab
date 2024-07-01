@@ -3,7 +3,7 @@
   config,
   ...
 }: let
-  cfg = config.homelab;
+  inherit (config.homelab.reverseProxy) vhosts;
 in {
   services.homepage-dashboard = {
     settings = {
@@ -41,14 +41,14 @@ in {
           {
             "Feed Aggregator" = {
               icon = "freshrss.svg";
-              href = "https://${cfg.feeds.host}";
+              href = "https://${vhosts.feeds.fqdn}";
               description = "FreshRSS";
             };
           }
           {
             "Documents Archive" = {
               icon = "paperless-ngx.svg";
-              href = "https://${cfg.documents-archive.host}";
+              href = "https://${vhosts.archive.fqdn}";
               description = "paperless-ngx";
             };
           }
@@ -59,14 +59,14 @@ in {
           {
             "Monitoring" = {
               icon = "netdata.svg";
-              href = "https://${cfg.monitoring.netdata.host}";
+              href = "https://${vhosts.netdata.fqdn}";
               description = "NetData";
             };
           }
           {
             "Traefik Dashboard" = {
               icon = "traefik.svg";
-              href = "https://${cfg.reverseProxy.traefikDashboardHost}/dashboard/";
+              href = "https://${vhosts.traefik.fqdn}/dashboard/";
             };
           }
         ];

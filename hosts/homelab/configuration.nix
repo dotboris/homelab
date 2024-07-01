@@ -7,33 +7,18 @@
   system.stateVersion = "23.11";
 
   homelab = {
-    homepage = {
-      port = 8001;
-      host = "home.dotboris.io";
-    };
-
     reverseProxy = {
-      traefikDashboardHost = "traefik.dotboris.io";
+      baseDomain = "dotboris.io";
       tls.acme.enable = true;
     };
 
+    homepage.port = 8001;
     monitoring = {
-      netdata = {
-        port = 8002;
-        host = "netdata.dotboris.io";
-      };
+      netdata.port = 8002;
       traefik.exporterPort = 8003;
     };
-
-    feeds = {
-      httpPort = 8004;
-      host = "feeds.dotboris.io";
-    };
-
-    documents-archive = {
-      port = 8005;
-      host = "archive.dotboris.io";
-    };
+    feeds.httpPort = 8004;
+    documents-archive.port = 8005;
   };
 
   sops = {

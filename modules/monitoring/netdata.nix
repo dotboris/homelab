@@ -4,13 +4,11 @@
   ...
 }: let
   cfg = config.homelab.monitoring.netdata;
+  vhost = config.homelab.reverseProxy.vhosts.netdata;
 in {
   options.homelab.monitoring.netdata = {
     port = lib.mkOption {
       type = lib.types.int;
-    };
-    host = lib.mkOption {
-      type = lib.types.str;
     };
   };
 
@@ -30,9 +28,10 @@ in {
       enableAnalyticsReporting = false;
     };
 
+    homelab.reverseProxy.vhosts.netdata = {};
     services.traefik.dynamicConfigOptions.http = {
       routers.netdata = {
-        rule = "Host(`${cfg.host}`)";
+        rule = "Host(`${vhost.fqdn}`)";
         service = "netdata";
         tls = config.homelab.reverseProxy.tls.value;
       };
