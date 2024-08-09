@@ -25,7 +25,7 @@ in {
         chmod 600 "$STATE_DIRECTORY/acme.json"
       '';
 
-      wantedBy = ["multi-user.target" "treafik.service"];
+      wantedBy = ["traefik.service"];
 
       unitConfig = {
         Before = ["traefik.service"];

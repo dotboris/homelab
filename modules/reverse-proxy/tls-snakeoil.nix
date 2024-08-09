@@ -17,7 +17,7 @@ in {
     lib.mkIf cfg.enable {
       homelab.reverseProxy.tls.value = {};
 
-      systemd.services."create-traefik-snaekoil-cert" = {
+      systemd.services."create-traefik-snakoil-cert" = {
         description = "Create a snakeoil certificate for traefik";
 
         script = ''
@@ -33,7 +33,7 @@ in {
           chmod 600 "$STATE_DIRECTORY/key.pem"
         '';
 
-        wantedBy = ["multi-user.target" "treafik.service"];
+        wantedBy = ["traefik.service"];
 
         unitConfig = {
           Before = ["traefik.service"];
