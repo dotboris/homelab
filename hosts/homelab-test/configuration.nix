@@ -22,6 +22,13 @@
     documents-archive.port = 8005;
   };
 
+  services.autorestic = {
+    enable = true;
+    settings = {
+      version = 2;
+    };
+  };
+
   sops = {
     defaultSopsFile = ./secrets.sops.yaml;
 
