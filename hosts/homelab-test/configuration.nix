@@ -12,7 +12,6 @@
       vhostSuffix = "-test";
       tls.acme.enable = true;
     };
-
     homepage.port = 8001;
     monitoring = {
       netdata.port = 8002;
@@ -20,13 +19,8 @@
     };
     feeds.httpPort = 8004;
     documents-archive.port = 8005;
-  };
 
-  services.autorestic = {
-    enable = true;
-    settings = {
-      version = 2;
-    };
+    backups.enable = true;
   };
 
   sops = {

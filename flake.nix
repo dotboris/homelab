@@ -70,6 +70,7 @@
         sops-nix.nixosModules.sops
         ./modules/adblock
         ./modules/documents-archive
+        ./modules/backups
         ./modules/feeds
         ./modules/home-page
         ./modules/monitoring
