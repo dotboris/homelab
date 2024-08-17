@@ -21,6 +21,19 @@ in {
       inherit (cfg) port;
       enable = true;
       passwordFile = config.sops.secrets."paperless/admin".path;
+      settings = {
+        PAPERLESS_OCR_USER_ARGS = {
+          # Some documents (like AWS bills) get digitally signed. That's pretty
+          # neat but in this context it's not helpful. The OCR system refuses to
+          # handle such files because it would invalidate the signature. I'd
+          # rather invalidate the signature than not being able to ingest the
+          # document to paperless. This setting allows the OCR engine to
+          # invalidate the signature.
+          #
+          # See: https://github.com/paperless-ngx/paperless-ngx/discussions/4047
+          invalidate_digital_signatures = true;
+        };
+      };
     };
 
     homelab.reverseProxy.vhosts.archive = {};
