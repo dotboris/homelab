@@ -27,7 +27,7 @@ in {
       example = "hourly";
       description = ''
         How often to run autorestic. Note that the actual backup jobs will run
-        depending on the cron option in the settings. 
+        depending on the cron option in the settings.
         Defaults to every 5 minutes.
 
         The format is described in systemd.time(7).
@@ -36,6 +36,10 @@ in {
     settings = mkOption {
       type = types.attrsOf types.anything;
       default = {};
+    };
+    environmentFile = mkOption {
+      type = types.nullOr types.str;
+      default = null;
     };
   };
 
@@ -46,29 +50,60 @@ in {
     };
     users.groups.${cfg.group} = mkIf createGroup {};
 
-    systemd = {
-      services.autorestic = {
-        description = "autorestic cron handler";
-        serviceConfig = {
+    systemd = let
+      path = [
+        pkgs.autorestic
+        pkgs.bash # autorestic runs hooks through bash
+        pkgs.restic # autorestic runs restic to do backups
+      ];
+      serviceConfig =
+        {
           Type = "oneshot";
           User = cfg.user;
           Group = cfg.group;
-          RuntimeDirectory = "autorestic";
+          StateDirectory = "autorestic";
+        }
+        // optionalAttrs (cfg.environmentFile != null) {
+          EnvironmentFile = cfg.environmentFile;
         };
-        preStart = ''
-          ln -s ${configFile} "$RUNTIME_DIRECTORY/autorestic.yml"
-        '';
+      preStart = ''
+        echo "Preparing autorestic config"
+        ln -sf ${configFile} "$STATE_DIRECTORY/autorestic.yml"
+        echo "Running autorestic check"
+        autorestic check \
+          --verbose \
+          --ci \
+          --config $STATE_DIRECTORY/autorestic.yml
+      '';
+    in {
+      services.autorestic = {
+        inherit path serviceConfig preStart;
+        description = "autorestic cron handler";
         script = ''
-          ${cfg.package}/bin/autorestic cron \
+          echo "Running autorestic cron"
+          autorestic cron \
+            --verbose \
             --ci \
-            --config $RUNTIME_DIRECTORY/autorestic.yml
+            --lean \
+            --config $STATE_DIRECTORY/autorestic.yml
         '';
       };
       timers.autorestic = {
         description = "Timer for autorestic cron handler";
-        partOf = ["autorestic.service"];
         wantedBy = ["timers.target"];
         timerConfig.OnCalendar = cfg.interval;
+      };
+      services.autorestic-backup-all = {
+        inherit path serviceConfig preStart;
+        description = "manually backup all locations managed by autorestic";
+        script = ''
+          echo "Running autorestic backup"
+          autorestic backup \
+            --all \
+            --verbose \
+            --ci \
+            --config $STATE_DIRECTORY/autorestic.yml
+        '';
       };
     };
   };

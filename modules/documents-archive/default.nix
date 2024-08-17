@@ -6,6 +6,10 @@
   cfg = config.homelab.documents-archive;
   vhost = config.homelab.reverseProxy.vhosts.archive;
 in {
+  imports = [
+    ./backups.nix
+  ];
+
   options.homelab.documents-archive = {
     port = lib.mkOption {
       type = lib.types.int;
