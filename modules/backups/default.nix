@@ -41,7 +41,20 @@ in {
       environmentFile = config.sops.templates."autorestic.env".path;
       settings = {
         version = 2;
-        locations = mapAttrs (_: value: value // {to = ["local"];}) cfg.locations;
+        global.forget = {
+          keep-hourly = 5;
+          keep-daily = 7;
+          keep-weekly = 4;
+          keep-monthly = 12;
+          keep-yearly = 7;
+        };
+        locations = mapAttrs (_: value:
+          value
+          // {
+            to = ["local"];
+            forget = "yes";
+          })
+        cfg.locations;
         backends = {
           local = {
             type = "local";

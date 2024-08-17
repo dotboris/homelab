@@ -20,7 +20,10 @@
     feeds.httpPort = 8004;
     documents-archive.port = 8005;
 
-    backups.enable = true;
+    backups = {
+      enable = true;
+      locations.paperless.cron = "*/15 * * * *";
+    };
   };
 
   sops = {
