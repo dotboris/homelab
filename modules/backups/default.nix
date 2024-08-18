@@ -15,6 +15,14 @@ in {
       type = types.attrsOf types.anything;
       default = {};
     };
+    joinGroups = mkOption {
+      type = types.listOf types.str;
+      default = [];
+      description = ''
+        List of groups to join the backup user to. This is useful to give the
+        backup user access to files they normally wouldn't have access to.
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
@@ -63,5 +71,7 @@ in {
         };
       };
     };
+
+    users.users.${autoresticCfg.user}.extraGroups = cfg.joinGroups;
   };
 }
