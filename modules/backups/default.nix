@@ -27,7 +27,7 @@ in {
 
   config = mkIf cfg.enable {
     sops = let
-      localPass = "backups/repo-passwords/local";
+      localPass = "backups/repos/local/password";
     in {
       secrets = {
         ${localPass} = {};
@@ -50,7 +50,7 @@ in {
       settings = {
         version = 2;
         global.forget = {
-          keep-hourly = 5;
+          keep-last = 4; # Assuming 4 backups a day, that keeps them all
           keep-daily = 7;
           keep-weekly = 4;
           keep-monthly = 12;

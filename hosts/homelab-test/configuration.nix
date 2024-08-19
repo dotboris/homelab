@@ -22,8 +22,8 @@
 
     backups = {
       enable = true;
-      locations.paperless.cron = "*/15 * * * *";
-      locations.freshrss.cron = "*/15 * * * *";
+      locations.paperless.cron = "0 */6 * * *";
+      locations.freshrss.cron = "0 */6 * * *";
     };
   };
 
