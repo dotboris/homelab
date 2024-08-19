@@ -65,10 +65,12 @@
 
     nixosModules.default = {...}: {
       imports = [
+        ./modules/nixos-ext
         disko.nixosModules.disko
         sops-nix.nixosModules.sops
         ./modules/adblock
         ./modules/documents-archive
+        ./modules/backups
         ./modules/feeds
         ./modules/home-page
         ./modules/monitoring

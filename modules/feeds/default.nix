@@ -7,6 +7,10 @@
   vhost = config.homelab.reverseProxy.vhosts.feeds;
   user = "freshrss";
 in {
+  imports = [
+    ./backups.nix
+  ];
+
   options.homelab.feeds = {
     httpPort = lib.mkOption {
       type = lib.types.int;
