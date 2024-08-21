@@ -19,10 +19,6 @@ in {
       type = types.attrsOf types.anything;
       default = {};
     };
-    reposDir = mkOption {
-      type = types.str;
-      default = "/var/lib/homelab-backups/repos";
-    };
     joinGroups = mkOption {
       type = types.listOf types.str;
       default = [];
@@ -34,22 +30,6 @@ in {
   };
 
   config = mkIf cfg.enable {
-    # sops = {
-    #   secrets = {
-    #     "backups/repos/b2/password" = mkIf cfg.enableB2Backend {};
-    #     "backups/repos/b2/keyId" = mkIf cfg.enableB2Backend {};
-    #     "backups/repos/b2/key" = mkIf cfg.enableB2Backend {};
-    #   };
-    #   templates."autorestic.env" = {
-    #     owner = autoresticCfg.user;
-    #     content = ''
-    #       AUTORESTIC_B2_RESTIC_PASSWORD=${config.sops.placeholder."backups/repos/b2/password"}
-    #       AUTORESTIC_B2_ACCOUNT_ID=${config.sops.placeholder."backups/repos/b2/keyId"}
-    #       AUTORESTIC_B2_ACCOUNT_KEY=${config.sops.placeholder."backups/repos/b2/key"}
-    #     '';
-    #   };
-    # };
-
     services.autorestic = {
       enable = true;
       settings = {

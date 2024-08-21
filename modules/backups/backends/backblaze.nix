@@ -31,9 +31,6 @@ in {
       };
     };
 
-    systemd.tmpfiles.rules = [
-      "d ${cfg.path} 0700 ${autoresticCfg.user} ${autoresticCfg.group}"
-    ];
     services.autorestic = {
       environmentFiles = [config.sops.templates."homelab-backups-backblaze-backend.env".path];
       settings = {
