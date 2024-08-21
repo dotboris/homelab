@@ -11,7 +11,7 @@ in {
     enable = mkEnableOption "homelab backend local backend";
     path = mkOption {
       type = types.path;
-      default = "/var/lib/homelab-backups/repos";
+      default = "/var/lib/homelab-backups/repos/local";
     };
   };
   config = mkIf cfg.enable {

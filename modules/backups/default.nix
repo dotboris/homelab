@@ -6,7 +6,7 @@
 with lib; let
   cfg = config.homelab.backups;
   autoresticCfg = config.services.autorestic;
-  locationKeys = builtins.attrNames cfg.locations;
+  backendKeys = builtins.attrNames autoresticCfg.settings.backends;
 in {
   imports = [
     ./backends/local.nix
@@ -44,7 +44,7 @@ in {
         locations = mapAttrs (_: value:
           value
           // {
-            to = locationKeys;
+            to = backendKeys;
             forget = "yes";
           })
         cfg.locations;
