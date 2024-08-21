@@ -37,9 +37,9 @@ in {
       type = types.attrsOf types.anything;
       default = {};
     };
-    environmentFile = mkOption {
-      type = types.nullOr types.str;
-      default = null;
+    environmentFiles = mkOption {
+      type = types.listOf types.path;
+      default = [];
     };
   };
 
@@ -56,16 +56,13 @@ in {
         pkgs.bash # autorestic runs hooks through bash
         pkgs.restic # autorestic runs restic to do backups
       ];
-      serviceConfig =
-        {
-          Type = "oneshot";
-          User = cfg.user;
-          Group = cfg.group;
-          StateDirectory = "autorestic";
-        }
-        // optionalAttrs (cfg.environmentFile != null) {
-          EnvironmentFile = cfg.environmentFile;
-        };
+      serviceConfig = {
+        Type = "oneshot";
+        User = cfg.user;
+        Group = cfg.group;
+        StateDirectory = "autorestic";
+        EnvironmentFile = cfg.environmentFiles;
+      };
       preStart = ''
         echo "Preparing autorestic config"
         ln -sf ${configFile} "$STATE_DIRECTORY/autorestic.yml"

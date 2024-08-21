@@ -6,14 +6,22 @@
 with lib; let
   cfg = config.homelab.backups;
   autoresticCfg = config.services.autorestic;
-  stateDir = "/var/lib/homelab-backups";
-  reposDir = "${stateDir}/repos";
+  locationKeys = builtins.attrNames cfg.locations;
 in {
+  imports = [
+    ./backends/local.nix
+    ./backends/backblaze.nix
+  ];
+
   options.homelab.backups = {
     enable = mkEnableOption "homelab backups";
     locations = mkOption {
       type = types.attrsOf types.anything;
       default = {};
+    };
+    reposDir = mkOption {
+      type = types.str;
+      default = "/var/lib/homelab-backups/repos";
     };
     joinGroups = mkOption {
       type = types.listOf types.str;
@@ -26,27 +34,24 @@ in {
   };
 
   config = mkIf cfg.enable {
-    sops = let
-      localPass = "backups/repos/local/password";
-    in {
-      secrets = {
-        ${localPass} = {};
-      };
-      templates."autorestic.env" = {
-        owner = autoresticCfg.user;
-        content = ''
-          AUTORESTIC_LOCAL_RESTIC_PASSWORD=${config.sops.placeholder.${localPass}}
-        '';
-      };
-    };
+    # sops = {
+    #   secrets = {
+    #     "backups/repos/b2/password" = mkIf cfg.enableB2Backend {};
+    #     "backups/repos/b2/keyId" = mkIf cfg.enableB2Backend {};
+    #     "backups/repos/b2/key" = mkIf cfg.enableB2Backend {};
+    #   };
+    #   templates."autorestic.env" = {
+    #     owner = autoresticCfg.user;
+    #     content = ''
+    #       AUTORESTIC_B2_RESTIC_PASSWORD=${config.sops.placeholder."backups/repos/b2/password"}
+    #       AUTORESTIC_B2_ACCOUNT_ID=${config.sops.placeholder."backups/repos/b2/keyId"}
+    #       AUTORESTIC_B2_ACCOUNT_KEY=${config.sops.placeholder."backups/repos/b2/key"}
+    #     '';
+    #   };
+    # };
 
-    systemd.tmpfiles.rules = [
-      "d ${stateDir} 0700 ${autoresticCfg.user} ${autoresticCfg.group}"
-      "d ${reposDir} 0700 ${autoresticCfg.user} ${autoresticCfg.group}"
-    ];
     services.autorestic = {
       enable = true;
-      environmentFile = config.sops.templates."autorestic.env".path;
       settings = {
         version = 2;
         global.forget = {
@@ -59,16 +64,10 @@ in {
         locations = mapAttrs (_: value:
           value
           // {
-            to = ["local"];
+            to = locationKeys;
             forget = "yes";
           })
         cfg.locations;
-        backends = {
-          local = {
-            type = "local";
-            path = "${reposDir}/local";
-          };
-        };
       };
     };
 

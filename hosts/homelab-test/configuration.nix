@@ -22,6 +22,7 @@
 
     backups = {
       enable = true;
+      backends.local.enable = true;
       locations.paperless.cron = "0 */6 * * *";
       locations.freshrss.cron = "0 */6 * * *";
     };
