@@ -9,6 +9,9 @@ with lib; let
 in {
   options.homelab.backups.backends.backblaze = {
     enable = mkEnableOption "homelab backend backblaze backend";
+    bucketName = mkOption {
+      type = types.str;
+    };
   };
   config = mkIf cfg.enable {
     sops = let
@@ -36,6 +39,7 @@ in {
       settings = {
         backends.backblaze = {
           type = "b2";
+          path = cfg.bucketName;
         };
       };
     };
