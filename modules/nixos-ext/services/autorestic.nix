@@ -79,19 +79,7 @@ in {
     };
     users.groups.${cfg.group} = mkIf createGroup {};
 
-    systemd = let
-      path = [
-        cfg.package
-        pkgs.bash # autorestic runs hooks through bash
-        pkgs.restic # autorestic runs restic to do backups
-      ];
-      serviceConfig = {
-        Type = "oneshot";
-        User = cfg.user;
-        Group = cfg.group;
-        EnvironmentFile = cfg.environmentFiles;
-      };
-    in {
+    systemd = {
       tmpfiles.rules = [
         "d ${resticCacheDir} 0700 ${cfg.user} ${cfg.group}"
         "d ${cfg.stateDir} 0755 ${cfg.user} ${cfg.group}"
@@ -99,8 +87,18 @@ in {
         "L+ ${cfg.stateDir}/autorestic-wrapper - - - - ${autoresticWrapper}/bin/autorestic-wrapper"
       ];
       services.autorestic = {
-        inherit path serviceConfig;
         description = "autorestic cron handler";
+        path = [
+          cfg.package
+          pkgs.bash # autorestic runs hooks through bash
+          pkgs.restic # autorestic runs restic to do backups
+        ];
+        serviceConfig = {
+          Type = "oneshot";
+          User = cfg.user;
+          Group = cfg.group;
+          EnvironmentFile = cfg.environmentFiles;
+        };
         script = ''
           autorestic cron \
             --verbose \
@@ -113,17 +111,6 @@ in {
         description = "Timer for autorestic cron handler";
         wantedBy = ["timers.target"];
         timerConfig.OnCalendar = cfg.interval;
-      };
-      services.autorestic-backup-all = {
-        inherit path serviceConfig;
-        description = "manually backup all locations managed by autorestic";
-        script = ''
-          autorestic backup \
-            --all \
-            --verbose \
-            --ci \
-            --config ${cfg.stateDir}/autorestic.yml
-        '';
       };
     };
   };
