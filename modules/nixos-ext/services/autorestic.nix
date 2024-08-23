@@ -91,13 +91,6 @@ in {
         Group = cfg.group;
         EnvironmentFile = cfg.environmentFiles;
       };
-      preStart = ''
-        echo "Running autorestic check"
-        autorestic check \
-          --verbose \
-          --ci \
-          --config ${cfg.stateDir}/autorestic.yml
-      '';
     in {
       tmpfiles.rules = [
         "d ${resticCacheDir} 0700 ${cfg.user} ${cfg.group}"
@@ -106,10 +99,9 @@ in {
         "L+ ${cfg.stateDir}/autorestic-wrapper - - - - ${autoresticWrapper}/bin/autorestic-wrapper"
       ];
       services.autorestic = {
-        inherit path serviceConfig preStart;
+        inherit path serviceConfig;
         description = "autorestic cron handler";
         script = ''
-          echo "Running autorestic cron"
           autorestic cron \
             --verbose \
             --ci \
@@ -123,10 +115,9 @@ in {
         timerConfig.OnCalendar = cfg.interval;
       };
       services.autorestic-backup-all = {
-        inherit path serviceConfig preStart;
+        inherit path serviceConfig;
         description = "manually backup all locations managed by autorestic";
         script = ''
-          echo "Running autorestic backup"
           autorestic backup \
             --all \
             --verbose \
