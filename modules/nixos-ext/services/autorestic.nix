@@ -15,6 +15,21 @@ with lib; let
     }
     cfg.settings
   );
+  autoresticWrapper = pkgs.writeShellScriptBin "autorestic-wrapper" (
+    ''
+      set -euo pipefail
+      set -a # export from .env files
+    ''
+    + concatMapStrings (envFile: "source ${envFile}\n") cfg.environmentFiles
+    + ''
+      set +a # stop exporting
+
+      exec ${cfg.package}/bin/autorestic \
+        --config ${cfg.stateDir}/autorestic.yml \
+        --restic-bin ${pkgs.restic}/bin/restic \
+        "$@"
+    ''
+  );
 in {
   options.services.autorestic = {
     enable = mkEnableOption "autorestic";
@@ -66,7 +81,7 @@ in {
 
     systemd = let
       path = [
-        pkgs.autorestic
+        cfg.package
         pkgs.bash # autorestic runs hooks through bash
         pkgs.restic # autorestic runs restic to do backups
       ];
@@ -88,6 +103,7 @@ in {
         "d ${resticCacheDir} 0700 ${cfg.user} ${cfg.group}"
         "d ${cfg.stateDir} 0755 ${cfg.user} ${cfg.group}"
         "L+ ${cfg.stateDir}/autorestic.yml - - - - ${configFile}"
+        "L+ ${cfg.stateDir}/autorestic-wrapper - - - - ${autoresticWrapper}/bin/autorestic-wrapper"
       ];
       services.autorestic = {
         inherit path serviceConfig preStart;
