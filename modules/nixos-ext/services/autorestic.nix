@@ -8,7 +8,13 @@ with lib; let
   cfg = config.services.autorestic;
   createUser = cfg.user == "autorestic";
   createGroup = cfg.group == "autorestic";
-  configFile = (pkgs.formats.yaml {}).generate "autorestic-config" cfg.settings;
+  resticCacheDir = "${cfg.cacheDir}/restic";
+  configFile = (pkgs.formats.yaml {}).generate "autorestic-config" (
+    recursiveUpdate {
+      global.all.cache-dir = resticCacheDir;
+    }
+    cfg.settings
+  );
 in {
   options.services.autorestic = {
     enable = mkEnableOption "autorestic";
@@ -41,6 +47,14 @@ in {
       type = types.listOf types.path;
       default = [];
     };
+    stateDir = mkOption {
+      type = types.path;
+      default = "/var/lib/autorestic";
+    };
+    cacheDir = mkOption {
+      type = types.path;
+      default = "/var/cache/autorestic";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -60,19 +74,21 @@ in {
         Type = "oneshot";
         User = cfg.user;
         Group = cfg.group;
-        StateDirectory = "autorestic";
         EnvironmentFile = cfg.environmentFiles;
       };
       preStart = ''
-        echo "Preparing autorestic config"
-        ln -sf ${configFile} "$STATE_DIRECTORY/autorestic.yml"
         echo "Running autorestic check"
         autorestic check \
           --verbose \
           --ci \
-          --config $STATE_DIRECTORY/autorestic.yml
+          --config ${cfg.stateDir}/autorestic.yml
       '';
     in {
+      tmpfiles.rules = [
+        "d ${resticCacheDir} 0700 ${cfg.user} ${cfg.group}"
+        "d ${cfg.stateDir} 0755 ${cfg.user} ${cfg.group}"
+        "L+ ${cfg.stateDir}/autorestic.yml - - - - ${configFile}"
+      ];
       services.autorestic = {
         inherit path serviceConfig preStart;
         description = "autorestic cron handler";
@@ -82,7 +98,7 @@ in {
             --verbose \
             --ci \
             --lean \
-            --config $STATE_DIRECTORY/autorestic.yml
+            --config ${cfg.stateDir}/autorestic.yml
         '';
       };
       timers.autorestic = {
@@ -99,7 +115,7 @@ in {
             --all \
             --verbose \
             --ci \
-            --config $STATE_DIRECTORY/autorestic.yml
+            --config ${cfg.stateDir}/autorestic.yml
         '';
       };
     };
