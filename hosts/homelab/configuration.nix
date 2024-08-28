@@ -16,6 +16,7 @@
     monitoring = {
       netdata.port = 8002;
       traefik.exporterPort = 8003;
+      ntfy.port = 8006;
     };
     feeds.httpPort = 8004;
     documents-archive.port = 8005;

@@ -64,6 +64,13 @@ in {
             };
           }
           {
+            "Alerts" = {
+              icon = "ntfy.svg";
+              href = "https://${vhosts.ntfy.fqdn}";
+              description = "ntfy.sh";
+            };
+          }
+          {
             "Traefik Dashboard" = {
               icon = "traefik.svg";
               href = "https://${vhosts.traefik.fqdn}/dashboard/";
