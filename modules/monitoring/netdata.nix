@@ -1,10 +1,11 @@
 {
   lib,
+  pkgs,
   config,
   ...
 }: let
+  inherit (config.homelab.reverseProxy) vhosts;
   cfg = config.homelab.monitoring.netdata;
-  vhost = config.homelab.reverseProxy.vhosts.netdata;
 in {
   options.homelab.monitoring.netdata = {
     port = lib.mkOption {
@@ -25,13 +26,20 @@ in {
         db.mode = "dbengine";
       };
 
+      configDir = {
+        "health_alarm_notify.conf" = pkgs.writeText "health_alarm_notify.conf" ''
+          SEND_NTFY=YES
+          DEFAULT_RECIPIENT_NTFY=https://${vhosts.ntfy.fqdn}/netdata
+        '';
+      };
+
       enableAnalyticsReporting = false;
     };
 
     homelab.reverseProxy.vhosts.netdata = {};
     services.traefik.dynamicConfigOptions.http = {
       routers.netdata = {
-        rule = "Host(`${vhost.fqdn}`)";
+        rule = "Host(`${vhosts.netdata.fqdn}`)";
         service = "netdata";
         tls = config.homelab.reverseProxy.tls.value;
       };
