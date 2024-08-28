@@ -57,13 +57,6 @@ in {
       {
         System = [
           {
-            "Monitoring" = {
-              icon = "netdata.svg";
-              href = "https://${vhosts.netdata.fqdn}";
-              description = "NetData";
-            };
-          }
-          {
             "Alerts" = {
               icon = "ntfy.svg";
               href = "https://${vhosts.ntfy.fqdn}";
@@ -71,9 +64,24 @@ in {
             };
           }
           {
+            "Monitoring" = {
+              icon = "netdata.svg";
+              href = "https://${vhosts.netdata.fqdn}";
+              description = "NetData";
+              widget = {
+                type = "netdata";
+                url = "https://${vhosts.netdata.fqdn}";
+              };
+            };
+          }
+          {
             "Traefik Dashboard" = {
               icon = "traefik.svg";
               href = "https://${vhosts.traefik.fqdn}/dashboard/";
+              widget = {
+                type = "traefik";
+                url = "https://${vhosts.traefik.fqdn}";
+              };
             };
           }
         ];
