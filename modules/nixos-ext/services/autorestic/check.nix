@@ -2,8 +2,10 @@
   config,
   lib,
   pkgs,
+  utils,
   ...
 }:
+with utils;
 with lib; let
   cfg = config.services.autorestic;
   script = concatStringsSep " " ([
@@ -20,6 +22,7 @@ with lib; let
     ++ (optional cfg.check.readData "--read-data"));
 in {
   options.services.autorestic.check = {
+    inherit (systemdUtils.unitOptions.commonUnitOptions.options) onSuccess onFailure;
     enable = mkEnableOption "autorestic periodic check";
     interval = mkOption {
       type = types.str;
@@ -42,6 +45,7 @@ in {
   config = mkIf cfg.check.enable {
     systemd = {
       services.autorestic-check = {
+        inherit (cfg.check) onSuccess onFailure;
         inherit script;
         description = "autorestic check";
         path = [

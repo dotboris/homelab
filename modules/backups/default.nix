@@ -2,8 +2,10 @@
   lib,
   pkgs,
   config,
+  utils,
   ...
 }:
+with utils;
 with lib; let
   cfg = config.homelab.backups;
   autoresticCfg = config.services.autorestic;
@@ -75,6 +77,22 @@ in {
         enable = true;
         interval = "monthly";
         readData = true;
+        onSuccess = [
+          "ntfy-send@${escapeSystemdPath (builtins.toJSON {
+            topic = "backups";
+            priority = 2;
+            title = "Backup Checks OK";
+            message = "Backups integrity checks have completed succesfully";
+          })}.service"
+        ];
+        onFailure = [
+          "ntfy-send@${escapeSystemdPath (builtins.toJSON {
+            topic = "backups";
+            priority = 5;
+            title = "Backup Checks Failed";
+            message = "Backups integrity checks have failed";
+          })}.service"
+        ];
       };
     };
 
