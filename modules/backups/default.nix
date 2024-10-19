@@ -71,6 +71,11 @@ in {
           )
           cfg.locations;
       };
+      check = {
+        enable = true;
+        interval = "monthly";
+        readData = true;
+      };
     };
 
     users.users.${autoresticCfg.user}.extraGroups = cfg.joinGroups;
