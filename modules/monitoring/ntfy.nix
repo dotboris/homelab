@@ -1,6 +1,7 @@
 {
   lib,
   config,
+  pkgs,
   ...
 }:
 with lib; let
@@ -23,6 +24,23 @@ in {
         listen-http = ":${toString cfg.port}";
         behind-proxy = true;
       };
+    };
+
+    systemd.services."ntfy-send@" = {
+      description = "send message to ntfy";
+      serviceConfig = {
+        Type = "oneshot";
+      };
+      environment = {
+        PAYLOAD = "%I";
+      };
+      path = [pkgs.curl];
+      script = ''
+        curl \
+          --fail --silent --show-error \
+          -X POST https://${vhost.fqdn} \
+          -d "$PAYLOAD"
+      '';
     };
 
     services.traefik.dynamicConfigOptions.http = {
