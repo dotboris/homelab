@@ -1,5 +1,5 @@
 {...}: {
   imports = [
-    ./services/autorestic.nix
+    ./services/autorestic
   ];
 }

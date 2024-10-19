@@ -31,6 +31,10 @@ with lib; let
     ''
   );
 in {
+  imports = [
+    ./check.nix
+  ];
+
   options.services.autorestic = {
     enable = mkEnableOption "autorestic";
     package = mkPackageOption pkgs "autorestic" {};
