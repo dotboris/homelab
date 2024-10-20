@@ -28,8 +28,21 @@
         enable = true;
         bucketName = "dotboris-homelab-backups";
       };
-      locations.paperless.cron = "0 */6 * * *";
-      locations.freshrss.cron = "0 */6 * * *";
+      github = {
+        enable = true;
+        cloneWiki = true;
+        skipArchived = true;
+        skipForks = true;
+        cloneType = "user";
+        githubOrg = "dotboris";
+        appId = "1030841";
+        installationId = "56188691";
+      };
+      locations = {
+        paperless.cron = "0 */6 * * *";
+        freshrss.cron = "0 */6 * * *";
+        github.cron = "0 1 * * *";
+      };
     };
   };
 
