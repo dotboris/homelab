@@ -28,6 +28,7 @@ in {
   imports = [
     ./backends/local.nix
     ./backends/backblaze.nix
+    ./github.nix
   ];
 
   options.homelab.backups = {
