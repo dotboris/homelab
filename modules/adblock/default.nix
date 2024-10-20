@@ -34,6 +34,7 @@ in {
       ];
 
       blocking = {
+        blockType = "nxDomain";
         blackLists.ads = [
           "${stevenblack-blocklist}/hosts"
         ];
