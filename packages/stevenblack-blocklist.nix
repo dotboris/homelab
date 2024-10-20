@@ -1,5 +1,5 @@
 {pkgs, ...}: let
-  version = "3.14.74";
+  version = "3.14.125";
 in
   # https://github.com/StevenBlack/hosts/releases
   pkgs.fetchFromGitHub {
@@ -7,5 +7,5 @@ in
     owner = "StevenBlack";
     repo = "hosts";
     rev = version;
-    sha256 = "sha256-wllEikCX/bMY/ZyRszXvar+AzYqmAx6fcjvcDJBkzfU=";
+    sha256 = "sha256-6bZhQRCGAeBzOXF8CRFDDG9fI0szycsR/6XDoFaYAjs=";
   }
