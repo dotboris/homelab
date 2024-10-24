@@ -46,6 +46,14 @@ HTTPS certificate.
 
 Once you're done remember to comment out the entries in your hosts file.
 
+## Updating Packages
+
+1. Do the update: `nix run .#update-packages`
+1. Check the differences: `git diff`
+1. Test the changes: `nix flake check -L`
+1. Test with the VM
+1. Ship to prod
+
 ## Todo
 
 This is a work in progress. This is a list of things that I want / need from
