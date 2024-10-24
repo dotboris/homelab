@@ -125,6 +125,12 @@
       anudeepnd-allowlist = callPackage ./packages/anudeepnd-allowlist.nix {};
       installer-iso = callPackage ./packages/installer-iso.nix {};
       stevenblack-blocklist = callPackage ./packages/stevenblack-blocklist.nix {};
+      update-packages = callPackage ./packages/update-packages.nix {};
+    };
+
+    apps.${system}.update-packages = {
+      type = "app";
+      program = "${self.packages.${system}.update-packages}/bin/update-packages";
     };
 
     checks.${system} = let
