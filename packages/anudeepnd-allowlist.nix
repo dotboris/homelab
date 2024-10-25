@@ -16,4 +16,5 @@ stdenv.mkDerivation rec {
     mkdir -p $out/domains
     cp domains/whitelist.txt $out/domains/whitelist.txt
   '';
+  passthru.update = true;
 }

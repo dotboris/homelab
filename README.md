@@ -54,6 +54,9 @@ Once you're done remember to comment out the entries in your hosts file.
 1. Test with the VM
 1. Ship to prod
 
+This will update all packages in the flake with `passthru.update = true;`. If
+you want to update a package, add that to the derivation.
+
 ## Todo
 
 This is a work in progress. This is a list of things that I want / need from

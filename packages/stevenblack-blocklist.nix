@@ -17,4 +17,5 @@ stdenv.mkDerivation rec {
     mkdir -p $out
     cp hosts $out/hosts
   '';
+  passthru.update = true;
 }
