@@ -76,7 +76,8 @@ in {
       };
       check = {
         enable = true;
-        interval = "monthly";
+        # Monthly, time avoids overlap with backup run
+        interval = "*-*-01 01:00:00 America/Toronto"; 
         readData = true;
         onSuccess = [
           "ntfy-send@${escapeSystemdPath (builtins.toJSON {
