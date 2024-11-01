@@ -46,16 +46,40 @@ HTTPS certificate.
 
 Once you're done remember to comment out the entries in your hosts file.
 
-## Updating Packages
+## Updates
 
-1. Do the update: `nix run .#update-packages`
-1. Check the differences: `git diff`
-1. Test the changes: `nix flake check -L`
-1. Test with the VM
-1. Ship to prod
+### Local Packages
+
+There are custom package in this repo. Some of these packages pull source from other places like GitHub. These are pinned to specific versions and hashes. Updating those packages means updating those versions and hashes. There's tooling in place to automate this:
+
+```sh
+nix run .#update-packages
+```
 
 This will update all packages in the flake with `passthru.update = true;`. If
 you want to update a package, add that to the derivation.
+
+### Flake lock
+
+```sh
+nix flake update -L
+```
+
+### Do I need to reboot?
+
+Most of the time you don't need to reboot. Services with new versions gets rebooted automatically and other programs get the the update when they're closed and re-opened.
+
+There are a few packages that require a reboot. They're core components of the systems that can't just be restarted. They are:
+
+- The Linux kernel
+- SystemD
+
+You can figure out what changed through the following steps:
+
+1. SSH into the machine
+1. Run: `nix profile diff-closures --profile /nix/var/nix/profiles/system`
+
+If the packages mentioned above have been updated, you need to reboot.
 
 ## Todo
 
