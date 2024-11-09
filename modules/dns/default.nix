@@ -53,14 +53,25 @@ in {
           concatStringsSep " " ([host.ips.${variant} host.name] ++ host.aliases)
         );
       in ''
+        (forward) {
+          forward . 127.0.0.1:5301 127.0.0.1:5302 127.0.0.1:5303
+        }
+
+        (common) {
+          errors
+        }
+
         . {
+          view lan {
+            expr incidr(client_ip(), '127.0.0.0/24') || incidr(client_ip(), '10.0.42.0/24')
+          }
+          import common
           hosts {
             ${hostLine hosts.homelab "lan"}
             ${hostLine hosts.homelab-test "lan"}
             fallthrough
           }
-          forward . 127.0.0.1:5301 127.0.0.1:5302 127.0.0.1:5303
-          errors
+          import forward
         }
 
         # CloudFlare upstream
