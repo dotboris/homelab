@@ -1,9 +1,17 @@
 {
   lib,
   config,
+  inputs,
+  pkgs,
   ...
 }:
 with lib; let
+  inherit
+    (inputs.self.packages.${pkgs.system})
+    coredns
+    anudeepnd-allowlist
+    stevenblack-blocklist
+    ;
   cfg = config.homelab.dns;
   hosts = {
     homelab = {
@@ -48,11 +56,18 @@ in {
     services.coredns = {
       enable = true;
       extraArgs = ["-dns.port=${toString cfg.port}"];
+      package = coredns;
       config = let
         hostLine = host: variant: (
           concatStringsSep " " ([host.ips.${variant} host.name] ++ host.aliases)
         );
       in ''
+        (adblock) {
+          blocklist ${stevenblack-blocklist}/blocklist.txt {
+            allowlist ${anudeepnd-allowlist}/domains/whitelist.txt
+          }
+        }
+
         (forward) {
           forward . 127.0.0.1:5301 127.0.0.1:5302 127.0.0.1:5303
         }
@@ -71,6 +86,7 @@ in {
             ${hostLine hosts.homelab-test "lan"}
             fallthrough
           }
+          import adblock
           import forward
         }
 
