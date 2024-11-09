@@ -5,13 +5,13 @@
 }:
 stdenv.mkDerivation rec {
   pname = "stevenblack-blocklist";
-  version = "3.14.128";
+  version = "3.14.130";
   # https://github.com/StevenBlack/hosts/releases
   src = pkgs.fetchFromGitHub {
     owner = "StevenBlack";
     repo = "hosts";
     rev = version;
-    sha256 = "sha256-IZVtXqjDWoQJdyTqw2zUKfpBxky1oix1gByPwcbNT+4=";
+    sha256 = "sha256-1LO6MzklwZ3ry3gi8ET129L7P2aRsAWOj1XeiNM6qHM=";
   };
   installPhase = ''
     mkdir -p $out
