@@ -69,6 +69,7 @@
         disko.nixosModules.disko
         sops-nix.nixosModules.sops
         ./modules/adblock
+        ./modules/dns
         ./modules/documents-archive
         ./modules/backups
         ./modules/feeds

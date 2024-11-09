@@ -7,6 +7,7 @@
   system.stateVersion = "23.11";
 
   homelab = {
+    dns.enable = true;
     reverseProxy = {
       baseDomain = "dotboris.io";
       vhostSuffix = "-test";
