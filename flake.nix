@@ -127,7 +127,7 @@
       installer-iso = callPackage ./packages/installer-iso.nix {};
       stevenblack-blocklist = callPackage ./packages/stevenblack-blocklist.nix {};
       update-packages = callPackage ./packages/update-packages.nix {};
-      coredns = callPackage ./packages/coredns.nix {};
+      coredns = callPackage ./packages/coredns {};
     };
 
     apps.${system}.update-packages = {
