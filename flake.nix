@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOs/nixpkgs/nixos-24.11";
+    nixpkgs-coredns-patch.url = "github:dotboris/nixpkgs/coredns-external-plugins-position";
     deploy-rs = {
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -38,12 +39,23 @@
     disko,
     deploy-rs,
     nixpkgs,
+    nixpkgs-coredns-patch,
     nixos-anywhere,
     sops-nix,
     ...
   }: let
     system = "x86_64-linux";
-    pkgs = import nixpkgs {inherit system;};
+    pkgs = import nixpkgs {
+      inherit system;
+      overlays = [
+        # Patch CoreDNS to include our patch https://github.com/NixOS/nixpkgs/pull/360798
+        (prev: final: let
+          pkgs-coredns-patch = import nixpkgs-coredns-patch {inherit system;};
+        in {
+          inherit (pkgs-coredns-patch) coredns;
+        })
+      ];
+    };
     callPackage = path: overrides: pkgs.callPackage path {inherit inputs;} // overrides;
   in {
     formatter.${system} = pkgs.alejandra;
@@ -126,7 +138,7 @@
       installer-iso = callPackage ./packages/installer-iso.nix {};
       stevenblack-blocklist = callPackage ./packages/stevenblack-blocklist.nix {};
       update-packages = callPackage ./packages/update-packages.nix {};
-      coredns = callPackage ./packages/coredns {};
+      coredns = callPackage ./packages/coredns.nix {};
     };
 
     apps.${system}.update-packages = {
