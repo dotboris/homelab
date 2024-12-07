@@ -16,6 +16,8 @@
   testScript = ''
     start_all()
     server.wait_for_unit("coredns.service")
+    server.wait_for_unit("default.target")
+    client.wait_for_unit("default.target")
 
     # Internal IPs
     assert "10.0.42.2" in client.succeed("nslookup homelab.lan server")
