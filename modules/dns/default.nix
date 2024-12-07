@@ -4,8 +4,15 @@
   inputs,
   pkgs,
   ...
-}:
-with lib; let
+}: let
+  inherit
+    (lib)
+    concatStringsSep
+    mkIf
+    mkEnableOption
+    mkOption
+    types
+    ;
   inherit
     (inputs.self.packages.${pkgs.system})
     coredns
@@ -51,6 +58,11 @@ in {
       type = types.port;
       default = 53;
     };
+    lanCidr = mkOption {
+      type = types.str;
+      description = "CIDR for the local network";
+      default = "10.0.42.0/24";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -81,7 +93,7 @@ in {
 
           . {
             view lan {
-              expr incidr(client_ip(), '127.0.0.0/24') || incidr(client_ip(), '10.0.42.0/24')
+              expr incidr(client_ip(), '127.0.0.0/24') || incidr(client_ip(), '${cfg.lanCidr}')
             }
             import common
             hosts {

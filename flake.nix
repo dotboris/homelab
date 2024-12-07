@@ -153,12 +153,18 @@
         mapFn ? (x: x),
       }:
         mapAttrs' (name: value: nameValuePair "${prefix}${name}" (mapFn value)) output;
+      runTest = path:
+        pkgs.testers.runNixOSTest {
+          imports = [path];
+          node.specialArgs = {inherit inputs;};
+        };
     in
       {
         statix = pkgs.runCommand "statix" {buildInputs = [pkgs.statix];} ''
           statix check -c ${./statix.toml} ${./.}
           touch $out
         '';
+        test-dns = runTest ./modules/dns/test.nix;
       }
       # Build all packages
       // buildAll {
