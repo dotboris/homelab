@@ -72,6 +72,5 @@
       address = "10.0.42.1";
       interface = "enp2s0";
     };
-    nameservers = ["1.1.1.1"];
   };
 }
