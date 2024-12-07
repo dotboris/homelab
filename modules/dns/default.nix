@@ -13,6 +13,7 @@ with lib; let
     stevenblack-blocklist
     ;
   cfg = config.homelab.dns;
+  yaml = pkgs.formats.yaml {};
   hosts = {
     homelab = {
       name = "homelab.lan";
@@ -53,67 +54,80 @@ in {
   };
 
   config = mkIf cfg.enable {
-    services.coredns = {
-      enable = true;
-      extraArgs = ["-dns.port=${toString cfg.port}"];
-      package = coredns;
-      config = let
-        hostLine = host: variant: (
-          concatStringsSep " " ([host.ips.${variant} host.name] ++ host.aliases)
-        );
-      in ''
-        (adblock) {
-          blocklist ${stevenblack-blocklist}/blocklist.txt {
-            allowlist ${anudeepnd-allowlist}/domains/whitelist.txt
+    services = {
+      coredns = {
+        enable = true;
+        extraArgs = ["-dns.port=${toString cfg.port}"];
+        package = coredns;
+        config = let
+          hostLine = host: variant: (
+            concatStringsSep " " ([host.ips.${variant} host.name] ++ host.aliases)
+          );
+        in ''
+          (adblock) {
+            blocklist ${stevenblack-blocklist}/blocklist.txt {
+              allowlist ${anudeepnd-allowlist}/domains/whitelist.txt
+            }
           }
-        }
 
-        (forward) {
-          forward . 127.0.0.1:5301 127.0.0.1:5302 127.0.0.1:5303
-        }
-
-        (common) {
-          errors
-        }
-
-        . {
-          view lan {
-            expr incidr(client_ip(), '127.0.0.0/24') || incidr(client_ip(), '10.0.42.0/24')
+          (forward) {
+            forward . 127.0.0.1:5301 127.0.0.1:5302 127.0.0.1:5303
           }
-          import common
-          hosts {
-            ${hostLine hosts.homelab "lan"}
-            ${hostLine hosts.homelab-test "lan"}
-            fallthrough
-          }
-          import adblock
-          import forward
-        }
 
-        # CloudFlare upstream
-        .:5301 {
-          forward . tls://1.1.1.1 tls://1.0.0.1 {
-            tls_servername cloudflare-dns.com
+          (common) {
+            errors
+            prometheus
           }
-        }
 
-        # UncensoredDNS upstream
-        .:5302 {
-          forward . tls://91.239.100.100:853 {
-            tls_servername anycast.uncensoreddns.org
+          . {
+            view lan {
+              expr incidr(client_ip(), '127.0.0.0/24') || incidr(client_ip(), '10.0.42.0/24')
+            }
+            import common
+            hosts {
+              ${hostLine hosts.homelab "lan"}
+              ${hostLine hosts.homelab-test "lan"}
+              fallthrough
+            }
+            import adblock
+            import forward
           }
-        }
 
-        # Quad9 base DNS server
-        .:5303 {
-          forward . tls://9.9.9.9 tls://149.112.112.112 {
-            tls_servername dns.quad9.net
+          # CloudFlare upstream
+          .:5301 {
+            forward . tls://1.1.1.1 tls://1.0.0.1 {
+              tls_servername cloudflare-dns.com
+            }
           }
-        }
-      '';
+
+          # UncensoredDNS upstream
+          .:5302 {
+            forward . tls://91.239.100.100:853 {
+              tls_servername anycast.uncensoreddns.org
+            }
+          }
+
+          # Quad9 base DNS server
+          .:5303 {
+            forward . tls://9.9.9.9 tls://149.112.112.112 {
+              tls_servername dns.quad9.net
+            }
+          }
+        '';
+      };
+
+      resolved.enable = false;
+
+      netdata.configDir."go.d/coredns.conf" = yaml.generate "coredns.conf" {
+        jobs = [
+          {
+            name = "local";
+            url = "http://localhost:9153/metrics";
+          }
+        ];
+      };
     };
 
-    services.resolved.enable = false;
     networking.nameservers = ["127.0.0.1:${toString cfg.port}"];
     networking.firewall.allowedUDPPorts = [cfg.port];
   };
