@@ -12,12 +12,6 @@ with lib; let
   backendKeys = builtins.attrNames autoresticCfg.settings.backends;
 
   ntfyTopic = "https://${config.homelab.reverseProxy.vhosts.ntfy.fqdn}/backups";
-  notifySuccess = pkgs.writeShellScript "notify-backup-success.sh" ''
-    ${pkgs.curl}/bin/curl -s \
-      -H "Title: Backup Complete" \
-      -H "Priority: low" \
-      -d "Backup of location $AUTORESTIC_LOCATION has completed sucessfully." \
-      ${ntfyTopic}'';
   notifyFailure = pkgs.writeShellScript "notify-backup-failure.sh" ''
     ${pkgs.curl}/bin/curl -s \
       -H "Title: Backup Failed" \
@@ -66,7 +60,6 @@ in {
                 to = backendKeys;
                 forget = "yes";
                 hooks = {
-                  success = ["${notifySuccess}"];
                   failure = ["${notifyFailure}"];
                 };
               }
@@ -77,14 +70,14 @@ in {
       check = {
         enable = true;
         # Monthly, time avoids overlap with backup run
-        interval = "*-*-01 01:00:00 America/Toronto"; 
+        interval = "*-*-01 01:00:00 America/Toronto";
         readData = true;
         onSuccess = [
           "ntfy-send@${escapeSystemdPath (builtins.toJSON {
             topic = "backups";
             priority = 2;
             title = "Backup Checks OK";
-            message = "Backups integrity checks have completed succesfully";
+            message = "Backups integrity checks have completed successfully";
           })}.service"
         ];
         onFailure = [

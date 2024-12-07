@@ -2,11 +2,11 @@
   description = "Home Lab / Home Server";
 
   inputs = {
+    nixpkgs.url = "github:NixOs/nixpkgs/nixos-24.11";
     deploy-rs = {
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs.url = "github:NixOs/nixpkgs/nixos-24.05";
     nixos-images = {
       url = "github:nix-community/nixos-images";
       inputs = {
@@ -30,7 +30,6 @@
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-stable.follows = "nixpkgs";
     };
   };
 

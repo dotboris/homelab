@@ -6,6 +6,7 @@
   environment = {
     systemPackages = [
       pkgs.busybox # most of the base utilities
+      pkgs.htop
     ];
   };
 
