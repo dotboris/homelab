@@ -7,6 +7,7 @@
   system.stateVersion = "24.11";
 
   homelab = {
+    dns.enable = true;
     reverseProxy = {
       baseDomain = "dotboris.io";
       tls.acme.enable = true;
