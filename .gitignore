@@ -1,5 +1,6 @@
 # Nix result
 /result
+/result-man
 
 # VM artifacts
 *.qcow2

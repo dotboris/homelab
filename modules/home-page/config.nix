@@ -132,14 +132,6 @@ in {
             ];
           }
           {
-            "Bocky (Adblocking DNS)" = [
-              {
-                icon = "mdi-advertisements-off";
-                href = "https://0xerr0r.github.io/blocky/main/";
-              }
-            ];
-          }
-          {
             "Traefik" = [
               {
                 icon = "traefik.svg";

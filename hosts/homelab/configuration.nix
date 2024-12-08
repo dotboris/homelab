@@ -7,6 +7,7 @@
   system.stateVersion = "24.11";
 
   homelab = {
+    dns.enable = true;
     reverseProxy = {
       baseDomain = "dotboris.io";
       tls.acme.enable = true;
@@ -72,6 +73,5 @@
       address = "10.0.42.1";
       interface = "enp2s0";
     };
-    nameservers = ["1.1.1.1"];
   };
 }
