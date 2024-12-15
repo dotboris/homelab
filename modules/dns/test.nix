@@ -6,8 +6,8 @@
       imports = [./default.nix];
       homelab.dns = {
         enable = true;
-        lanCidr = "192.168.1.0/24";
-        tailscaleCidr = "192.168.2.0/24";
+        lanCidr = "192.168.1.0/24"; # eth1
+        tailscaleCidr = "192.168.2.0/24"; # eth2
       };
     };
     client = {...}: {
