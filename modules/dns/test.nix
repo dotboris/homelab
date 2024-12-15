@@ -2,30 +2,44 @@
   name = "dns";
   nodes = {
     server = {...}: {
+      virtualisation.vlans = [1 2];
       imports = [./default.nix];
       homelab.dns.enable = true;
       homelab.dns.lanCidr = "192.168.1.0/24";
+      homelab.dns.tailscaleCidr = "192.168.2.0/24";
     };
     client = {...}: {
+      virtualisation.vlans = [1 2];
       environment.systemPackages = [
         pkgs.busybox # for nslookup
       ];
     };
   };
 
-  testScript = ''
+  testScript = {nodes, ...}: let
+    serverIp = interface: (pkgs.lib.head nodes.server.networking.interfaces.${interface}.ipv4.addresses).address;
+  in ''
     start_all()
     server.wait_for_unit("coredns.service")
     server.wait_for_unit("default.target")
     client.wait_for_unit("default.target")
 
-    # Internal IPs
-    assert "10.0.42.2" in client.succeed("nslookup homelab.lan server")
-    assert "10.0.42.2" in client.succeed("nslookup home.dotboris.io server")
-    assert "10.0.42.3" in client.succeed("nslookup homelab-test.lan server")
-    assert "10.0.42.3" in client.succeed("nslookup home-test.dotboris.io server")
+    with subtest("internal ips (lan)"):
+      assert "10.0.42.2" in client.succeed("nslookup homelab.lan ${serverIp "eth1"}")
+      assert "10.0.42.2" in client.succeed("nslookup home.dotboris.io ${serverIp "eth1"}")
+      assert "10.0.42.3" in client.succeed("nslookup homelab-test.lan ${serverIp "eth1"}")
+      assert "10.0.42.3" in client.succeed("nslookup home-test.dotboris.io ${serverIp "eth1"}")
 
-    # adblock
-    assert "NXDOMAIN" in client.fail("nslookup doubleclick.net server")
+    with subtest("internal ips (tailscale)"):
+      assert "100.69.230.33" in client.succeed("nslookup homelab.lan ${serverIp "eth2"}")
+      assert "100.69.230.33" in client.succeed("nslookup home.dotboris.io ${serverIp "eth2"}")
+      assert "100.67.226.105" in client.succeed("nslookup homelab-test.lan ${serverIp "eth2"}")
+      assert "100.67.226.105" in client.succeed("nslookup home-test.dotboris.io ${serverIp "eth2"}")
+
+    with subtest("adblock (lan)"):
+      assert "NXDOMAIN" in client.fail("nslookup doubleclick.net ${serverIp "eth1"}")
+
+    with subtest("adblock (tailscale)"):
+      assert "NXDOMAIN" in client.fail("nslookup doubleclick.net ${serverIp "eth2"}")
   '';
 }

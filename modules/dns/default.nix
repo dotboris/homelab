@@ -65,6 +65,11 @@ in {
       description = "CIDR for the local network";
       default = "10.0.42.0/24";
     };
+    tailscaleCidr = mkOption {
+      type = types.str;
+      description = "CIDR for the tailscale network";
+      default = "100.0.0.0/8";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -109,7 +114,7 @@ in {
 
           . {
             view lan {
-              expr incidr(client_ip(), '100.0.0.0/8')
+              expr incidr(client_ip(), '${cfg.tailscaleCidr}')
             }
             hosts {
               ${hostLine hosts.homelab "tailscale"}
