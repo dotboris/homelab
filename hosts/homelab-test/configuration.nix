@@ -8,6 +8,7 @@
 
   homelab = {
     dns.enable = true;
+    remote-access.enable = true;
     reverseProxy = {
       baseDomain = "dotboris.io";
       vhostSuffix = "-test";

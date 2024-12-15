@@ -34,6 +34,7 @@
       ];
       ips = {
         lan = "10.0.42.2";
+        tailscale = "100.69.230.33";
       };
     };
     homelab-test = {
@@ -48,6 +49,7 @@
       ];
       ips = {
         lan = "10.0.42.3";
+        tailscale = "100.67.226.105";
       };
     };
   };
@@ -95,12 +97,26 @@ in {
             view lan {
               expr incidr(client_ip(), '127.0.0.0/24') || incidr(client_ip(), '${cfg.lanCidr}')
             }
-            import common
             hosts {
               ${hostLine hosts.homelab "lan"}
               ${hostLine hosts.homelab-test "lan"}
               fallthrough
             }
+            import common
+            import adblock
+            import forward
+          }
+
+          . {
+            view lan {
+              expr incidr(client_ip(), '100.0.0.0/8')
+            }
+            hosts {
+              ${hostLine hosts.homelab "tailscale"}
+              ${hostLine hosts.homelab-test "tailscale"}
+              fallthrough
+            }
+            import common
             import adblock
             import forward
           }

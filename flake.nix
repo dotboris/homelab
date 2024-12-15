@@ -85,6 +85,7 @@
         ./modules/feeds
         ./modules/home-page
         ./modules/monitoring
+        ./modules/remote-access
         ./modules/reverse-proxy
         ./modules/system
       ];
