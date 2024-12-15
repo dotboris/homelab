@@ -7,7 +7,6 @@
 in {
   services.openssh = {
     enable = true;
-    allowSFTP = false;
     settings = {
       # Auth hardening
       PasswordAuthentication = false;
@@ -19,18 +18,14 @@ in {
   };
 
   sops.secrets."users/dotboris".neededForUsers = true;
-
   users.users.dotboris = {
     isNormalUser = true;
     extraGroups = [
       "wheel" # allow sudo
     ];
     hashedPasswordFile = config.sops.secrets."users/dotboris".path;
-
     shell = pkgs.fish;
-
     openssh.authorizedKeys.keys = [consts.dotborisSshPubkey];
   };
-
   programs.fish.enable = true; # shell for dotboris
 }
