@@ -4,9 +4,11 @@
     server = {...}: {
       virtualisation.vlans = [1 2];
       imports = [./default.nix];
-      homelab.dns.enable = true;
-      homelab.dns.lanCidr = "192.168.1.0/24";
-      homelab.dns.tailscaleCidr = "192.168.2.0/24";
+      homelab.dns = {
+        enable = true;
+        lanCidr = "192.168.1.0/24";
+        tailscaleCidr = "192.168.2.0/24";
+      };
     };
     client = {...}: {
       virtualisation.vlans = [1 2];
