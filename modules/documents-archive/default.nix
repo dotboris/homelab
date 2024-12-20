@@ -40,7 +40,19 @@ in {
       };
     };
 
-    homelab.reverseProxy.vhosts.archive = {};
+    homelab = {
+      reverseProxy.vhosts.archive = {};
+      homepage.links = [
+        {
+          category = "services";
+          title = "Documents Archive";
+          icon = "paperless-ngx.svg";
+          description = "paperless-ngx";
+          urlVhost = "archive";
+        }
+      ];
+    };
+
     services.traefik.dynamicConfigOptions.http = {
       routers.documentsArchive = {
         rule = "Host(`${vhost.fqdn}`)";

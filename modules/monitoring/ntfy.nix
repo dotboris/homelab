@@ -15,7 +15,18 @@ in {
   };
 
   config = {
-    homelab.reverseProxy.vhosts.ntfy = {};
+    homelab = {
+      reverseProxy.vhosts.ntfy = {};
+      homepage.links = [
+        {
+          category = "system";
+          title = "Alerts";
+          icon = "ntfy.svg";
+          description = "ntfy.sh";
+          urlVhost = "ntfy";
+        }
+      ];
+    };
 
     services.ntfy-sh = {
       enable = true;

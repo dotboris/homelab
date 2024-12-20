@@ -3,6 +3,7 @@
   config,
   ...
 }: let
+  inherit (lib) types mkOption;
   cfg = config.homelab.homepage;
   vhost = config.homelab.reverseProxy.vhosts.home;
 in {
@@ -11,8 +12,8 @@ in {
   ];
 
   options.homelab.homepage = {
-    port = lib.mkOption {
-      type = lib.types.int;
+    port = mkOption {
+      type = types.int;
     };
   };
 

@@ -22,7 +22,19 @@ in {
       owner = user;
     };
 
-    homelab.reverseProxy.vhosts.feeds = {};
+    homelab = {
+      reverseProxy.vhosts.feeds = {};
+      homepage.links = [
+        {
+          category = "services";
+          title = "Feed Aggregator";
+          icon = "freshrss.svg";
+          description = "FreshRSS";
+          urlVhost = "feeds";
+        }
+      ];
+    };
+
     services = {
       freshrss = {
         inherit user;

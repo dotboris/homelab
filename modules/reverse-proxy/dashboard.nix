@@ -2,7 +2,23 @@
   cfg = config.homelab.reverseProxy;
   vhost = config.homelab.reverseProxy.vhosts.traefik;
 in {
-  homelab.reverseProxy.vhosts.traefik = {};
+  homelab = {
+    reverseProxy.vhosts.traefik = {};
+    homepage.links = [
+      {
+        category = "system";
+        title = "Traefik Dashboard";
+        icon = "traefik.svg";
+        urlVhost = "traefik";
+        urlPath = "/dashboard/";
+        widget = {
+          type = "traefik";
+          url = "https://${vhost.fqdn}";
+        };
+      }
+    ];
+  };
+
   services.traefik = {
     staticConfigOptions.api.dashboard = true;
     dynamicConfigOptions = {

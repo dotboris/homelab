@@ -35,8 +35,23 @@ in {
 
       enableAnalyticsReporting = false;
     };
+    homelab = {
+      reverseProxy.vhosts.netdata = {};
+      homepage.links = [
+        {
+          category = "system";
+          title = "Monitoring";
+          icon = "netdata.svg";
+          description = "NetData";
+          urlVhost = "netdata";
+          widget = {
+            type = "netdata";
+            url = "https://${vhosts.netdata.fqdn}";
+          };
+        }
+      ];
+    };
 
-    homelab.reverseProxy.vhosts.netdata = {};
     services.traefik.dynamicConfigOptions.http = {
       routers.netdata = {
         rule = "Host(`${vhosts.netdata.fqdn}`)";
