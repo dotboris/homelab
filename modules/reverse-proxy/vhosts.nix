@@ -3,27 +3,30 @@
   config,
   ...
 }: let
+  inherit (lib) types mkOption;
   cfg = config.homelab.reverseProxy;
-  vhostType = lib.types.submodule ({config, ...}: {
-    options = {
-      fqdn = lib.mkOption {
-        type = lib.types.str;
-        default = "${config._module.args.name}${cfg.vhostSuffix}.${cfg.baseDomain}";
-      };
-    };
-  });
 in {
   options = {
     homelab.reverseProxy = {
-      baseDomain = lib.mkOption {
-        type = lib.types.str;
+      baseDomain = mkOption {
+        type = types.str;
       };
-      vhostSuffix = lib.mkOption {
-        type = lib.types.str;
+      vhostSuffix = mkOption {
+        type = types.str;
         default = "";
       };
-      vhosts = lib.mkOption {
-        type = lib.types.attrsOf vhostType;
+      vhosts = mkOption {
+        type = types.attrsOf (
+          types.submodule ({config, ...}: {
+            options = {
+              fqdn = mkOption {
+                type = types.str;
+                internal = true;
+              };
+            };
+            config.fqdn = "${config._module.args.name}${cfg.vhostSuffix}.${cfg.baseDomain}";
+          })
+        );
       };
     };
   };
