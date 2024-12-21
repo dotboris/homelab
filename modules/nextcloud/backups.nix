@@ -8,7 +8,7 @@
   inherit (config.services.nextcloud) datadir occ;
   cfg = config.homelab.nextcloud;
   autoresticCfg = config.services.autorestic;
-
+  sudo = "/run/wrappers/bin/sudo";
   enableMaintenanceMode =
     pkgs.writeShellScript
     "nextcloud-backups-enable-maintenance"
@@ -43,8 +43,8 @@ in {
           ".rnd"
         ];
         hooks = {
-          before = ["sudo -u nextcloud -g nextcloud ${enableMaintenanceMode}"];
-          after = ["sudo -u nextcloud -g nextcloud ${disableMaintenanceMode}"];
+          before = ["${sudo} -u nextcloud -g nextcloud ${enableMaintenanceMode}"];
+          after = ["${sudo} -u nextcloud -g nextcloud ${disableMaintenanceMode}"];
         };
       };
       joinGroups = ["nextcloud"];
