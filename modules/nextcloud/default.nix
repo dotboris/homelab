@@ -9,6 +9,10 @@
   vhost = config.homelab.reverseProxy.vhosts.cloud;
   nextcloud = pkgs.nextcloud30;
 in {
+  imports = [
+    ./backups.nix
+  ];
+
   options.homelab.nextcloud = {
     enable = mkEnableOption "NextCloud";
     port = mkOption {type = types.port;};
