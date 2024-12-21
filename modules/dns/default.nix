@@ -27,7 +27,7 @@
       aliases = [
         "home.dotboris.io."
         "archive.dotboris.io."
-        "cloud.dotboris.io"
+        "cloud.dotboris.io."
         "feeds.dotboris.io."
         "netdata.dotboris.io."
         "traefik.dotboris.io."
@@ -43,7 +43,7 @@
       aliases = [
         "home-test.dotboris.io."
         "archive-test.dotboris.io."
-        "cloud-test.dotboris.io"
+        "cloud-test.dotboris.io."
         "feeds-test.dotboris.io."
         "netdata-test.dotboris.io."
         "traefik-test.dotboris.io."
