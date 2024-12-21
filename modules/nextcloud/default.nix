@@ -48,9 +48,16 @@ in {
           maintenance_window_start = 5; # Midnight EST to UTC (hour)
         };
         phpOptions = {
-          # In /settings/admin/overview, there's a warning complaining about 
+          # In /settings/admin/overview, there's a warning complaining about
           # this being too low. Increase it until it's happy.
           "opcache.interned_strings_buffer" = 16;
+        };
+        extraApps = {
+          inherit
+            (nextcloud.packages.apps)
+            deck
+            tasks
+            ;
         };
       };
       nginx.virtualHosts.${vhost.fqdn}.listen = [
