@@ -22,6 +22,10 @@
     };
     feeds.httpPort = 8004;
     documents-archive.port = 8005;
+    nextcloud = {
+      enable = true;
+      port = 8007;
+    };
 
     backups = {
       enable = true;
@@ -44,6 +48,7 @@
         paperless.cron = "0 */6 * * *";
         freshrss.cron = "0 */6 * * *";
         github.cron = "0 1 * * *";
+        nextcloud.cron = "0 2 * * *";
       };
     };
   };
