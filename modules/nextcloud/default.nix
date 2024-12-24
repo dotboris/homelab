@@ -59,7 +59,10 @@ in {
         extraApps = {
           inherit
             (nextcloud.packages.apps)
+            calendar
+            contacts
             deck
+            notes
             tasks
             ;
         };
