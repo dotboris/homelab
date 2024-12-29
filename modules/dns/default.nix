@@ -30,6 +30,7 @@
         "cloud.dotboris.io."
         "feeds.dotboris.io."
         "netdata.dotboris.io."
+        "office.dotboris.io."
         "traefik.dotboris.io."
         "ntfy.dotboris.io."
       ];
@@ -46,6 +47,7 @@
         "cloud-test.dotboris.io."
         "feeds-test.dotboris.io."
         "netdata-test.dotboris.io."
+        "office-test.dotboris.io."
         "traefik-test.dotboris.io."
         "ntfy-test.dotboris.io."
       ];

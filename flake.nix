@@ -47,6 +47,11 @@
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
+      config.allowUnfreePredicate = pkg:
+        builtins.elem (nixpkgs.lib.getName pkg) [
+          # microsoft fonts. Needed for onlyoffice which is used for nextcloud
+          "corefonts"
+        ];
       overlays = [
         # Patch CoreDNS to include our patch https://github.com/NixOS/nixpkgs/pull/360798
         (prev: final: let

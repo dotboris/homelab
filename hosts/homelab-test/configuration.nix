@@ -25,6 +25,11 @@
     nextcloud = {
       enable = true;
       port = 8007;
+      onlyoffice = {
+        enable = true;
+        port = 8008;
+        nginxPort = 8009;
+      };
     };
 
     backups = {

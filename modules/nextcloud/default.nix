@@ -11,6 +11,7 @@
 in {
   imports = [
     ./backups.nix
+    ./onlyoffice.nix
   ];
 
   options.homelab.nextcloud = {
