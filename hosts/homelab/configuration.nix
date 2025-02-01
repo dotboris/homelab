@@ -29,6 +29,11 @@
 
     backups = {
       enable = true;
+      # Runs monthly.
+      # ATTN: Don't overlap backup schedule. Beware timezone differences.
+      # - 00:00 EDT = 04:00 UTC (daylight saving's time)
+      # - 00:00 EST = 05:00 UTC (normal time)
+      checkAt = "*-*-01 00:00:00 America/Toronto";
       backends.local.enable = true;
       backends.backblaze = {
         enable = true;
@@ -45,6 +50,7 @@
         installationId = "56188691";
       };
       locations = {
+        # NOTE: times are in UTC
         paperless.cron = "0 */6 * * *";
         freshrss.cron = "0 */6 * * *";
         github.cron = "0 1 * * *";

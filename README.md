@@ -90,6 +90,6 @@ this home lab.
 - [ ] Password manager. Something like bitwarden.
 - [x] Backup system. Doesn't have to be fancy. They should run automatically.
 - [x] Monitoring stack.
-- [ ] Cloud file storage. Something to replace Google Drive. (maybe)
+- [x] Cloud file storage. Something to replace Google Drive. (maybe)
 - [x] Landing page that links to all the services.
 - [x] RSS Feed aggregation.

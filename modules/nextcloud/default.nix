@@ -44,6 +44,7 @@ in {
         https = true;
         webfinger = true;
         appstoreEnable = false;
+        maxUploadSize = "8G";
         config = {
           adminpassFile = config.sops.secrets."nextcloud/admin-password".path;
         };
