@@ -4,9 +4,17 @@
   pkgs,
   utils,
   ...
-}:
-with utils;
-with lib; let
+}: let
+  inherit
+    (lib)
+    concatStringsSep
+    mkIf
+    mkEnableOption
+    mkOption
+    optional
+    types
+    ;
+  inherit (utils.systemdUtils) unitOptions;
   cfg = config.services.autorestic;
   script = concatStringsSep " " ([
       "autorestic"
@@ -22,17 +30,9 @@ with lib; let
     ++ (optional cfg.check.readData "--read-data"));
 in {
   options.services.autorestic.check = {
-    inherit (systemdUtils.unitOptions.commonUnitOptions.options) onSuccess onFailure;
-    enable = mkEnableOption "autorestic periodic check";
-    interval = mkOption {
-      type = types.str;
-      example = "daily";
-      description = ''
-        How often to run `autorestic check`.
-
-        The format is described in systemd.time(7).
-      '';
-    };
+    inherit (unitOptions.commonUnitOptions.options) onSuccess onFailure;
+    inherit (unitOptions.stage2ServiceOptions.options) startAt;
+    enable = mkEnableOption "autorestic backup integrity check";
     readData = mkOption {
       type = types.bool;
       default = false;
@@ -45,7 +45,7 @@ in {
   config = mkIf cfg.check.enable {
     systemd = {
       services.autorestic-check = {
-        inherit (cfg.check) onSuccess onFailure;
+        inherit (cfg.check) onSuccess onFailure startAt;
         inherit script;
         description = "autorestic check";
         path = [
@@ -58,11 +58,6 @@ in {
           Group = cfg.group;
           EnvironmentFile = cfg.environmentFiles;
         };
-      };
-      timers.autorestic-check = {
-        description = "Timer for autorestic check";
-        wantedBy = ["timers.target"];
-        timerConfig.OnCalendar = cfg.check.interval;
       };
     };
   };

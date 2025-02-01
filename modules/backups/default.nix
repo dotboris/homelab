@@ -4,9 +4,19 @@
   config,
   utils,
   ...
-}:
-with utils;
-with lib; let
+}: let
+  inherit
+    (lib)
+    mapAttrs
+    mkIf
+    mkEnableOption
+    mkOption
+    recursiveUpdate
+    types
+    ;
+  inherit (utils) escapeSystemdPath;
+  inherit (utils.systemdUtils) unitOptions;
+
   cfg = config.homelab.backups;
   autoresticCfg = config.services.autorestic;
   backendKeys = builtins.attrNames autoresticCfg.settings.backends;
@@ -39,6 +49,7 @@ in {
         backup user access to files they normally wouldn't have access to.
       '';
     };
+    checkAt = unitOptions.stage2ServiceOptions.options.startAt;
   };
 
   config = mkIf cfg.enable {
@@ -69,8 +80,7 @@ in {
       };
       check = {
         enable = true;
-        # Monthly, time avoids overlap with backup run
-        interval = "*-*-01 01:00:00 America/Toronto";
+        startAt = cfg.checkAt;
         readData = true;
         onSuccess = [
           "ntfy-send@${escapeSystemdPath (builtins.toJSON {
