@@ -16,5 +16,9 @@ in {
       openFirewall = true;
       disableTaildrop = true;
     };
+    systemd.network.wait-online.ignoredInterfaces = [
+      # We're online even if tailscale is not
+      config.services.tailscale.interfaceName
+    ];
   };
 }
