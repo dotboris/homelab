@@ -4,7 +4,7 @@ My personal Home Lab / Home Server powered by Nix
 
 ## Test VM
 
-To test things out, you can install the Home Lab config into a test VM. 
+To test things out, you can install the Home Lab config into a test VM.
 
 ### Setup
 
@@ -16,7 +16,7 @@ version of the Home Lab to it.
    work. Make sure you set the boot ISO to
    `./result/iso/nixos-installer-x86_64-linux.iso`.
 1. Boot the VM. It'll eventually land on a page showing you network information
-1. Install NixOS using `nixos-anywhere`: 
+1. Install NixOS using `nixos-anywhere`:
 
     ```sh
     nixos-anywhere --flake .#homelab-test root@nixos-installer.local
@@ -69,7 +69,7 @@ nix flake update -L
 
 Most of the time you don't need to reboot. Services with new versions gets rebooted automatically and other programs get the the update when they're closed and re-opened.
 
-There are a few packages that require a reboot. They're core components of the systems that can't just be restarted. They are:
+There are a few packages that require a reboot. They're core components of the system that can't just be restarted. They are:
 
 - The Linux kernel
 - SystemD
