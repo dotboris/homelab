@@ -58,5 +58,7 @@ Then, you need to update they keys in the secrets files. Do this for every affec
 sops updatekeys hosts/.../secrets.sops.yaml
 ```
 
+Finally, deploy to the affected hosts.
+
 [sops]: https://github.com/getsops/sops
 [sops-nix]: https://github.com/Mic92/sops-nix
