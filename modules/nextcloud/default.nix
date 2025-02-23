@@ -63,6 +63,7 @@ in {
             calendar
             contacts
             deck
+            mail
             notes
             tasks
             ;
