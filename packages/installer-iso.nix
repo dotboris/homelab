@@ -9,7 +9,7 @@
   # NixOS module with customized configuration
   module = {...}: {
     # Bake in my SSH key so that I can ssh in without doing the password dance
-    users.users.root.openssh.authorizedKeys.keys = [consts.dotborisSshPubkey];
+    users.users.root.openssh.authorizedKeys.keys = consts.dotboris.ssh.pubKeys;
 
     environment.systemPackages = [
       # Image alrady ships disko but it's the nipkgs version not the one from
