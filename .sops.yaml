@@ -1,4 +1,5 @@
 keys:
+  - &backup age14h3mwuj74khf4vu75a9mqy7hawc2pej8yqrqw5g55qcx6djup55qydcvmc
   - &admin-dotboris age16lldqqyqqy6rw4zerw6kxr5x8dygt8apag8ve7n42n6me74mk4nseyvm3l
   - &host-homelab age1drttm3pedzu63pwahgfjk0f2za0ywu57dec0e5sh3nc59vfm55xqzph4zm
   - &host-homelab-test age1uxn8hz7fv4h05l4uhtshpxkylv4krfmekc8ancuur682djmnm9asmgs8ma
@@ -7,12 +8,14 @@ creation_rules:
   - path_regex: '^hosts/homelab/secrets.sops.yaml$'
     key_groups:
       - age:
+          - *backup
           - *admin-dotboris
           - *host-homelab
 
   - path_regex: '^hosts/homelab-test/secrets.sops.yaml$'
     key_groups:
       - age:
+          - *backup
           - *admin-dotboris
           - *host-homelab-test
 

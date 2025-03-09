@@ -25,7 +25,7 @@ in {
     ];
     hashedPasswordFile = config.sops.secrets."users/dotboris".path;
     shell = pkgs.fish;
-    openssh.authorizedKeys.keys = [consts.dotborisSshPubkey];
+    openssh.authorizedKeys.keys = consts.dotboris.ssh.pubKeys;
   };
   programs.fish.enable = true; # shell for dotboris
 }

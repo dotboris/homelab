@@ -37,6 +37,9 @@ in {
           # See: https://github.com/paperless-ngx/paperless-ngx/discussions/4047
           invalidate_digital_signatures = true;
         };
+        # Short expiration to force re-login. Some of these documents are
+        # sensitive. Better not get screwed by a stolen cookie
+        PAPERLESS_SESSION_COOKIE_AGE = 2 * 60 * 60; # seconds
       };
     };
 
