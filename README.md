@@ -80,16 +80,3 @@ You can figure out what changed through the following steps:
 1. Run: `nix profile diff-closures --profile /nix/var/nix/profiles/system`
 
 If the packages mentioned above have been updated, you need to reboot.
-
-## Todo
-
-This is a work in progress. This is a list of things that I want / need from
-this home lab.
-
-- [x] Network wide ad blocking. Something like pi-hole.
-- [ ] Password manager. Something like bitwarden.
-- [x] Backup system. Doesn't have to be fancy. They should run automatically.
-- [x] Monitoring stack.
-- [x] Cloud file storage. Something to replace Google Drive. (maybe)
-- [x] Landing page that links to all the services.
-- [x] RSS Feed aggregation.
