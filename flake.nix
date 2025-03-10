@@ -76,6 +76,10 @@
         # Deployment
         nixos-anywhere.packages.${system}.default
         deploy-rs.packages.${system}.default
+
+        # IDE integration
+        pkgs.nil
+        pkgs.alejandra
       ];
     };
 
