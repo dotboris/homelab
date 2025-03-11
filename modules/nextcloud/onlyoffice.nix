@@ -10,10 +10,6 @@ in {
   options.homelab.nextcloud.onlyoffice = {
     enable = mkEnableOption "NextCloud OnlyOffice integration";
     port = mkOption {type = types.port;};
-    # TODO: the traefik -> nginx -> onlyoffice setup breaks. Nextcloud fails to
-    #   embed to render the document through an iframe because it gets rewritten
-    #   to https://{fqdn}:{nginxPort}/ for some reason. Also, HTTPS keeps
-    #   getting dropped in those redirects.
     nginxPort = mkOption {type = types.port;};
   };
   config = mkIf cfg.enable {
@@ -39,14 +35,23 @@ in {
             ;
         };
       };
-      nginx.virtualHosts.${vhost.fqdn}.listen = [
-        # onlyoffice uses nginx under the hood. We're using traefik. This moves
-        # nginx aside to let traefik take over.
-        {
-          port = cfg.nginxPort;
-          addr = "127.0.0.1";
-        }
-      ];
+      nginx.virtualHosts.${vhost.fqdn} = {
+        extraConfig = ''
+          # Force nginx to return relative redirects. This lets the browser
+          # figure out the full URL. This ends up working better because it's in
+          # front of traefik and has the right protocol, hostname & port.
+          absolute_redirect off;
+        '';
+        listen = [
+          # onlyoffice uses nginx under the hood. We're using traefik. This moves
+          # nginx aside to let traefik take over.
+          {
+            port = cfg.nginxPort;
+            addr = "127.0.0.1";
+          }
+        ];
+      };
+
       traefik.dynamicConfigOptions.http = {
         routers.onlyoffice = {
           rule = "Host(`${vhost.fqdn}`)";
