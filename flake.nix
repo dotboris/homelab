@@ -61,6 +61,8 @@
     formatter.${system} = pkgs.alejandra;
     devShells.${system}.default = pkgs.mkShell {
       packages = [
+        pkgs.nil
+        pkgs.alejandra
         pkgs.statix
 
         # Secrets management
