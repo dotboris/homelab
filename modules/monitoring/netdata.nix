@@ -16,14 +16,16 @@ in {
   config = {
     services.netdata = {
       enable = true;
+      package = pkgs.netdataCloud;
 
       config = {
         global = {
+          profile = "standalone";
           "default port" = cfg.port;
         };
-
-        # Enables persistent storage
-        db.mode = "dbengine";
+        db.mode = "dbengine"; # Enables persistent storage
+        ml.enabled = "yes";
+        registry.enabled = "no"; # No need to phone home
       };
 
       configDir = {
@@ -44,6 +46,7 @@ in {
           icon = "netdata.svg";
           description = "NetData";
           urlVhost = "netdata";
+          urlPath = "/v3"; # bypasses the login prompt
           widget = {
             type = "netdata";
             url = "https://${vhosts.netdata.fqdn}";

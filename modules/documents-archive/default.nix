@@ -26,6 +26,7 @@ in {
       enable = true;
       passwordFile = config.sops.secrets."paperless/admin".path;
       settings = {
+        PAPERLESS_URL = "https://${vhost.fqdn}";
         PAPERLESS_OCR_USER_ARGS = {
           # Some documents (like AWS bills) get digitally signed. That's pretty
           # neat but in this context it's not helpful. The OCR system refuses to

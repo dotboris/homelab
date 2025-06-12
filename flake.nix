@@ -2,7 +2,7 @@
   description = "Home Lab / Home Server";
 
   inputs = {
-    nixpkgs.url = "github:NixOs/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOs/nixpkgs/nixos-25.05";
     nixpkgs-coredns-patch.url = "github:dotboris/nixpkgs/coredns-external-plugins-position";
     deploy-rs = {
       url = "github:serokell/deploy-rs";
@@ -47,6 +47,7 @@
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
+      config.allowUnfree = true; # TODO: do this per-package for netdata
       overlays = [
         # Patch CoreDNS to include our patch https://github.com/NixOS/nixpkgs/pull/360798
         (prev: final: let

@@ -21,6 +21,7 @@ in {
     services.homepage-dashboard = {
       enable = true;
       listenPort = cfg.port;
+      allowedHosts = vhost.fqdn;
     };
 
     homelab.reverseProxy.vhosts.home = {};

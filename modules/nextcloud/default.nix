@@ -46,6 +46,7 @@ in {
         maxUploadSize = "8G";
         config = {
           adminpassFile = config.sops.secrets."nextcloud/admin-password".path;
+          dbtype = "sqlite";
         };
         settings = {
           trusted_proxies = ["127.0.0.1"];
