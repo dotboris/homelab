@@ -5,13 +5,13 @@
 }:
 stdenv.mkDerivation rec {
   pname = "stevenblack-blocklist";
-  version = "3.15.44";
+  version = "3.15.45";
   # https://github.com/StevenBlack/hosts/releases
   src = pkgs.fetchFromGitHub {
     owner = "StevenBlack";
     repo = "hosts";
     rev = version;
-    sha256 = "sha256-+evSN4xiZQkuUaXkdt3Kggc3PAjL2b4lC0mw5mjqcow=";
+    sha256 = "sha256-ONPW+AAFSeG808KUyGpvIYrnKrCu9WLoLkrxsaYPD5o=";
   };
   # Clean up hosts file so that it's only a list of domains. We need to:
   # - Remove some generic host entries for localhost & the like
