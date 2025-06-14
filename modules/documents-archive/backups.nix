@@ -5,14 +5,13 @@
 }: let
   autoresticCfg = config.services.autorestic;
   exportDir = "/var/lib/paperless-export";
-  paperlessManage = "/var/lib/paperless/paperless-manage";
   exportScript =
     pkgs.writeShellScript "paperless-export-for-backups"
     ''
       set -euo pipefail
       umask 037
       echo exporting
-      ${paperlessManage} document_exporter --split-manifest ${exportDir}
+      paperless-manage document_exporter --split-manifest ${exportDir}
       echo fixing permissions
       find ${exportDir} -type f -exec chmod 640 '{}' +
       find ${exportDir} -type d -exec chmod 750 '{}' +
