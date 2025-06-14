@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOs/nixpkgs/nixos-25.05";
-    nixpkgs-coredns-patch.url = "github:dotboris/nixpkgs/coredns-external-plugins-position";
+    nixpkgs-unstable.url = "github:NixOs/nixpkgs/nixos-unstable";
     deploy-rs = {
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -39,13 +39,16 @@
     disko,
     deploy-rs,
     nixpkgs,
-    nixpkgs-coredns-patch,
+    nixpkgs-unstable,
     nixos-anywhere,
     sops-nix,
     ...
   }: let
     inherit (nixpkgs) lib;
     system = "x86_64-linux";
+    pkgsUnstable = import nixpkgs-unstable {
+      inherit system;
+    };
     pkgs = import nixpkgs {
       inherit system;
       config.allowUnfreePredicate = pkg:
@@ -53,11 +56,9 @@
           "netdata" # The UI is non OSS. It's under its own funny license.
         ];
       overlays = [
-        # Patch CoreDNS to include our patch https://github.com/NixOS/nixpkgs/pull/360798
-        (prev: final: let
-          pkgs-coredns-patch = import nixpkgs-coredns-patch {inherit system;};
-        in {
-          inherit (pkgs-coredns-patch) coredns;
+        # Use unstable coredns. It's supports ordering plugins correctly
+        (prev: final: {
+          inherit (pkgsUnstable) coredns;
         })
       ];
     };

@@ -171,18 +171,18 @@
         "type": "github"
       }
     },
-    "nixpkgs-coredns-patch": {
+    "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1748216723,
-        "narHash": "sha256-LjKzn/x+GbZEAx3B8sFrT7nTCna1SoHGB1Z9sl6NYK0=",
-        "owner": "dotboris",
+        "lastModified": 1749794982,
+        "narHash": "sha256-Kh9K4taXbVuaLC0IL+9HcfvxsSUx8dPB5s5weJcc9pc=",
+        "owner": "NixOs",
         "repo": "nixpkgs",
-        "rev": "b2b51acb41c34c05471d09077eae94ac3cdb3752",
+        "rev": "ee930f9755f58096ac6e8ca94a1887e0534e2d81",
         "type": "github"
       },
       "original": {
-        "owner": "dotboris",
-        "ref": "coredns-external-plugins-position",
+        "owner": "NixOs",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -194,7 +194,7 @@
         "nixos-anywhere": "nixos-anywhere",
         "nixos-images": "nixos-images",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-coredns-patch": "nixpkgs-coredns-patch",
+        "nixpkgs-unstable": "nixpkgs-unstable",
         "sops-nix": "sops-nix"
       }
     },
