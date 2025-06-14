@@ -44,10 +44,14 @@
     sops-nix,
     ...
   }: let
+    inherit (nixpkgs) lib;
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
-      config.allowUnfree = true; # TODO: do this per-package for netdata
+      config.allowUnfreePredicate = pkg:
+        builtins.elem (lib.getName pkg) [
+          "netdata" # The UI is non OSS. It's under its own funny license.
+        ];
       overlays = [
         # Patch CoreDNS to include our patch https://github.com/NixOS/nixpkgs/pull/360798
         (prev: final: let
