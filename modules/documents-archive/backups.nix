@@ -5,9 +5,12 @@
 }: let
   autoresticCfg = config.services.autorestic;
   exportDir = "/var/lib/paperless-export";
-  exportScript =
-    pkgs.writeShellScript "paperless-export-for-backups"
-    ''
+  exportScript = pkgs.writeShellApplication {
+    name = "paperless-export-for-backups";
+    runtimeInputs = [
+      config.services.paperless.manage
+    ];
+    text = ''
       set -euo pipefail
       umask 037
       echo exporting
@@ -16,6 +19,8 @@
       find ${exportDir} -type f -exec chmod 640 '{}' +
       find ${exportDir} -type d -exec chmod 750 '{}' +
     '';
+  };
+  exportCmd = "${exportScript}/bin/paperless-export-for-backups";
 in {
   config = {
     systemd.tmpfiles.rules = [
@@ -27,7 +32,7 @@ in {
         runAs = "paperless:${autoresticCfg.group}";
         commands = [
           {
-            command = "${exportScript}";
+            command = "${exportCmd}";
             options = ["NOPASSWD"];
           }
         ];
@@ -35,7 +40,7 @@ in {
     ];
     homelab.backups.locations.paperless = {
       hooks.before = [
-        "/run/wrappers/bin/sudo -u paperless -g ${autoresticCfg.group} ${exportScript}"
+        "/run/wrappers/bin/sudo -u paperless -g ${autoresticCfg.group} ${exportCmd}"
       ];
       from = exportDir;
     };
