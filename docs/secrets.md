@@ -34,14 +34,14 @@ The backup key should only be used to add a new key to the secrets. It should ne
 
 First, you'll need to configure your key in `.sops.yaml`:
 
-1. Under `keys:` add your public age key: `- &alias age...`
+1. Under `keys:` add your public ssh key: `- &alias ssh...`
 1. For each applicable creation rule, add the key to the key groups
 
 Here's what it looks like all put together:
 
 ```yaml
 keys:
-  - &my-key-alias age...
+  - &my-key-alias ssh...
   - ... # other keys
 
 creation_rules:
