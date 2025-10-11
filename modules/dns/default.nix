@@ -54,6 +54,21 @@
         tailscale = "100.67.226.105";
       };
     };
+    homelab-test-foxtrot = {
+      name = "homelab-test-foxtrot.lan";
+      aliases = [
+        "home-test-foxtrot.dotboris.io."
+        "archive-test-foxtrot.dotboris.io."
+        "cloud-test-foxtrot.dotboris.io."
+        "feeds-test-foxtrot.dotboris.io."
+        "netdata-test-foxtrot.dotboris.io."
+        "traefik-test-foxtrot.dotboris.io."
+        "ntfy-test-foxtrot.dotboris.io."
+      ];
+      ips = {
+        lan = "192.168.122.3";
+      };
+    };
   };
 in {
   options.homelab.dns = {
@@ -107,6 +122,7 @@ in {
             hosts {
               ${hostLine hosts.homelab "lan"}
               ${hostLine hosts.homelab-test "lan"}
+              ${hostLine hosts.homelab-test-foxtrot "lan"}
               fallthrough
             }
             import common

@@ -61,7 +61,7 @@
   };
 
   networking = {
-    hostName = "homelab-test";
+    hostName = "homelab-test-foxtrot";
     useDHCP = false;
     interfaces = {
       enp1s0.ipv4.addresses = [
