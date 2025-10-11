@@ -64,7 +64,11 @@
     };
     callPackage = path: overrides: pkgs.callPackage path {inherit inputs;} // overrides;
   in {
-    formatter.${system} = pkgs.alejandra;
+    formatter.${system} = pkgs.writeShellApplication {
+      name = "alejandra-format-repo";
+      runtimeInputs = [pkgs.alejandra];
+      text = "alejandra .";
+    };
     devShells.${system}.default = pkgs.mkShell {
       packages = [
         pkgs.nil
