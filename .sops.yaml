@@ -4,6 +4,7 @@ keys:
   - &admin-dotboris-foxtrot ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK9QlBQ++xvislNNi4L2hkYpNHBL6MjrAkVhMRhUrOtg
   - &host-homelab age1drttm3pedzu63pwahgfjk0f2za0ywu57dec0e5sh3nc59vfm55xqzph4zm
   - &host-homelab-test age1uxn8hz7fv4h05l4uhtshpxkylv4krfmekc8ancuur682djmnm9asmgs8ma
+  - &host-homelab-test-foxtrot age15t4624jxd7a678rwg5z8uanpvzull2v7drh07knduv3vp2uv5c3sksgd5v
 
 creation_rules:
   - path_regex: '^hosts/homelab/secrets.sops.yaml$'
@@ -21,6 +22,14 @@ creation_rules:
           - *admin-dotboris-desktop
           - *admin-dotboris-foxtrot
           - *host-homelab-test
+
+  - path_regex: '^hosts/homelab-test-foxtrot/secrets.sops.yaml$'
+    key_groups:
+      - age:
+          - *backup
+          - *admin-dotboris-desktop
+          - *admin-dotboris-foxtrot
+          - *host-homelab-test-foxtrot
 
 stores:
   yaml:

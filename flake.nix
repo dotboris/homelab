@@ -121,6 +121,14 @@
           ./hosts/homelab-test/configuration.nix
         ];
       };
+      homelab-test-foxtrot = nixpkgs.lib.nixosSystem {
+        inherit system pkgs;
+        specialArgs = {inherit inputs;};
+        modules = [
+          self.nixosModules.default
+          ./hosts/homelab-test-foxtrot/configuration.nix
+        ];
+      };
     };
 
     deploy.nodes = let
@@ -143,6 +151,15 @@
         fastConnection = true;
         magicRollback = false;
         profiles.system.path = nixos self.nixosConfigurations.homelab-test;
+      };
+      homelab-test-foxtrot = {
+        hostname = "192.168.122.3";
+        user = "root";
+        sshUser = "dotboris";
+        interactiveSudo = true;
+        fastConnection = true;
+        magicRollback = false;
+        profiles.system.path = nixos self.nixosConfigurations.homelab-test-foxtrot;
       };
     };
 
