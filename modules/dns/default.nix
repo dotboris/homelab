@@ -67,6 +67,7 @@
       ];
       ips = {
         lan = "192.168.122.3";
+        tailscale = "100.103.210.109";
       };
     };
   };
@@ -137,6 +138,7 @@ in {
             hosts {
               ${hostLine hosts.homelab "tailscale"}
               ${hostLine hosts.homelab-test "tailscale"}
+              ${hostLine hosts.homelab-test-foxtrot "tailscale"}
               fallthrough
             }
             import common

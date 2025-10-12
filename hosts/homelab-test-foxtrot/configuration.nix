@@ -7,7 +7,10 @@
   system.stateVersion = "25.05";
 
   homelab = {
-    dns.enable = true;
+    dns = {
+      enable = true;
+      lanCidr = "192.168.122.0/24";
+    };
     remote-access.enable = true;
     reverseProxy = {
       baseDomain = "dotboris.io";
