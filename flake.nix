@@ -54,6 +54,8 @@
         (import-tree [
           ./packages
           ./modules
+          ./modules/flake
+          ./hosts/homelab-test
         ])
       ];
       flake = {
@@ -76,19 +78,6 @@
               modules = [
                 self.nixosModules.default
                 ./hosts/homelab/configuration.nix
-              ];
-            });
-          homelab-test = withSystem "x86_64-linux" ({
-            pkgs,
-            system,
-            ...
-          }:
-            nixpkgs.lib.nixosSystem {
-              inherit system pkgs;
-              specialArgs = {inherit inputs;};
-              modules = [
-                self.nixosModules.default
-                ./hosts/homelab-test/configuration.nix
               ];
             });
           homelab-test-foxtrot = withSystem "x86_64-linux" ({
@@ -117,15 +106,6 @@
             fastConnection = true;
             magicRollback = false;
             profiles.system.path = nixos self.nixosConfigurations.homelab;
-          };
-          homelab-test = {
-            hostname = "10.0.42.3";
-            user = "root";
-            sshUser = "dotboris";
-            interactiveSudo = true;
-            fastConnection = true;
-            magicRollback = false;
-            profiles.system.path = nixos self.nixosConfigurations.homelab-test;
           };
           homelab-test-foxtrot = {
             hostname = "192.168.122.3";
@@ -206,12 +186,12 @@
             prefix = "build-pkg-";
             output = self'.packages;
           }
-          # Build all nixos configs
-          // buildAll {
-            prefix = "build-nixos-";
-            output = self.nixosConfigurations;
-            mapFn = host: host.config.system.build.toplevel;
-          }
+          # # Build all nixos configs
+          # // buildAll {
+          #   prefix = "build-nixos-";
+          #   output = self.nixosConfigurations;
+          #   mapFn = host: host.config.system.build.toplevel;
+          # }
           # Checks from deploy-rs
           // deploy-rs.lib.${system}.deployChecks self.deploy;
       };
