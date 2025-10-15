@@ -1,47 +1,49 @@
-{
-  lib,
-  config,
-  ...
-}:
-with lib; let
-  cfg = config.homelab.backups.backends.backblaze;
-  autoresticCfg = config.services.autorestic;
-in {
-  options.homelab.backups.backends.backblaze = {
-    enable = mkEnableOption "homelab backend backblaze backend";
-    bucketName = mkOption {
-      type = types.str;
-    };
-  };
-  config = mkIf cfg.enable {
-    sops = let
-      password = "backups/repos/backblaze/password";
-      keyId = "backups/repos/backblaze/keyId";
-      key = "backups/repos/backblaze/key";
+{...}: {
+  flake.modules.nixos.default = {
+    lib,
+    config,
+    ...
+  }:
+    with lib; let
+      cfg = config.homelab.backups.backends.backblaze;
+      autoresticCfg = config.services.autorestic;
     in {
-      secrets = {
-        ${password} = {};
-        ${keyId} = {};
-        ${key} = {};
+      options.homelab.backups.backends.backblaze = {
+        enable = mkEnableOption "homelab backend backblaze backend";
+        bucketName = mkOption {
+          type = types.str;
+        };
       };
-      templates."homelab-backups-backblaze-backend.env" = {
-        owner = autoresticCfg.user;
-        content = ''
-          AUTORESTIC_BACKBLAZE_RESTIC_PASSWORD=${config.sops.placeholder.${password}}
-          AUTORESTIC_BACKBLAZE_B2_ACCOUNT_ID=${config.sops.placeholder.${keyId}}
-          AUTORESTIC_BACKBLAZE_B2_ACCOUNT_KEY=${config.sops.placeholder.${key}}
-        '';
-      };
-    };
+      config = mkIf cfg.enable {
+        sops = let
+          password = "backups/repos/backblaze/password";
+          keyId = "backups/repos/backblaze/keyId";
+          key = "backups/repos/backblaze/key";
+        in {
+          secrets = {
+            ${password} = {};
+            ${keyId} = {};
+            ${key} = {};
+          };
+          templates."homelab-backups-backblaze-backend.env" = {
+            owner = autoresticCfg.user;
+            content = ''
+              AUTORESTIC_BACKBLAZE_RESTIC_PASSWORD=${config.sops.placeholder.${password}}
+              AUTORESTIC_BACKBLAZE_B2_ACCOUNT_ID=${config.sops.placeholder.${keyId}}
+              AUTORESTIC_BACKBLAZE_B2_ACCOUNT_KEY=${config.sops.placeholder.${key}}
+            '';
+          };
+        };
 
-    services.autorestic = {
-      environmentFiles = [config.sops.templates."homelab-backups-backblaze-backend.env".path];
-      settings = {
-        backends.backblaze = {
-          type = "b2";
-          path = cfg.bucketName;
+        services.autorestic = {
+          environmentFiles = [config.sops.templates."homelab-backups-backblaze-backend.env".path];
+          settings = {
+            backends.backblaze = {
+              type = "b2";
+              path = cfg.bucketName;
+            };
+          };
         };
       };
     };
-  };
 }

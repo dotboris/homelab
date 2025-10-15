@@ -50,26 +50,18 @@
   }:
     flake-parts.lib.mkFlake {inherit inputs;} ({withSystem, ...}: {
       imports = [
+        flake-parts.flakeModules.modules
         (import-tree [
           ./packages
+          ./modules
         ])
       ];
       flake = {
         nixosModules.default = {...}: {
           imports = [
-            ./modules/nixos-ext
             disko.nixosModules.disko
             sops-nix.nixosModules.sops
-            ./modules/dns
-            ./modules/documents-archive
-            ./modules/backups
-            ./modules/feeds
-            ./modules/home-page
-            ./modules/monitoring
-            ./modules/nextcloud
-            ./modules/remote-access
-            ./modules/reverse-proxy
-            ./modules/system
+            self.modules.nixos.default
           ];
         };
         nixosConfigurations = {
@@ -202,18 +194,12 @@
             mapFn ? (x: x),
           }:
             mapAttrs' (name: value: nameValuePair "${prefix}${name}" (mapFn value)) output;
-          runTest = path:
-            pkgs.testers.runNixOSTest {
-              imports = [path];
-              node.specialArgs = {inherit inputs;};
-            };
         in
           {
             statix = pkgs.runCommand "statix" {buildInputs = [pkgs.statix];} ''
               statix check -c ${./statix.toml} ${./.}
               touch $out
             '';
-            test-dns = runTest ./modules/dns/test.nix;
           }
           # Build all packages
           // buildAll {
