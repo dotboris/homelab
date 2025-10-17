@@ -3,7 +3,7 @@
     ip = "10.0.42.3";
     system = "x86_64-linux";
     module = {...}: {
-      imports = [config.flake.nixosModules.default];
+      imports = [config.flake.modules.nixos.default];
 
       system.stateVersion = "25.05";
 

@@ -54,47 +54,15 @@
         (import-tree [
           ./packages
           ./modules
-          ./modules/flake
-          ./hosts/homelab-test
-          ./hosts/homelab-test-foxtrot
+          ./hosts
         ])
       ];
       flake = {
-        nixosModules.default = {...}: {
+        modules.nixos.default = {...}: {
           imports = [
             disko.nixosModules.disko
             sops-nix.nixosModules.sops
-            self.modules.nixos.default
           ];
-        };
-        nixosConfigurations = {
-          homelab = withSystem "x86_64-linux" ({
-            pkgs,
-            system,
-            ...
-          }:
-            nixpkgs.lib.nixosSystem {
-              inherit system pkgs;
-              specialArgs = {inherit inputs;};
-              modules = [
-                self.nixosModules.default
-                ./hosts/homelab/configuration.nix
-              ];
-            });
-        };
-
-        deploy.nodes = let
-          inherit (deploy-rs.lib.x86_64-linux.activate) nixos;
-        in {
-          homelab = {
-            hostname = "10.0.42.2";
-            user = "root";
-            sshUser = "dotboris";
-            interactiveSudo = true;
-            fastConnection = true;
-            magicRollback = false;
-            profiles.system.path = nixos self.nixosConfigurations.homelab;
-          };
         };
       };
       systems = ["x86_64-linux"];
