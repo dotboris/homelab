@@ -41,11 +41,9 @@
     self,
     flake-parts,
     import-tree,
-    disko,
     deploy-rs,
     nixpkgs,
     nixpkgs-unstable,
-    sops-nix,
     ...
   }:
     flake-parts.lib.mkFlake {inherit inputs;} ({withSystem, ...}: {
@@ -57,14 +55,6 @@
           ./hosts
         ])
       ];
-      flake = {
-        modules.nixos.default = {...}: {
-          imports = [
-            disko.nixosModules.disko
-            sops-nix.nixosModules.sops
-          ];
-        };
-      };
       systems = ["x86_64-linux"];
       perSystem = {
         pkgs,
