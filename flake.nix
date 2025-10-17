@@ -113,25 +113,12 @@
           ];
         };
 
-        checks = let
-          inherit (pkgs.lib.attrsets) nameValuePair mapAttrs';
-          buildAll = {
-            prefix,
-            output,
-            mapFn ? (x: x),
-          }:
-            mapAttrs' (name: value: nameValuePair "${prefix}${name}" (mapFn value)) output;
-        in
+        checks =
           {
             statix = pkgs.runCommand "statix" {buildInputs = [pkgs.statix];} ''
               statix check -c ${./statix.toml} ${./.}
               touch $out
             '';
-          }
-          # Build all packages
-          // buildAll {
-            prefix = "build-pkg-";
-            output = self'.packages;
           }
           # Checks from deploy-rs
           // deploy-rs.lib.${system}.deployChecks self.deploy;

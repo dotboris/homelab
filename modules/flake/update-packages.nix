@@ -5,11 +5,10 @@
     self',
     ...
   }: {
-    packages.update-packages = let
+    apps.update-packages = let
       packagesToUpdate = lib.filterAttrs (_: p: p.update or false) self'.packages;
       packageNamesToUpdate = builtins.attrNames packagesToUpdate;
-    in
-      pkgs.writeShellApplication {
+      package = pkgs.writeShellApplication {
         name = "update-packages";
         runtimeInputs = [pkgs.nix-update];
         text = ''
@@ -27,9 +26,10 @@
           fi
         '';
       };
-    apps.update-packages = {
+    in {
       type = "app";
-      program = "${self'.packages.update-packages}/bin/update-packages";
+      program = "${package}/bin/update-packages";
+      meta.description = "Update all packages in this flake with passthru.update = true";
     };
   };
 }
