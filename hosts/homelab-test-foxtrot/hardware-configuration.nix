@@ -1,29 +1,31 @@
-{
-  lib,
-  config,
-  modulesPath,
-  ...
-}: {
-  imports = [
-    (modulesPath + "/profiles/qemu-guest.nix")
-  ];
+{...}: {
+  flake.hosts.homelab-test-foxtrot.module = {
+    lib,
+    config,
+    modulesPath,
+    ...
+  }: {
+    imports = [
+      (modulesPath + "/profiles/qemu-guest.nix")
+    ];
 
-  boot = {
-    initrd = {
-      availableKernelModules = [
-        "ahci"
-        "xhci_pci"
-        "virtio_pci"
-        "sr_mod"
-        "virtio_blk"
-      ];
-      kernelModules = [];
+    boot = {
+      initrd = {
+        availableKernelModules = [
+          "ahci"
+          "xhci_pci"
+          "virtio_pci"
+          "sr_mod"
+          "virtio_blk"
+        ];
+        kernelModules = [];
+      };
+      kernelModules = ["kvm-amd"];
+      extraModulePackages = [];
     };
-    kernelModules = ["kvm-amd"];
-    extraModulePackages = [];
+
+    swapDevices = [];
+
+    hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   };
-
-  swapDevices = [];
-
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

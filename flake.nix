@@ -56,6 +56,7 @@
           ./modules
           ./modules/flake
           ./hosts/homelab-test
+          ./hosts/homelab-test-foxtrot
         ])
       ];
       flake = {
@@ -80,19 +81,6 @@
                 ./hosts/homelab/configuration.nix
               ];
             });
-          homelab-test-foxtrot = withSystem "x86_64-linux" ({
-            pkgs,
-            system,
-            ...
-          }:
-            nixpkgs.lib.nixosSystem {
-              inherit system pkgs;
-              specialArgs = {inherit inputs;};
-              modules = [
-                self.nixosModules.default
-                ./hosts/homelab-test-foxtrot/configuration.nix
-              ];
-            });
         };
 
         deploy.nodes = let
@@ -106,15 +94,6 @@
             fastConnection = true;
             magicRollback = false;
             profiles.system.path = nixos self.nixosConfigurations.homelab;
-          };
-          homelab-test-foxtrot = {
-            hostname = "192.168.122.3";
-            user = "root";
-            sshUser = "dotboris";
-            interactiveSudo = true;
-            fastConnection = true;
-            magicRollback = false;
-            profiles.system.path = nixos self.nixosConfigurations.homelab-test-foxtrot;
           };
         };
       };
@@ -186,12 +165,6 @@
             prefix = "build-pkg-";
             output = self'.packages;
           }
-          # # Build all nixos configs
-          # // buildAll {
-          #   prefix = "build-nixos-";
-          #   output = self.nixosConfigurations;
-          #   mapFn = host: host.config.system.build.toplevel;
-          # }
           # Checks from deploy-rs
           // deploy-rs.lib.${system}.deployChecks self.deploy;
       };

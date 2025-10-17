@@ -1,8 +1,5 @@
-{inputs, ...}: {
+{...}: {
   flake.hosts.homelab-test.module = {...}: {
-    imports = [
-      inputs.disko.nixosModules.disko
-    ];
     disko.devices = {
       disk.vda = {
         device = "/dev/vda";

@@ -49,5 +49,14 @@ in {
         profiles.system.path = nixos self.nixosConfigurations.${name};
       }))
       config.flake.hosts;
+
+    checks = lib.pipe config.flake.hosts [
+      (lib.mapAttrsToList
+        (name: host: {
+          ${host.system}."nixos-${name}" =
+            self.nixosConfigurations.${name}.config.system.build.toplevel;
+        }))
+      lib.mkMerge
+    ];
   };
 }
