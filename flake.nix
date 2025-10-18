@@ -6,10 +6,6 @@
     nixpkgs-unstable.url = "github:NixOs/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
-    deploy-rs = {
-      url = "github:serokell/deploy-rs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nixos-images = {
       url = "github:nix-community/nixos-images";
       inputs = {
@@ -41,7 +37,6 @@
     self,
     flake-parts,
     import-tree,
-    deploy-rs,
     nixpkgs,
     nixpkgs-unstable,
     ...
@@ -99,19 +94,15 @@
 
             # Deployment
             inputs'.nixos-anywhere.packages.default
-            inputs'.deploy-rs.packages.default
           ];
         };
 
-        checks =
-          {
-            statix = pkgs.runCommand "statix" {buildInputs = [pkgs.statix];} ''
-              statix check -c ${./statix.toml} ${./.}
-              touch $out
-            '';
-          }
-          # Checks from deploy-rs
-          // deploy-rs.lib.${system}.deployChecks self.deploy;
+        checks = {
+          statix = pkgs.runCommand "statix" {buildInputs = [pkgs.statix];} ''
+            statix check -c ${./statix.toml} ${./.}
+            touch $out
+          '';
+        };
       };
     });
 }

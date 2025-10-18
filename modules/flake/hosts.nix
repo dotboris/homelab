@@ -36,20 +36,6 @@ in {
       ))
       config.flake.hosts;
 
-    deploy.nodes =
-      lib.mapAttrs (name: host: (let
-        inherit (inputs.deploy-rs.lib.${host.system}.activate) nixos;
-      in {
-        hostname = host.hostname;
-        user = "root";
-        sshUser = "dotboris";
-        interactiveSudo = true;
-        fastConnection = true;
-        magicRollback = false;
-        profiles.system.path = nixos self.nixosConfigurations.${name};
-      }))
-      config.flake.hosts;
-
     apps = lib.pipe config.flake.hosts [
       (lib.mapAttrsToList
         (name: host: {
