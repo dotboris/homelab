@@ -94,6 +94,11 @@
 
             # Deployment
             inputs'.nixos-anywhere.packages.default
+
+            # standard-backups
+            self'.packages.standard-backups
+            self'.packages.standard-backups-restic-backend
+            self'.packages.standard-backups-rsync-backend
           ];
         };
 
