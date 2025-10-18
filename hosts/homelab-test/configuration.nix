@@ -1,6 +1,6 @@
 {config, ...}: {
   flake.hosts.homelab-test = {
-    ip = "10.0.42.3";
+    hostname = "homelab-test.lan";
     system = "x86_64-linux";
     module = {...}: {
       imports = [config.flake.modules.nixos.default];

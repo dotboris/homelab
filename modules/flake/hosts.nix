@@ -16,7 +16,7 @@ in {
       type = lib.types.lazyAttrsOf (lib.types.submodule {
         options = {
           system = lib.mkOption {type = lib.types.str;};
-          ip = lib.mkOption {type = lib.types.str;};
+          hostname = lib.mkOption {type = lib.types.str;};
           module = lib.mkOption {type = lib.types.deferredModule;};
         };
       });
@@ -40,7 +40,7 @@ in {
       lib.mapAttrs (name: host: (let
         inherit (inputs.deploy-rs.lib.${host.system}.activate) nixos;
       in {
-        hostname = host.ip;
+        hostname = host.hostname;
         user = "root";
         sshUser = "dotboris";
         interactiveSudo = true;
@@ -49,6 +49,31 @@ in {
         profiles.system.path = nixos self.nixosConfigurations.${name};
       }))
       config.flake.hosts;
+
+    apps = lib.pipe config.flake.hosts [
+      (lib.mapAttrsToList
+        (name: host: {
+          ${host.system}."deploy-${name}" = withSystem host.system ({pkgs, ...}: {
+            type = "app";
+            meta.description = "Deploy ${name} NixOS configuration to ${host.hostname}";
+            program = pkgs.writeShellApplication {
+              name = "deploy-${name}";
+              runtimeInputs = [
+                self.nixosConfigurations.${name}.config.system.build.nixos-rebuild
+              ];
+              text = ''
+                nixos-rebuild switch \
+                  --flake ${lib.escapeShellArg ".#${name}"} \
+                  --target-host ${lib.escapeShellArg host.hostname} \
+                  --use-remote-sudo \
+                  --verbose \
+                  --print-build-logs
+              '';
+            };
+          });
+        }))
+      lib.mkMerge
+    ];
 
     checks = lib.pipe config.flake.hosts [
       (lib.mapAttrsToList

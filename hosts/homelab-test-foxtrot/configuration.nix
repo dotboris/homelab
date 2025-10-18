@@ -1,6 +1,6 @@
 {config, ...}: {
   flake.hosts.homelab-test-foxtrot = {
-    ip = "192.168.122.3";
+    hostname = "homelab-test-foxtrot.lan";
     system = "x86_64-linux";
     module = {...}: {
       imports = [config.flake.modules.nixos.default];
