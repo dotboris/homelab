@@ -11,17 +11,6 @@
 
       system.stateVersion = "25.05";
 
-      # testing standard-backups, this should move to homelab.backups
-      services.standard-backups = {
-        enable = true;
-        extraPackages = [
-          self'.packages.standard-backups-restic-backend
-        ];
-        jobSchedules = {
-          test = "minutely";
-        };
-      };
-
       homelab = {
         dns = {
           enable = true;
