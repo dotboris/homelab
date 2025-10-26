@@ -17,6 +17,9 @@
         extraPackages = [
           self'.packages.standard-backups-restic-backend
         ];
+        jobSchedules = {
+          test = "minutely";
+        };
       };
 
       homelab = {
