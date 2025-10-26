@@ -1,11 +1,23 @@
-{config, ...}: {
+{
+  config,
+  moduleWithSystem,
+  ...
+}: {
   flake.hosts.homelab-test-foxtrot = {
     hostname = "homelab-test-foxtrot.lan";
     system = "x86_64-linux";
-    module = {...}: {
+    module = moduleWithSystem ({self', ...}: {...}: {
       imports = [config.flake.modules.nixos.default];
 
       system.stateVersion = "25.05";
+
+      # testing standard-backups, this should move to homelab.backups
+      services.standard-backups = {
+        enable = true;
+        extraPackages = [
+          self'.packages.standard-backups-restic-backend
+        ];
+      };
 
       homelab = {
         dns = {
@@ -80,6 +92,6 @@
           interface = "enp1s0";
         };
       };
-    };
+    });
   };
 }
