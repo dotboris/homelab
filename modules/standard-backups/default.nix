@@ -1,5 +1,10 @@
-{moduleWithSystem, ...}: {
-  flake.modules.nixos.default = moduleWithSystem ({self', ...}: {
+{
+  self,
+  moduleWithSystem,
+  ...
+}: {
+  flake.modules.nixos.default = self.modules.nixos.standard-backups;
+  flake.modules.nixos.standard-backups = moduleWithSystem ({self', ...}: {
     config,
     lib,
     pkgs,

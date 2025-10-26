@@ -1,6 +1,5 @@
-{self, ...}: let
-  test = {pkgs, ...}: {
-    name = "dns";
+{self, ...}: {
+  flake.modules.nixosTest.dns = {pkgs, ...}: {
     nodes = {
       server = {...}: {
         imports = [
@@ -47,11 +46,5 @@
       with subtest("adblock (tailscale)"):
         assert "NXDOMAIN" in client.fail("nslookup doubleclick.net ${serverIp "eth2"}")
     '';
-  };
-in {
-  perSystem = {pkgs, ...}: {
-    checks.test-dns = pkgs.testers.runNixOSTest {
-      imports = [test];
-    };
   };
 }
