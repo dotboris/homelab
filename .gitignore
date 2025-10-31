@@ -1,6 +1,7 @@
 # Nix result
 /result
 /result-man
+.nixos-test-history
 
 # VM artifacts
 *.qcow2

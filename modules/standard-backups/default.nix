@@ -12,6 +12,7 @@
     ...
   }: let
     cfg = config.services.standard-backups;
+    packages = [cfg.package] ++ cfg.extraPackages;
   in {
     options.services.standard-backups = {
       enable = lib.mkEnableOption "standard-backup";
@@ -81,7 +82,10 @@
           User = cfg.user;
           Group = cfg.group;
         };
-        path = [cfg.package] ++ cfg.extraPackages;
+        # Ensure backends and recipes are discovered
+        environment.XDG_DATA_DIRS = lib.makeSearchPath "share" packages;
+        # Ensure backends can run
+        path = packages;
         scriptArgs = "%i";
         script = ''
           standard-backups backup "$1"
