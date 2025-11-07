@@ -45,14 +45,14 @@ in {
             program = pkgs.writeShellApplication {
               name = "deploy-${name}";
               runtimeInputs = [
-                self.nixosConfigurations.${name}.config.system.build.nixos-rebuild
+                pkgs.nixos-rebuild-ng
               ];
               text = ''
-                nixos-rebuild switch \
+                nixos-rebuild-ng switch \
                   --flake ${lib.escapeShellArg ".#${name}"} \
                   --target-host ${lib.escapeShellArg host.hostname} \
-                  --use-remote-sudo \
-                  --verbose \
+                  --sudo \
+                  --ask-sudo-password \
                   --print-build-logs
               '';
             };
