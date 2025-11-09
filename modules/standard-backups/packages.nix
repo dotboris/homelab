@@ -24,12 +24,13 @@
         '';
       };
     in {
-      standard-backups = pkgs.buildGoModule {
+      standard-backups = pkgs.buildGoModule rec {
         inherit src vendorHash;
         name = "standard-backups";
         subPackages = ["cmd/standard-backups"];
+        meta.mainProgram = name;
       };
-      standard-backups-restic-backend = pkgs.buildGoModule {
+      standard-backups-restic-backend = pkgs.buildGoModule rec {
         inherit src vendorHash;
         name = "standard-backups-restic-backend";
         subPackages = ["cmd/standard-backups-restic-backend"];
@@ -44,8 +45,9 @@
           wrapProgram $out/bin/standard-backups-restic-backend \
             --prefix PATH : ${pkgs.restic}/bin
         '';
+        meta.mainProgram = name;
       };
-      standard-backups-rsync-backend = pkgs.buildGoModule {
+      standard-backups-rsync-backend = pkgs.buildGoModule rec {
         inherit src vendorHash;
         name = "standard-backups-rsync-backend";
         subPackages = ["cmd/standard-backups-rsync-backend"];
@@ -60,6 +62,7 @@
           wrapProgram $out/bin/standard-backups-rsync-backend \
             --prefix PATH : ${pkgs.rsync}/bin
         '';
+        meta.mainProgram = name;
       };
     };
   };

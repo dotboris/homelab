@@ -12,7 +12,6 @@
     ...
   }: let
     cfg = config.services.standard-backups;
-    packages = [cfg.package] ++ cfg.extraPackages;
   in {
     options.services.standard-backups = {
       enable = lib.mkEnableOption "standard-backup";
@@ -65,8 +64,22 @@
 
     config = lib.mkIf cfg.enable {
       services.standard-backups.settings.version = 1;
-      environment = {
-        systemPackages = [cfg.package] ++ cfg.extraPackages;
+      environment = let
+        # Wrapper that is run by people. If it's not run as the right user, it
+        # switches to the right one using sudo.
+        wrapper = pkgs.writeShellScriptBin "standard-backups" ''
+          run=exec
+          if [[ "$USER" != "${lib.escapeShellArg cfg.user}" ]]; then
+          ${
+            if config.security.sudo.enable
+            then "run='exec ${config.security.wrapperDir}/sudo -u ${cfg.user} -E'"
+            else ">&2 echo 'Aborting, standard-backups must be run as user `${cfg.user}`!'; exit 2"
+          }
+          fi
+          $run ${lib.getExe cfg.package} "$@"
+        '';
+      in {
+        systemPackages = [wrapper] ++ cfg.extraPackages;
         pathsToLink = ["/share/standard-backups"];
         etc."standard-backups/config.yaml" = {
           source = let
@@ -75,7 +88,9 @@
             yaml.generate "standard-backups-config" cfg.settings;
         };
       };
-      systemd.services."standard-backups@" = {
+      systemd.services."standard-backups@" = let
+        packages = [cfg.package] ++ cfg.extraPackages;
+      in {
         description = "Runs a standard-backups job";
         serviceConfig = {
           Type = "oneshot";
