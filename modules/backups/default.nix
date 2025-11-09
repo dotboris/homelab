@@ -1,5 +1,5 @@
-{...}: {
-  flake.modules.nixos.default = {
+{moduleWithSystem, ...}: {
+  flake.modules.nixos.default = moduleWithSystem ({self', ...}: {
     lib,
     pkgs,
     config,
@@ -96,7 +96,23 @@
         };
       };
 
-      users.users.${autoresticCfg.user}.extraGroups = cfg.joinGroups;
+      services.standard-backups = {
+        enable = true;
+        user = "backups";
+        group = "backups";
+        extraPackages = [
+          self'.packages.standard-backups-restic-backend
+        ];
+      };
+      users = {
+        users.${autoresticCfg.user}.extraGroups = cfg.joinGroups;
+        groups.backups = {};
+        users.backups = {
+          isSystemUser = true;
+          group = "backups";
+          extraGroups = cfg.joinGroups;
+        };
+      };
     };
-  };
+  });
 }

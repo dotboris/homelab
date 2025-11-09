@@ -20,7 +20,9 @@
           password = "backups/repos/local/password";
         in {
           secrets = {
-            ${password} = {};
+            ${password} = {
+              owner = "backups";
+            };
           };
           templates."homelab-backups-local-backend.env" = {
             owner = autoresticCfg.user;
@@ -31,7 +33,7 @@
         };
 
         systemd.tmpfiles.rules = [
-          "d ${cfg.path} 0700 ${autoresticCfg.user} ${autoresticCfg.group}"
+          "d ${cfg.path} 0700 backups backups"
         ];
         services.autorestic = {
           environmentFiles = [config.sops.templates."homelab-backups-local-backend.env".path];
@@ -39,6 +41,16 @@
             backends.local = {
               inherit (cfg) path;
               type = "local";
+            };
+          };
+        };
+        services.standard-backups.settings = {
+          secrets.localPassword.from-file = config.sops.secrets."backups/repos/local/password".path;
+          destinations.local = {
+            backend = "restic";
+            options = {
+              repo = cfg.path;
+              env.RESTIC_PASSWORD = "{{ .Secrets.localPassword }}";
             };
           };
         };

@@ -21,9 +21,15 @@
           key = "backups/repos/backblaze/key";
         in {
           secrets = {
-            ${password} = {};
-            ${keyId} = {};
-            ${key} = {};
+            ${password} = {
+              owner = "backups";
+            };
+            ${keyId} = {
+              owner = "backups";
+            };
+            ${key} = {
+              owner = "backups";
+            };
           };
           templates."homelab-backups-backblaze-backend.env" = {
             owner = autoresticCfg.user;
@@ -41,6 +47,24 @@
             backends.backblaze = {
               type = "b2";
               path = cfg.bucketName;
+            };
+          };
+        };
+        services.standard-backups.settings = {
+          secrets = {
+            backblazePassword.from-file = config.sops.secrets."backups/repos/backblaze/password".path;
+            backblazeKeyId.from-file = config.sops.secrets."backups/repos/backblaze/keyId".path;
+            backblazeKey.from-file = config.sops.secrets."backups/repos/backblaze/key".path;
+          };
+          destinations.backblaze = {
+            backend = "restic";
+            options = {
+              repo = "b2:${cfg.bucketName}";
+              env = {
+                RESTIC_PASSWORD = "{{ .Secrets.backblazePassword }}";
+                B2_ACCOUNT_ID = "{{ .Secrets.backblazeKeyId }}";
+                B2_ACCOUNT_KEY = "{{ .Secrets.backblazeKey }}";
+              };
             };
           };
         };
