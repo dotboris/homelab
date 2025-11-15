@@ -1,4 +1,4 @@
-{...}: {
+{self, ...}: {
   flake.modules.nixos.default = {
     pkgs,
     config,
@@ -13,8 +13,9 @@
       ];
       text = ''
         set -euo pipefail
+        set -x
+        cd /
         umask 037
-        echo exporting
         paperless-manage document_exporter --split-manifest ${exportDir}
         echo fixing permissions
         find ${exportDir} -type f -exec chmod 640 '{}' +
@@ -25,7 +26,7 @@
   in {
     config = {
       systemd.tmpfiles.rules = [
-        "d ${exportDir} 0750 paperless ${autoresticCfg.group}"
+        "d ${exportDir} 0750 paperless backups"
       ];
       security.sudo.extraRules = [
         {
@@ -38,12 +39,32 @@
             }
           ];
         }
+        {
+          users = ["backups"];
+          runAs = "paperless:backups";
+          commands = [
+            {
+              command = "${exportCmd}";
+              options = ["NOPASSWD"];
+            }
+          ];
+        }
       ];
-      homelab.backups.locations.paperless = {
-        hooks.before = [
-          "/run/wrappers/bin/sudo -u paperless -g ${autoresticCfg.group} ${exportCmd}"
-        ];
-        from = exportDir;
+      homelab.backups = {
+        locations.paperless = {
+          hooks.before = [
+            "/run/wrappers/bin/sudo -u paperless -g backups ${exportCmd}"
+          ];
+          from = exportDir;
+        };
+        recipes.paperless = self.lib.mkBackupRecipe pkgs {
+          name = "paperless";
+          paths = [exportDir];
+          before = {
+            shell = "bash";
+            command = "/run/wrappers/bin/sudo -u paperless -g backups ${exportCmd}";
+          };
+        };
       };
     };
   };

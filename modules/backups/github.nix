@@ -1,4 +1,4 @@
-{...}: {
+{self, ...}: {
   flake.modules.nixos.default = {
     lib,
     config,
@@ -24,14 +24,16 @@
           GHORG_CLONE_WIKI = boolToString cfg.cloneWiki;
           GHORG_SKIP_ARCHIVED = boolToString cfg.skipArchived;
           GHORG_SKIP_FORKS = boolToString cfg.skipForks;
+          GHORG_ABSOLUTE_PATH_TO_CLONE_TO = cfg.syncDir;
+          GHORG_IGNORE_PATH = "/dev/null";
         };
         text = ''
+          cd /
           ghorg clone ${cfg.githubOrg} \
             --scm github \
             --backup \
             --prune \
-            --prune-no-confirm \
-            --path=${cfg.syncDir}
+            --prune-no-confirm
         '';
       };
     in {
@@ -76,14 +78,22 @@
 
       config = mkIf cfg.enable {
         sops.secrets."backups/github/app-private-key" = {
-          owner = autoresticCfg.user;
+          owner = "backups";
         };
         systemd.tmpfiles.rules = [
-          "d ${cfg.syncDir} 0700 ${autoresticCfg.user} ${autoresticCfg.group}"
+          "d ${cfg.syncDir} 0700 backups backups"
         ];
         homelab.backups.locations.github = {
           hooks.before = ["${syncGithubScript}/bin/sync-github-for-backups.sh"];
           from = cfg.syncDir;
+        };
+        homelab.backups.recipes.github = self.lib.mkBackupRecipe pkgs {
+          name = "github";
+          paths = [cfg.syncDir];
+          before = {
+            shell = "bash";
+            command = lib.getExe syncGithubScript;
+          };
         };
       };
     };

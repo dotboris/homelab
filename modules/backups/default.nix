@@ -36,6 +36,10 @@
         type = types.attrsOf types.anything;
         default = {};
       };
+      recipes = lib.mkOption {
+        type = lib.types.attrsOf lib.types.package;
+        default = {};
+      };
       joinGroups = mkOption {
         type = types.listOf types.str;
         default = [];
@@ -100,9 +104,25 @@
         enable = true;
         user = "backups";
         group = "backups";
-        extraPackages = [
-          self'.packages.standard-backups-restic-backend
-        ];
+        extraPackages =
+          [self'.packages.standard-backups-restic-backend]
+          ++ (builtins.attrValues cfg.recipes);
+        settings.jobs =
+          lib.mapAttrs (name: _: {
+            recipe = name;
+            backup-to = backendKeys;
+            on-failure = {
+              shell = "bash";
+              command = ''
+                ${pkgs.curl}/bin/curl -s \
+                  -H "Title: Backup Failed" \
+                  -H "Priority: high" \
+                  -d "Backup job ${name} has failed." \
+                  ${ntfyTopic}
+              '';
+            };
+          })
+          cfg.recipes;
       };
       users = {
         users.${autoresticCfg.user}.extraGroups = cfg.joinGroups;

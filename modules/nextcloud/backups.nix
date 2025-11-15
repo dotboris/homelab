@@ -1,4 +1,4 @@
-{...}: {
+{self, ...}: {
   flake.modules.nixos.default = {
     lib,
     config,
@@ -35,6 +35,20 @@
             }
           ];
         }
+        {
+          users = ["backups"];
+          runAs = "nextcloud:nextcloud";
+          commands = [
+            {
+              command = toString enableMaintenanceMode;
+              options = ["NOPASSWD"];
+            }
+            {
+              command = toString disableMaintenanceMode;
+              options = ["NOPASSWD"];
+            }
+          ];
+        }
       ];
 
       homelab.backups = {
@@ -46,6 +60,18 @@
           hooks = {
             before = ["${sudo} -u nextcloud -g nextcloud ${enableMaintenanceMode}"];
             after = ["${sudo} -u nextcloud -g nextcloud ${disableMaintenanceMode}"];
+          };
+        };
+        recipes.nextcloud = self.lib.mkBackupRecipe pkgs {
+          name = "nextcloud";
+          paths = [datadir];
+          before = {
+            shell = "bash";
+            command = "${sudo} -u nextcloud -g nextcloud ${enableMaintenanceMode}";
+          };
+          after = {
+            shell = "bash";
+            command = "${sudo} -u nextcloud -g nextcloud ${disableMaintenanceMode}";
           };
         };
         joinGroups = ["nextcloud"];

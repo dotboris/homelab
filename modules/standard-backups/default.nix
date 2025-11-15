@@ -100,7 +100,9 @@
         # Ensure backends and recipes are discovered
         environment.XDG_DATA_DIRS = lib.makeSearchPath "share" packages;
         # Ensure backends can run
-        path = packages;
+        path = packages ++ [
+          pkgs.bash # to run hooks
+        ];
         scriptArgs = "%i";
         script = ''
           standard-backups backup "$1"
