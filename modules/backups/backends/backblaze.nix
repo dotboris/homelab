@@ -1,4 +1,4 @@
-{...}: {
+{self, ...}: {
   flake.modules.nixos.default = {
     lib,
     config,
@@ -56,8 +56,7 @@
             backblazeKeyId.from-file = config.sops.secrets."backups/repos/backblaze/keyId".path;
             backblazeKey.from-file = config.sops.secrets."backups/repos/backblaze/key".path;
           };
-          destinations.backblaze = {
-            backend = "restic";
+          destinations.backblaze = self.lib.mkResticDestination {
             options = {
               repo = "b2:${cfg.bucketName}";
               env = {
