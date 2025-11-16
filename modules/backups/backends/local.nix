@@ -6,7 +6,6 @@
   }:
     with lib; let
       cfg = config.homelab.backups.backends.local;
-      autoresticCfg = config.services.autorestic;
     in {
       options.homelab.backups.backends.local = {
         enable = mkEnableOption "homelab backend local backend";
@@ -16,34 +15,12 @@
         };
       };
       config = mkIf cfg.enable {
-        sops = let
-          password = "backups/repos/local/password";
-        in {
-          secrets = {
-            ${password} = {
-              owner = "backups";
-            };
-          };
-          templates."homelab-backups-local-backend.env" = {
-            owner = autoresticCfg.user;
-            content = ''
-              AUTORESTIC_LOCAL_RESTIC_PASSWORD=${config.sops.placeholder.${password}}
-            '';
-          };
+        sops.secrets."backups/repos/local/password" = {
+          owner = "backups";
         };
-
         systemd.tmpfiles.rules = [
           "d ${cfg.path} 0700 backups backups"
         ];
-        services.autorestic = {
-          environmentFiles = [config.sops.templates."homelab-backups-local-backend.env".path];
-          settings = {
-            backends.local = {
-              inherit (cfg) path;
-              type = "local";
-            };
-          };
-        };
         services.standard-backups.settings = {
           secrets.localPassword.from-file = config.sops.secrets."backups/repos/local/password".path;
           destinations.local = self.lib.mkResticDestination {

@@ -20,7 +20,10 @@
 
     cfg = config.homelab.backups;
     autoresticCfg = config.services.autorestic;
-    backendKeys = builtins.attrNames autoresticCfg.settings.backends;
+    backendKeys = builtins.attrNames (autoresticCfg.settings.backends or {});
+
+    sbCfg = config.services.standard-backups;
+    destinationKeys = builtins.attrNames sbCfg.settings.destinations;
 
     ntfyTopic = "https://${config.homelab.reverseProxy.vhosts.ntfy.fqdn}/backups";
     notifyFailure = pkgs.writeShellScript "notify-backup-failure.sh" ''
@@ -110,7 +113,7 @@
         settings.jobs =
           lib.mapAttrs (name: _: {
             recipe = name;
-            backup-to = backendKeys;
+            backup-to = destinationKeys;
             on-failure = {
               shell = "bash";
               command = ''

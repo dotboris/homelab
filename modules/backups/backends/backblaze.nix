@@ -6,48 +6,23 @@
   }:
     with lib; let
       cfg = config.homelab.backups.backends.backblaze;
-      autoresticCfg = config.services.autorestic;
     in {
       options.homelab.backups.backends.backblaze = {
-        enable = mkEnableOption "homelab backend backblaze backend";
+        enable = mkEnableOption "homelab backups backblaze backend";
         bucketName = mkOption {
           type = types.str;
         };
       };
       config = mkIf cfg.enable {
-        sops = let
-          password = "backups/repos/backblaze/password";
-          keyId = "backups/repos/backblaze/keyId";
-          key = "backups/repos/backblaze/key";
-        in {
-          secrets = {
-            ${password} = {
-              owner = "backups";
-            };
-            ${keyId} = {
-              owner = "backups";
-            };
-            ${key} = {
-              owner = "backups";
-            };
+        sops.secrets = {
+          "backups/repos/backblaze/password" = {
+            owner = "backups";
           };
-          templates."homelab-backups-backblaze-backend.env" = {
-            owner = autoresticCfg.user;
-            content = ''
-              AUTORESTIC_BACKBLAZE_RESTIC_PASSWORD=${config.sops.placeholder.${password}}
-              AUTORESTIC_BACKBLAZE_B2_ACCOUNT_ID=${config.sops.placeholder.${keyId}}
-              AUTORESTIC_BACKBLAZE_B2_ACCOUNT_KEY=${config.sops.placeholder.${key}}
-            '';
+          "backups/repos/backblaze/keyId" = {
+            owner = "backups";
           };
-        };
-
-        services.autorestic = {
-          environmentFiles = [config.sops.templates."homelab-backups-backblaze-backend.env".path];
-          settings = {
-            backends.backblaze = {
-              type = "b2";
-              path = cfg.bucketName;
-            };
+          "backups/repos/backblaze/key" = {
+            owner = "backups";
           };
         };
         services.standard-backups.settings = {
