@@ -7,7 +7,6 @@
   }:
     with lib; let
       cfg = config.homelab.backups.github;
-      autoresticCfg = config.services.autorestic;
       syncGithubScript = pkgs.writeShellApplication {
         name = "sync-github-for-backups.sh";
         runtimeInputs = [
@@ -83,10 +82,6 @@
         systemd.tmpfiles.rules = [
           "d ${cfg.syncDir} 0700 backups backups"
         ];
-        homelab.backups.locations.github = {
-          hooks.before = ["${syncGithubScript}/bin/sync-github-for-backups.sh"];
-          from = cfg.syncDir;
-        };
         homelab.backups.recipes.github = self.lib.mkBackupRecipe pkgs {
           name = "github";
           paths = [cfg.syncDir];

@@ -8,9 +8,6 @@
   in {
     config = {
       homelab.backups = {
-        locations.freshrss = {
-          from = freshrssCfg.dataDir;
-        };
         recipes.freshrss = self.lib.mkBackupRecipe pkgs {
           name = "freshrss";
           paths = [freshrssCfg.dataDir];

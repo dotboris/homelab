@@ -8,7 +8,6 @@
     inherit (lib) mkIf;
     inherit (config.services.nextcloud) datadir occ;
     cfg = config.homelab.nextcloud;
-    autoresticCfg = config.services.autorestic;
     sudo = "/run/wrappers/bin/sudo";
     enableMaintenanceMode =
       pkgs.writeShellScript
@@ -21,20 +20,6 @@
   in {
     config = mkIf cfg.enable {
       security.sudo.extraRules = [
-        {
-          users = [autoresticCfg.user];
-          runAs = "nextcloud:nextcloud";
-          commands = [
-            {
-              command = toString enableMaintenanceMode;
-              options = ["NOPASSWD"];
-            }
-            {
-              command = toString disableMaintenanceMode;
-              options = ["NOPASSWD"];
-            }
-          ];
-        }
         {
           users = ["backups"];
           runAs = "nextcloud:nextcloud";
@@ -50,18 +35,7 @@
           ];
         }
       ];
-
       homelab.backups = {
-        locations.nextcloud = {
-          from = datadir;
-          options.backup.exclude = [
-            ".rnd"
-          ];
-          hooks = {
-            before = ["${sudo} -u nextcloud -g nextcloud ${enableMaintenanceMode}"];
-            after = ["${sudo} -u nextcloud -g nextcloud ${disableMaintenanceMode}"];
-          };
-        };
         recipes.nextcloud = self.lib.mkBackupRecipe pkgs {
           name = "nextcloud";
           paths = [datadir];

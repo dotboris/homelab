@@ -4,7 +4,6 @@
     config,
     ...
   }: let
-    autoresticCfg = config.services.autorestic;
     exportDir = "/var/lib/paperless-export";
     exportScript = pkgs.writeShellApplication {
       name = "paperless-export-for-backups";
@@ -30,16 +29,6 @@
       ];
       security.sudo.extraRules = [
         {
-          users = [autoresticCfg.user];
-          runAs = "paperless:${autoresticCfg.group}";
-          commands = [
-            {
-              command = "${exportCmd}";
-              options = ["NOPASSWD"];
-            }
-          ];
-        }
-        {
           users = ["backups"];
           runAs = "paperless:backups";
           commands = [
@@ -51,12 +40,6 @@
         }
       ];
       homelab.backups = {
-        locations.paperless = {
-          hooks.before = [
-            "/run/wrappers/bin/sudo -u paperless -g backups ${exportCmd}"
-          ];
-          from = exportDir;
-        };
         recipes.paperless = self.lib.mkBackupRecipe pkgs {
           name = "paperless";
           paths = [exportDir];
