@@ -52,6 +52,15 @@
         '';
       };
       checkAt = unitOptions.stage2ServiceOptions.options.startAt;
+      # Copied from `services.standard-backups.jobSchedules` for convenience
+      jobSchedules = lib.mkOption {
+        type = lib.types.attrsOf lib.types.str;
+        default = {};
+        description = ''
+          When to run the different backup jobs. Key is the job name,
+          value is a string who's format is described by systemd.time(7)
+        '';
+      };
     };
 
     config = mkIf cfg.enable {
@@ -104,6 +113,7 @@
       };
 
       services.standard-backups = {
+        inherit (cfg) jobSchedules;
         enable = true;
         user = "backups";
         group = "backups";
