@@ -35,8 +35,8 @@
           # - 00:00 EDT = 04:00 UTC (daylight saving's time)
           # - 00:00 EST = 05:00 UTC (normal time)
           checkAt = "*-*-01 00:00:00 America/Toronto";
-          backends.local.enable = true;
-          backends.backblaze = {
+          destinations.local.enable = true;
+          destinations.backblaze = {
             enable = true;
             bucketName = "dotboris-homelab-backups";
           };

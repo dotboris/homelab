@@ -5,10 +5,10 @@
     ...
   }:
     with lib; let
-      cfg = config.homelab.backups.backends.backblaze;
+      cfg = config.homelab.backups.destinations.backblaze;
       sbCfg = config.services.standard-backups;
     in {
-      options.homelab.backups.backends.backblaze = {
+      options.homelab.backups.destinations.backblaze = {
         enable = mkEnableOption "homelab backups backblaze backend";
         bucketName = mkOption {
           type = types.str;

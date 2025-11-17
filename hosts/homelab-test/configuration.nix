@@ -30,8 +30,8 @@
 
         backups = {
           enable = true;
-          backends.local.enable = true;
-          backends.backblaze = {
+          destinations.local.enable = true;
+          destinations.backblaze = {
             enable = true;
             bucketName = "dotboris-homelab-test-backups";
           };
