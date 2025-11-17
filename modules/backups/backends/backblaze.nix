@@ -6,11 +6,20 @@
   }:
     with lib; let
       cfg = config.homelab.backups.backends.backblaze;
+      sbCfg = config.services.standard-backups;
     in {
       options.homelab.backups.backends.backblaze = {
         enable = mkEnableOption "homelab backups backblaze backend";
         bucketName = mkOption {
           type = types.str;
+        };
+        checkAt = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          description = ''
+            When to check the integrity of the backblaze destination. Integrity
+            checks only run when this is set.
+          '';
         };
       };
       config = mkIf cfg.enable {
@@ -24,6 +33,19 @@
           "backups/repos/backblaze/key" = {
             owner = "backups";
           };
+        };
+        systemd.services.backups-check-backblaze-destination = {
+          description = "Check integrity of the backblaze backup destination";
+          serviceConfig = {
+            Type = "oneshot";
+            User = sbCfg.user;
+            Group = sbCfg.group;
+          };
+          path = [sbCfg.wrapper];
+          script = ''
+            standard-backups exec -d backblaze -- check --read-data
+          '';
+          startAt = lib.mkIf (cfg.checkAt != null) cfg.checkAt;
         };
         services.standard-backups.settings = {
           secrets = {

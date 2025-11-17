@@ -39,7 +39,7 @@
           enable = true;
           backends.local.enable = true;
           backends.backblaze = {
-            enable = false;
+            enable = true;
             bucketName = "dotboris-homelab-test-backups";
           };
           github = {
