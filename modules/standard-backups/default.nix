@@ -24,6 +24,15 @@
           where you include packages holding backends and recipes.
         '';
       };
+      wrapper = lib.mkOption {
+        type = lib.types.package;
+        description = ''
+          Wrapper program around `standard-backups` that sets all environment
+          variables correctly and runs as the right user / group.  This is set
+          automatically and is meant to help you call `standard-backups` in
+          your own systemd units.
+        '';
+      };
       settings = lib.mkOption {
         type = lib.types.attrsOf lib.types.anything;
         default = {};
@@ -60,24 +69,32 @@
     };
 
     config = lib.mkIf cfg.enable {
-      services.standard-backups.settings.version = 1;
-      environment = let
-        # Wrapper that is run by people. If it's not run as the right user, it
-        # switches to the right one using sudo.
-        wrapper = pkgs.writeShellScriptBin "standard-backups" ''
-          run=exec
-          if [[ "$USER" != "${lib.escapeShellArg cfg.user}" ]]; then
-          ${
-            if config.security.sudo.enable
-            then "run='exec ${config.security.wrapperDir}/sudo -u ${cfg.user} -E'"
-            else ">&2 echo 'Aborting, standard-backups must be run as user `${cfg.user}`!'; exit 2"
-          }
-          fi
-          $run ${lib.getExe cfg.package} "$@"
-        '';
-      in {
-        systemPackages = [wrapper] ++ cfg.extraPackages;
-        pathsToLink = ["/share/standard-backups"];
+      services.standard-backups = {
+        settings.version = 1;
+        wrapper = pkgs.writeShellApplication {
+          name = "standard-backups";
+          runtimeInputs =
+            [
+              cfg.package
+              pkgs.bash # to run hooks
+            ]
+            ++ cfg.extraPackages;
+          runtimeEnv.XDG_DATA_DIRS = lib.makeSearchPath "share" ([cfg.package] ++ cfg.extraPackages);
+          text = ''
+            run="exec"
+            if [[ "$USER" != "${lib.escapeShellArg cfg.user}" ]]; then
+            ${
+              if config.security.sudo.enable
+              then "run='exec ${config.security.wrapperDir}/sudo -u ${cfg.user} -E'"
+              else ">&2 echo 'Aborting, standard-backups must be run as user `${cfg.user}`!'; exit 2"
+            }
+            fi
+            $run ${lib.getExe cfg.package} "$@"
+          '';
+        };
+      };
+      environment = {
+        systemPackages = [cfg.wrapper];
         etc."standard-backups/config.yaml" = {
           source = let
             yaml = pkgs.formats.yaml {};
@@ -85,27 +102,16 @@
             yaml.generate "standard-backups-config" cfg.settings;
         };
       };
-      systemd.services."standard-backups@" = let
-        packages = [cfg.package] ++ cfg.extraPackages;
-      in {
+      systemd.services."standard-backups@" = {
         description = "Runs a standard-backups job";
         serviceConfig = {
           Type = "oneshot";
           User = cfg.user;
           Group = cfg.group;
         };
-        # Ensure backends and recipes are discovered
-        environment.XDG_DATA_DIRS = lib.makeSearchPath "share" packages;
-        # Ensure backends can run
-        path =
-          packages
-          ++ [
-            pkgs.bash # to run hooks
-          ];
+        path = [cfg.wrapper];
         scriptArgs = "%i";
-        script = ''
-          standard-backups backup "$1"
-        '';
+        script = ''standard-backups backup "$1"'';
       };
       systemd.timers =
         lib.mapAttrs' (
