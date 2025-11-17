@@ -50,10 +50,7 @@
         '';
       };
       jobSchedules = lib.mkOption {
-        type =
-          lib.types.attrsOf
-          lib.types.str;
-        # utils.systemdUtils.unitOptions.stage2ServiceOptions.options.startAt;
+        type = lib.types.attrsOf lib.types.str;
         default = {};
         description = ''
           When to run the different `standard-backups` jobs. Key is the job name
@@ -100,9 +97,11 @@
         # Ensure backends and recipes are discovered
         environment.XDG_DATA_DIRS = lib.makeSearchPath "share" packages;
         # Ensure backends can run
-        path = packages ++ [
-          pkgs.bash # to run hooks
-        ];
+        path =
+          packages
+          ++ [
+            pkgs.bash # to run hooks
+          ];
         scriptArgs = "%i";
         script = ''
           standard-backups backup "$1"
