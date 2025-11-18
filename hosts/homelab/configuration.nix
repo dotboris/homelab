@@ -30,15 +30,20 @@
 
         backups = {
           enable = true;
-          # Runs monthly.
-          # ATTN: Don't overlap backup schedule. Beware timezone differences.
-          # - 00:00 EDT = 04:00 UTC (daylight saving's time)
-          # - 00:00 EST = 05:00 UTC (normal time)
-          checkAt = "*-*-01 00:00:00 America/Toronto";
-          destinations.local.enable = true;
+          destinations.local = {
+            enable = true;
+            checkAt = "*-*-01 00:00:00 America/Toronto";
+          };
           destinations.backblaze = {
             enable = true;
             bucketName = "dotboris-homelab-backups";
+            checkAt = "*-*-01 00:30:00 America/Toronto";
+          };
+          jobSchedules = {
+            paperless = "01/6:00:00 America/Toronto";
+            freshrss = "01/6:15:00 America/Toronto";
+            github = "01:30:00 America/Toronto";
+            nextcloud = "01:45:00 America/Toronto";
           };
           github = {
             enable = true;
@@ -49,13 +54,6 @@
             githubOrg = "dotboris";
             appId = "1030841";
             installationId = "56188691";
-          };
-          locations = {
-            # NOTE: times are in UTC
-            paperless.cron = "0 */6 * * *";
-            freshrss.cron = "0 */6 * * *";
-            github.cron = "0 1 * * *";
-            nextcloud.cron = "0 2 * * *";
           };
         };
       };
