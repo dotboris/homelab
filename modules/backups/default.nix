@@ -87,7 +87,7 @@
         groups.backups = {};
       };
       systemd.services."backups-check@" = {
-        description = "Check integrity of the local backup destination";
+        description = "Backup integrity check";
         serviceConfig = {
           Type = "oneshot";
           User = sbCfg.user;
