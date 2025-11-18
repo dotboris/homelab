@@ -3,44 +3,27 @@
     lib,
     pkgs,
     config,
-    utils,
     ...
   }: let
-    inherit
-      (lib)
-      mkIf
-      mkEnableOption
-      mkOption
-      types
-      ;
-    inherit (utils.systemdUtils) unitOptions;
-
     cfg = config.homelab.backups;
-
     sbCfg = config.services.standard-backups;
     destinationKeys = builtins.attrNames sbCfg.settings.destinations;
-
     ntfyTopic = "https://${config.homelab.reverseProxy.vhosts.ntfy.fqdn}/backups";
   in {
     options.homelab.backups = {
-      enable = mkEnableOption "homelab backups";
-      locations = mkOption {
-        type = types.attrsOf types.anything;
-        default = {};
-      };
+      enable = lib.mkEnableOption "homelab backups";
       recipes = lib.mkOption {
         type = lib.types.attrsOf lib.types.package;
         default = {};
       };
-      joinGroups = mkOption {
-        type = types.listOf types.str;
+      joinGroups = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
         default = [];
         description = ''
           List of groups to join the backup user to. This is useful to give the
           backup user access to files they normally wouldn't have access to.
         '';
       };
-      checkAt = unitOptions.stage2ServiceOptions.options.startAt;
       # Copied from `services.standard-backups.jobSchedules` for convenience
       jobSchedules = lib.mkOption {
         type = lib.types.attrsOf lib.types.str;
@@ -52,7 +35,7 @@
       };
     };
 
-    config = mkIf cfg.enable {
+    config = lib.mkIf cfg.enable {
       services.standard-backups = {
         inherit (cfg) jobSchedules;
         enable = true;
