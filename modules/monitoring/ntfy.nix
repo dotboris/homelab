@@ -38,20 +38,49 @@
           };
         };
 
-        systemd.services."ntfy-send@" = {
-          description = "send message to ntfy";
-          serviceConfig = {
-            Type = "oneshot";
-          };
-          environment = {
-            PAYLOAD = "%I";
-          };
+        # OnSuccess=/OnFailure= unit handler for ntfy. Depending on the result,
+        # will send a message to ntfy.
+        #
+        # Format is `ntfy-handler@{topic}--{comment}.service`:
+        # - `topic` - The ntfy topic to send the message to
+        # - `command` - Arbitrary value. Used to make instance name unique.
+        #
+        # IMPORTANT: The instance name (everything after `@` must be unique).
+        #   Use `comment` to achieve this.
+        systemd.services."ntfy-handler@" = {
+          serviceConfig.Type = "oneshot";
           path = [pkgs.curl];
+          scriptArgs = "%i";
           script = ''
-            curl \
-              --fail --silent --show-error \
-              -X POST https://${vhost.fqdn} \
-              -d "$PAYLOAD"
+            IFS=-- read -ra args <<< "$1"
+            topic="''${args[0]}"
+
+            priority=3
+            tag=tada
+            title="$MONITOR_UNIT completed"
+            if [[ "$MONITOR_EXIT_STATUS" != 0 ]]; then
+              priority=5
+              tag=rotating_light
+              title="$MONITOR_UNIT failed"
+            fi
+
+            (
+              echo **Result**:
+              echo '```'
+              env | grep '^MONITOR_'
+              echo '```'
+              echo
+              echo **Logs**:
+              echo '```'
+              journalctl --output=cat --invocation="$MONITOR_INVOCATION_ID"
+              echo '```'
+            ) | curl --fail --silent --show-error \
+              -X POST "https://${vhost.fqdn}/$topic" \
+              -H "Priority: $priority" \
+              -H "Title: $title" \
+              -H "Tag: $tag" \
+              -H "Markdown: yes" \
+              --data-binary @-
           '';
         };
 

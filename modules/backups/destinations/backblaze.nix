@@ -34,18 +34,12 @@
             owner = "backups";
           };
         };
-        systemd.services.backups-check-backblaze-destination = {
-          description = "Check integrity of the backblaze backup destination";
-          serviceConfig = {
-            Type = "oneshot";
-            User = sbCfg.user;
-            Group = sbCfg.group;
+        systemd.timers.backups-check-backblaze = lib.mkIf (cfg.checkAt != null) {
+          wantedBy = ["timers.target"];
+          timerConfig = {
+            Unit = "backups-check@backblaze.service";
+            OnCalendar = cfg.checkAt;
           };
-          path = [sbCfg.wrapper];
-          script = ''
-            standard-backups exec -d backblaze -- check --read-data
-          '';
-          startAt = lib.mkIf (cfg.checkAt != null) cfg.checkAt;
         };
         services.standard-backups.settings = {
           secrets = {

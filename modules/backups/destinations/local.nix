@@ -31,18 +31,12 @@
           tmpfiles.rules = [
             "d ${cfg.path} 0700 backups backups"
           ];
-          services.backups-check-local-destination = {
-            description = "Check integrity of the local backup destination";
-            serviceConfig = {
-              Type = "oneshot";
-              User = sbCfg.user;
-              Group = sbCfg.group;
+          timers.backups-check-local = lib.mkIf (cfg.checkAt != null) {
+            wantedBy = ["timers.target"];
+            timerConfig = {
+              Unit = "backups-check@local.service";
+              OnCalendar = cfg.checkAt;
             };
-            path = [sbCfg.wrapper];
-            script = ''
-              standard-backups exec -d local -- check --read-data
-            '';
-            startAt = lib.mkIf (cfg.checkAt != null) cfg.checkAt;
           };
         };
         services.standard-backups.settings = {
