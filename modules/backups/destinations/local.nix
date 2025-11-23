@@ -6,7 +6,6 @@
   }:
     with lib; let
       cfg = config.homelab.backups.destinations.local;
-      sbCfg = config.services.standard-backups;
     in {
       options.homelab.backups.destinations.local = {
         enable = mkEnableOption "homelab backend local backend";

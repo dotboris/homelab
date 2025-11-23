@@ -6,7 +6,6 @@
   }:
     with lib; let
       cfg = config.homelab.backups.destinations.backblaze;
-      sbCfg = config.services.standard-backups;
     in {
       options.homelab.backups.destinations.backblaze = {
         enable = mkEnableOption "homelab backups backblaze backend";

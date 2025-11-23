@@ -60,5 +60,21 @@ sops updatekeys hosts/.../secrets.sops.yaml
 
 Finally, deploy to the affected hosts.
 
+## Access a Host's Secrets
+
+It's possible to read secrets using regular `sops` commands. This is because my personal SSH key is able to decrypt all secrets.
+
+This is fine for simple stuff like taking a look and copy-pasting single variables. If you need something a little more beefy, you can use the `sops-shell` app:
+
+```sh
+nix run .#sops-shell {host}
+```
+
+This will open a new `fish` shell with the secrets for that host available in the `$secrets` environment variable as JSON. They can then be accessed with `jq`:
+
+```sh
+echo "$secrets" | jq -r '.path.to.some.secret'
+```
+
 [sops]: https://github.com/getsops/sops
 [sops-nix]: https://github.com/Mic92/sops-nix
