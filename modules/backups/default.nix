@@ -69,21 +69,27 @@
         };
         groups.backups = {};
       };
-      systemd.services."backups-check@" = {
-        description = "Backup integrity check";
-        serviceConfig = {
-          Type = "oneshot";
-          User = sbCfg.user;
-          Group = sbCfg.group;
+      systemd = {
+        tmpfiles.rules = [
+          "d /var/lib/homelab-backups 0700 backups backups"
+          "d /var/cache/homelab-backups/restic 0700 backups backups"
+        ];
+        services."backups-check@" = {
+          description = "Backup integrity check";
+          serviceConfig = {
+            Type = "oneshot";
+            User = sbCfg.user;
+            Group = sbCfg.group;
+          };
+          path = [sbCfg.wrapper];
+          scriptArgs = "%i";
+          script = ''
+            standard-backups exec -d "$1" -- check --read-data
+          '';
+          # We have to include `--{...}` to ensure each value is unique
+          onSuccess = ["ntfy-handler@backups--%p-%i-success.service"];
+          onFailure = ["ntfy-handler@backups--%p-%i-failure.service"];
         };
-        path = [sbCfg.wrapper];
-        scriptArgs = "%i";
-        script = ''
-          standard-backups exec -d "$1" -- check --read-data
-        '';
-        # We have to include `--{...}` to ensure each value is unique
-        onSuccess = ["ntfy-handler@backups--%p-%i-success.service"];
-        onFailure = ["ntfy-handler@backups--%p-%i-failure.service"];
       };
     };
   });

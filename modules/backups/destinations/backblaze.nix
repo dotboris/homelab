@@ -50,6 +50,7 @@
             options = {
               repo = "b2:${cfg.bucketName}";
               env = {
+                RESTIC_CACHE_DIR = "/var/cache/homelab-backups/restic";
                 RESTIC_PASSWORD = "{{ .Secrets.backblazePassword }}";
                 B2_ACCOUNT_ID = "{{ .Secrets.backblazeKeyId }}";
                 B2_ACCOUNT_KEY = "{{ .Secrets.backblazeKey }}";

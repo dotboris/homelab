@@ -43,7 +43,10 @@
           destinations.local = self.lib.mkResticDestination {
             options = {
               repo = cfg.path;
-              env.RESTIC_PASSWORD = "{{ .Secrets.localPassword }}";
+              env = {
+                RESTIC_CACHE_DIR = "/var/cache/homelab-backups/restic";
+                RESTIC_PASSWORD = "{{ .Secrets.localPassword }}";
+              };
             };
           };
         };
