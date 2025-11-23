@@ -99,6 +99,7 @@
             self'.packages.standard-backups
             self'.packages.standard-backups-restic-backend
             self'.packages.standard-backups-rsync-backend
+            pkgs.restic
           ];
         };
 
