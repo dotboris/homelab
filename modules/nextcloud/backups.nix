@@ -39,6 +39,11 @@
         recipes.nextcloud = self.lib.mkBackupRecipe pkgs {
           name = "nextcloud";
           paths = [datadir];
+          exclude = [
+            # Sometimes shows up in nextcloud dir. Apparently it's something
+            # OpenSSL sometimes drops in the home folder.
+            ".rnd"
+          ];
           before = {
             shell = "bash";
             command = "${sudo} -u nextcloud -g nextcloud ${enableMaintenanceMode}";
