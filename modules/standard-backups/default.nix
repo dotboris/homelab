@@ -14,7 +14,7 @@
     cfg = config.services.standard-backups;
   in {
     options.services.standard-backups = {
-      enable = lib.mkEnableOption "standard-backup";
+      enable = lib.mkEnableOption "standard-backups";
       package = lib.mkPackageOption self'.packages "standard-backups" {};
       extraPackages = lib.mkOption {
         type = lib.types.listOf lib.types.package;
@@ -116,7 +116,7 @@
       systemd.timers =
         lib.mapAttrs' (
           job: startTime:
-            lib.nameValuePair "standard-backup-${job}" {
+            lib.nameValuePair "standard-backups-${job}" {
               description = "Periodic backups for ${job} standard-backups job";
               wantedBy = ["timers.target"];
               timerConfig = {
