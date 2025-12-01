@@ -34,6 +34,10 @@
           enable = true;
           port = 8007;
         };
+        search = {
+          enable = true;
+          port = 8008;
+        };
 
         backups = {
           enable = true;
