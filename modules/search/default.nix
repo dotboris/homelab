@@ -39,6 +39,7 @@
           settings = {
             server = {
               inherit (cfg) port;
+              base_url = "https://${vhost.fqdn}";
               bind_address = "127.0.0.1";
               secret_key = "$SECRET_KEY";
             };
