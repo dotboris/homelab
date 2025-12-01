@@ -30,6 +30,7 @@
           "cloud.dotboris.io."
           "feeds.dotboris.io."
           "netdata.dotboris.io."
+          "search.dotboris.io."
           "traefik.dotboris.io."
           "ntfy.dotboris.io."
         ];
@@ -46,6 +47,7 @@
           "cloud-test.dotboris.io."
           "feeds-test.dotboris.io."
           "netdata-test.dotboris.io."
+          "search-test.dotboris.io."
           "traefik-test.dotboris.io."
           "ntfy-test.dotboris.io."
         ];
@@ -62,6 +64,7 @@
           "cloud-test-foxtrot.dotboris.io."
           "feeds-test-foxtrot.dotboris.io."
           "netdata-test-foxtrot.dotboris.io."
+          "search-test-foxtrot.dotboris.io."
           "traefik-test-foxtrot.dotboris.io."
           "ntfy-test-foxtrot.dotboris.io."
         ];
