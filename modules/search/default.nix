@@ -42,6 +42,10 @@
               bind_address = "127.0.0.1";
               secret_key = "$SECRET_KEY";
             };
+            search.formats = [
+              "html"
+              "json"
+            ];
           };
         };
         traefik.dynamicConfigOptions.http = {
