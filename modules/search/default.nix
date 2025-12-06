@@ -66,7 +66,6 @@
             threads = 4;
             offload-threads = "%k";
           };
-          redisCreateLocally = true;
         };
         traefik.dynamicConfigOptions.http = {
           routers.search = {
