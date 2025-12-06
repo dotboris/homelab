@@ -24,6 +24,8 @@
 
       # Configure Netdata to listen to it
       services.netdata.configDir."go.d/traefik.conf" = yaml.generate "traefik.conf" {
+        # Sometimes there's a race condition on boot so we retry to make sure we pick it up
+        autodetection_retry = 30;
         jobs = [
           {
             name = "local";
