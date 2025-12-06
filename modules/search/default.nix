@@ -40,6 +40,13 @@
             server = {
               base_url = "https://${vhost.fqdn}";
               secret_key = "$SECRET_KEY";
+              method = "GET";
+              default_http_headers = {
+                X-Content-Type-Options = "nosniff";
+                X-Download-Options = "noopen";
+                X-Robots-Tag = "noindex, nofollow";
+                Referrer-Policy = "no-referrer";
+              };
             };
             search = {
               formats = [
