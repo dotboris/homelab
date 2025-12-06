@@ -38,15 +38,25 @@
           environmentFile = config.sops.templates."searx.env".path;
           settings = {
             server = {
-              inherit (cfg) port;
               base_url = "https://${vhost.fqdn}";
-              bind_address = "127.0.0.1";
               secret_key = "$SECRET_KEY";
             };
-            search.formats = [
-              "html"
-              "json"
-            ];
+            search = {
+              formats = [
+                "html"
+                "json"
+              ];
+              autocomplete = "brave";
+              autocomplete_min = 4;
+              favicon_resolver = "duckduckgo";
+            };
+          };
+          runInUwsgi = true;
+          uwsgiConfig = {
+            http = "127.0.0.1:${builtins.toString cfg.port}";
+            disable-logging = true; # It logs queries by default
+            workers = "%k";
+            threads = 4;
           };
         };
         traefik.dynamicConfigOptions.http = {
