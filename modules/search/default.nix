@@ -57,7 +57,9 @@
             disable-logging = true; # It logs queries by default
             workers = "%k";
             threads = 4;
+            offload-threads = "%k";
           };
+          redisCreateLocally = true;
         };
         traefik.dynamicConfigOptions.http = {
           routers.search = {
