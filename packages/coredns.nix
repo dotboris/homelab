@@ -9,7 +9,7 @@
           position.before = "forward";
         }
       ];
-      vendorHash = "sha256-0GaAaCOrXn2WXkqGltOntZ+W6M1NouWs9ymic8Ajs8k=";
+      vendorHash = "sha256-Drakfm+dzLmHlLHfl6O4tfOe1bRZRSYpTGkpkhXHY0w=";
     };
   };
 }
