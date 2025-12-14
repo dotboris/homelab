@@ -2,8 +2,7 @@
   description = "Home Lab / Home Server";
 
   inputs = {
-    nixpkgs.url = "github:NixOs/nixpkgs/nixos-25.05";
-    nixpkgs-unstable.url = "github:NixOs/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOs/nixpkgs/nixos-25.11";
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
     nixos-images = {
@@ -38,7 +37,6 @@
     flake-parts,
     import-tree,
     nixpkgs,
-    nixpkgs-unstable,
     ...
   }:
     flake-parts.lib.mkFlake {inherit inputs;} ({withSystem, ...}: {
@@ -58,24 +56,14 @@
         inputs',
         ...
       }: {
-        _module.args.pkgs = let
-          pkgsUnstable = import nixpkgs-unstable {
-            inherit system;
-          };
-        in
-          import nixpkgs {
-            inherit system;
-            config.allowUnfreePredicate = pkg:
-              builtins.elem (nixpkgs.lib.getName pkg) [
-                "netdata" # The UI is non OSS. It's under its own funny license.
-              ];
-            overlays = [
-              # Use unstable coredns. It's supports ordering plugins correctly
-              (prev: final: {
-                inherit (pkgsUnstable) coredns;
-              })
+        _module.args.pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfreePredicate = pkg:
+            builtins.elem (nixpkgs.lib.getName pkg) [
+              "netdata" # The UI is non OSS. It's under its own funny license.
             ];
-          };
+          overlays = [];
+        };
         formatter = pkgs.writeShellApplication {
           name = "alejandra-format-repo";
           runtimeInputs = [pkgs.alejandra];
