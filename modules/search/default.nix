@@ -58,7 +58,7 @@
               favicon_resolver = "duckduckgo";
             };
           };
-          runInUwsgi = true;
+          configureUwsgi = true;
           uwsgiConfig = {
             http = "127.0.0.1:${builtins.toString cfg.port}";
             disable-logging = true; # It logs queries by default

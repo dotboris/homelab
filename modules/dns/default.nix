@@ -1,5 +1,9 @@
-{self, ...}: {
-  flake.modules.nixos.dns = {
+{
+  self,
+  moduleWithSystem,
+  ...
+}: {
+  flake.modules.nixos.dns = moduleWithSystem ({self', ...}: {
     lib,
     config,
     pkgs,
@@ -14,7 +18,7 @@
       types
       ;
     inherit
-      (self.packages.${pkgs.system})
+      (self'.packages)
       coredns
       anudeepnd-allowlist
       stevenblack-blocklist
@@ -187,6 +191,6 @@
       networking.nameservers = ["127.0.0.1:${toString cfg.port}"];
       networking.firewall.allowedUDPPorts = [cfg.port];
     };
-  };
+  });
   flake.modules.nixos.default = self.modules.nixos.dns;
 }
