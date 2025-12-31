@@ -1,11 +1,13 @@
 {self, ...}: {
   flake.modules.nixosTest.dns = {pkgs, ...}: {
+    defaults = {
+      virtualisation.vlans = [1 2];
+    };
     nodes = {
       server = {...}: {
         imports = [
           self.modules.nixos.dns
         ];
-        virtualisation.vlans = [1 2];
         homelab.dns = {
           enable = true;
           lanCidr = "192.168.1.0/24"; # eth1
@@ -13,7 +15,6 @@
         };
       };
       client = {...}: {
-        virtualisation.vlans = [1 2];
         environment.systemPackages = [
           pkgs.busybox # for nslookup
         ];
@@ -25,8 +26,8 @@
     in ''
       start_all()
       server.wait_for_unit("coredns.service")
-      server.wait_for_unit("default.target")
-      client.wait_for_unit("default.target")
+      server.wait_for_unit("network.target")
+      client.wait_for_unit("network.target")
 
       with subtest("internal ips (lan)"):
         assert "10.0.42.2" in client.succeed("nslookup homelab.lan ${serverIp "eth1"}")
