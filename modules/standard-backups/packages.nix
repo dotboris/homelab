@@ -8,6 +8,7 @@
         sha256 = "sha256-X3xpB16eEaIppo5Zuh24lGyjlhqFpny9vwEBdxmfYQ8=";
       };
       vendorHash = "sha256-opoiYohJxS6lHCZSmsWjlbcEerlvtfPZrHaxVU3o6Xs=";
+      version = "main-${builtins.substring 0 7 src.rev}";
       generateBackendManifest = pkgs.writeShellApplication {
         name = "generateBackendManifest";
         text = ''
@@ -25,14 +26,14 @@
       };
     in {
       standard-backups = pkgs.buildGoModule rec {
-        inherit src vendorHash;
-        name = "standard-backups";
+        inherit src vendorHash version;
+        pname = "standard-backups";
         subPackages = ["cmd/standard-backups"];
-        meta.mainProgram = name;
+        meta.mainProgram = pname;
       };
       standard-backups-restic-backend = pkgs.buildGoModule rec {
-        inherit src vendorHash;
-        name = "standard-backups-restic-backend";
+        inherit src vendorHash version;
+        pname = "standard-backups-restic-backend";
         subPackages = ["cmd/standard-backups-restic-backend"];
         nativeBuildInputs = [
           pkgs.makeWrapper
@@ -45,11 +46,11 @@
           wrapProgram $out/bin/standard-backups-restic-backend \
             --prefix PATH : ${pkgs.restic}/bin
         '';
-        meta.mainProgram = name;
+        meta.mainProgram = pname;
       };
       standard-backups-rsync-backend = pkgs.buildGoModule rec {
-        inherit src vendorHash;
-        name = "standard-backups-rsync-backend";
+        inherit src vendorHash version;
+        pname = "standard-backups-rsync-backend";
         subPackages = ["cmd/standard-backups-rsync-backend"];
         nativeBuildInputs = [
           pkgs.makeWrapper
@@ -62,7 +63,7 @@
           wrapProgram $out/bin/standard-backups-rsync-backend \
             --prefix PATH : ${pkgs.rsync}/bin
         '';
-        meta.mainProgram = name;
+        meta.mainProgram = pname;
       };
     };
   };
