@@ -56,8 +56,22 @@ There are custom package in this repo. Some of these packages pull source from o
 nix run .#update-packages
 ```
 
-This will update all packages in the flake with `passthru.update = true;`. If
-you want to update a package, add that to the derivation.
+This will update all packages in the flake with `passthru.updateScript = ...;`.
+If you want to update a package, add the following to the derivation.
+
+```nix
+{self, ...}: {
+  perSystem = {pkgs, ...}: {
+    packages.my-package = pkgs.stdenv.mkDerivation rec {
+      pname = "my-package";
+      version = "...";
+      passthru.updateScript = self.lib.updateScript {inherit pkgs pname;};
+    };
+  };
+}
+```
+
+You can also update a single package by running `nix run .#{pname}.updateScript`.
 
 ### Flake lock
 

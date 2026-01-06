@@ -1,4 +1,4 @@
-{...}: {
+{self, ...}: {
   perSystem = {pkgs, ...}: {
     packages.stevenblack-blocklist = pkgs.stdenv.mkDerivation rec {
       pname = "stevenblack-blocklist";
@@ -27,7 +27,7 @@
         mkdir -p $out
         cp blocklist.txt $out/blocklist.txt
       '';
-      passthru.update = true;
+      passthru.updateScript = self.lib.updateScript {inherit pkgs pname;};
     };
   };
 }

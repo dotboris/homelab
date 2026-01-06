@@ -1,4 +1,4 @@
-{...}: {
+{self, ...}: {
   perSystem = {pkgs, ...}: {
     packages.anudeepnd-allowlist = pkgs.stdenv.mkDerivation rec {
       pname = "anudeepnd-allowlist";
@@ -13,7 +13,7 @@
         mkdir -p $out/domains
         cp domains/whitelist.txt $out/domains/whitelist.txt
       '';
-      passthru.update = true;
+      passthru.updateScript = self.lib.updateScript {inherit pkgs pname;};
     };
   };
 }

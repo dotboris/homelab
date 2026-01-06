@@ -1,4 +1,4 @@
-{...}: {
+{self, ...}: {
   perSystem = {pkgs, ...}: {
     packages = let
       src = pkgs.fetchFromGitHub {
@@ -8,7 +8,7 @@
         sha256 = "sha256-X3xpB16eEaIppo5Zuh24lGyjlhqFpny9vwEBdxmfYQ8=";
       };
       vendorHash = "sha256-opoiYohJxS6lHCZSmsWjlbcEerlvtfPZrHaxVU3o6Xs=";
-      version = "main-${builtins.substring 0 7 src.rev}";
+      version = "${builtins.substring 0 7 src.rev}";
       generateBackendManifest = pkgs.writeShellApplication {
         name = "generateBackendManifest";
         text = ''
@@ -30,6 +30,10 @@
         pname = "standard-backups";
         subPackages = ["cmd/standard-backups"];
         meta.mainProgram = pname;
+        passthru.updateScript = self.lib.updateScript {
+          inherit pkgs pname;
+          extraArgs = ["--version=branch=main"];
+        };
       };
       standard-backups-restic-backend = pkgs.buildGoModule rec {
         inherit src vendorHash version;
