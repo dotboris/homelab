@@ -4,10 +4,10 @@
       src = pkgs.fetchFromGitHub {
         owner = "dotboris";
         repo = "standard-backups";
-        rev = "f5d0cc85f8804e7e518580799141ce519cb61375";
-        sha256 = "sha256-X3xpB16eEaIppo5Zuh24lGyjlhqFpny9vwEBdxmfYQ8=";
+        rev = "0b6703515cc2b6478ef4cbc3766b05ae86f178c3";
+        sha256 = "sha256-XS5Sw6n/Gg3z3Yddi6+JEtUL3FFs0fvOKe7IF+bo+Uw=";
       };
-      vendorHash = "sha256-opoiYohJxS6lHCZSmsWjlbcEerlvtfPZrHaxVU3o6Xs=";
+      vendorHash = "sha256-5d5r+uIVrhYrh+wNd44Tdzzn8uqhW3vwL6HKF0PdWkk=";
       version = "${builtins.substring 0 7 src.rev}";
       generateBackendManifest = pkgs.writeShellApplication {
         name = "generateBackendManifest";
