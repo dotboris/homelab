@@ -58,6 +58,7 @@
           extraApps = {
             inherit
               (nextcloud.packages.apps)
+              bookmarks
               calendar
               contacts
               deck
