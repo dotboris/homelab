@@ -64,7 +64,15 @@
             storage = acmeStoreFile;
             dnsChallenge = {
               provider = "cloudflare";
-              delayBeforeCheck = 0;
+              propagation = {
+                # Normally, lego (the lib that used for ACME challenges)  checks
+                # that the TXT record with the SOA server is right before having
+                # the letsencrypt servers do the check. For some unknown reason
+                # this sometimes fails completely. Instead we just sleep and
+                # hope for the best.
+                disableANSChecks = true;
+                delayBeforeChecks = 60;
+              };
             };
           };
         };
