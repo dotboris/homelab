@@ -77,15 +77,7 @@
         hostName = "homelab";
         useDHCP = false;
         interfaces = {
-          # New hardware
           enp1s0.ipv4.addresses = [
-            {
-              address = "10.0.42.2";
-              prefixLength = 24;
-            }
-          ];
-          # Old hardware
-          enp2s0.ipv4.addresses = [
             {
               address = "10.0.42.2";
               prefixLength = 24;
@@ -94,7 +86,7 @@
         };
         defaultGateway = {
           address = "10.0.42.1";
-          interface = "enp2s0";
+          interface = "enp1s0";
         };
       };
     };
