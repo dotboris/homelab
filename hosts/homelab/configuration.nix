@@ -1,9 +1,16 @@
-{config, ...}: {
+{
+  config,
+  inputs,
+  ...
+}: {
   flake.hosts.homelab = {
     hostname = "homelab.lan";
     system = "x86_64-linux";
     module = {...}: {
-      imports = [config.flake.modules.nixos.default];
+      imports = [
+        inputs.nixos-hardware.nixosModules.dell-optiplex-3050
+        config.flake.modules.nixos.default
+      ];
 
       system.stateVersion = "25.05";
 
@@ -69,9 +76,13 @@
         age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
         gnupg.sshKeyPaths = []; # Turn off GPG key gen
       };
-
-      # Use the GRUB 2 boot loader.
-      boot.loader.grub.enable = true;
+      boot.loader = {
+        efi.canTouchEfiVariables = true;
+        grub = {
+          enable = true; # Use the GRUB 2 boot loader.
+          efiSupport = true;
+        };
+      };
 
       networking = {
         hostName = "homelab";

@@ -5,6 +5,7 @@
     nixpkgs.url = "github:NixOs/nixpkgs/nixos-25.11";
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixos-images = {
       url = "github:nix-community/nixos-images";
       inputs = {

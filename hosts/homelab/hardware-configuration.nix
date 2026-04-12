@@ -13,18 +13,10 @@
     ];
     boot = {
       initrd = {
-        availableKernelModules = [
-          "uhci_hcd"
-          "ehci_pci"
-          "ahci"
-          "firewire_ohci"
-          "usbhid"
-          "usb_storage"
-          "sd_mod"
-        ];
-        kernelModules = [];
+        availableKernelModules = ["xhci_pci" "ahci" "usb_storage" "sd_mod"];
+        kernelModules = ["dm-snapshot"];
       };
-      kernelModules = [];
+      kernelModules = ["kvm-intel"];
       extraModulePackages = [];
     };
 
