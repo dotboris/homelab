@@ -20,7 +20,7 @@
           {
             category = "services";
             title = "Music";
-            icon = "navidrome.svg";
+            icon = "navidrome.png"; # using PNG because the SVG is animated
             description = "Navidrome";
             urlVhost = "music";
           }
