@@ -5,12 +5,17 @@
     ...
   }: let
     cfg = config.homelab.music;
+    navidromeCfg = config.services.navidrome;
     vhost = config.homelab.reverseProxy.vhosts.music;
   in {
     options.homelab.music = {
       enable = lib.mkEnableOption "music streaming";
       port = lib.mkOption {
         type = lib.types.port;
+      };
+      musicDir = lib.mkOption {
+        type = lib.types.str;
+        default = "/srv/music";
       };
     };
     config = lib.mkIf cfg.enable {
@@ -26,12 +31,22 @@
           }
         ];
       };
+      users.groups.music = {
+        members = [
+          navidromeCfg.user
+          "dotboris"
+        ];
+      };
+      systemd.tmpfiles.rules = [
+        "d ${cfg.musicDir} 2770 root music"
+      ];
       services = {
         navidrome = {
           enable = true;
           settings = {
             Port = cfg.port;
             EnableInsightsCollector = false;
+            MusicFolder = cfg.musicDir;
           };
         };
         traefik.dynamicConfigOptions.http = {
