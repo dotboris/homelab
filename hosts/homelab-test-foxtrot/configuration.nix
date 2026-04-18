@@ -38,6 +38,10 @@
           enable = true;
           port = 8008;
         };
+        music = {
+          enable = true;
+          port = 8009;
+        };
 
         backups = {
           enable = true;
