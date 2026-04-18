@@ -38,6 +38,7 @@
         subPackages = ["cmd/standard-backups-restic-backend"];
         nativeBuildInputs = [
           pkgs.makeWrapper
+          pkgs.restic
           generateBackendManifest
         ];
         postInstall = ''
