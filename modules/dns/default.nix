@@ -29,14 +29,15 @@
       homelab = {
         name = "homelab.lan";
         aliases = [
-          "home.dotboris.io."
           "archive.dotboris.io."
           "cloud.dotboris.io."
           "feeds.dotboris.io."
+          "home.dotboris.io."
+          "music.dotboris.io."
           "netdata.dotboris.io."
+          "ntfy.dotboris.io."
           "search.dotboris.io."
           "traefik.dotboris.io."
-          "ntfy.dotboris.io."
         ];
         ips = {
           lan = "10.0.42.2";
@@ -46,14 +47,15 @@
       homelab-test = {
         name = "homelab-test.lan";
         aliases = [
-          "home-test.dotboris.io."
           "archive-test.dotboris.io."
           "cloud-test.dotboris.io."
           "feeds-test.dotboris.io."
+          "home-test.dotboris.io."
+          "music-test.dotboris.io."
           "netdata-test.dotboris.io."
+          "ntfy-test.dotboris.io."
           "search-test.dotboris.io."
           "traefik-test.dotboris.io."
-          "ntfy-test.dotboris.io."
         ];
         ips = {
           lan = "10.0.42.3";
@@ -63,14 +65,15 @@
       homelab-test-foxtrot = {
         name = "homelab-test-foxtrot.lan";
         aliases = [
-          "home-test-foxtrot.dotboris.io."
           "archive-test-foxtrot.dotboris.io."
           "cloud-test-foxtrot.dotboris.io."
           "feeds-test-foxtrot.dotboris.io."
+          "home-test-foxtrot.dotboris.io."
+          "music-test-foxtrot.dotboris.io."
           "netdata-test-foxtrot.dotboris.io."
+          "ntfy-test-foxtrot.dotboris.io."
           "search-test-foxtrot.dotboris.io."
           "traefik-test-foxtrot.dotboris.io."
-          "ntfy-test-foxtrot.dotboris.io."
         ];
         ips = {
           lan = "192.168.122.3";
