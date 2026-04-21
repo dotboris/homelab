@@ -17,7 +17,10 @@
     config = {
       services.netdata = {
         enable = true;
-        package = pkgs.netdataCloud;
+        package = pkgs.netdata.override {
+          withCloudUi = true; # new ui
+          withNdsudo = true;
+        };
 
         config = {
           global = {
