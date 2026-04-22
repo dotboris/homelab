@@ -3,6 +3,10 @@
 
   inputs = {
     nixpkgs.url = "github:NixOs/nixpkgs/nixos-25.11";
+    copyparty = {
+      url = "github:9001/copyparty/v1.20.13";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
@@ -35,6 +39,7 @@
 
   outputs = inputs @ {
     self,
+    copyparty,
     flake-parts,
     import-tree,
     nixpkgs,
@@ -64,6 +69,7 @@
               "netdata" # The UI is non OSS. It's under its own funny license.
             ];
           overlays = [
+            copyparty.overlays.default
             (final: prev: {
               # HACK: `nixos-images` is not ready for 25.11 and still references
               # the old zfsUnstable which has been removed. This works around
