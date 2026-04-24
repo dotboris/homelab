@@ -5,12 +5,17 @@
     ...
   }: let
     cfg = config.homelab.files;
+    copypartyCfg = config.services.copyparty;
     vhost = config.homelab.reverseProxy.vhosts.files;
   in {
     options.homelab.files = {
       enable = lib.mkEnableOption "file browser";
       port = lib.mkOption {
         type = lib.types.port;
+      };
+      users = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [];
       };
     };
 
@@ -27,12 +32,23 @@
           }
         ];
       };
+      sops.secrets = lib.pipe cfg.users [
+        (lib.map (user: {
+          "copyparty/users/${user}/password" = {
+            owner = copypartyCfg.user;
+          };
+        }))
+        lib.mkMerge
+      ];
       services = {
         copyparty = {
           enable = true;
-          accounts = {
-            dotboris.passwordFile = "supersecret";
-          };
+          accounts = lib.pipe cfg.users [
+            (lib.map (user: {
+              ${user}.passwordFile = config.sops.secrets."copyparty/users/${user}/password".path;
+            }))
+            lib.mkMerge
+          ];
           settings = {
             p = cfg.port;
           };

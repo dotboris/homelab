@@ -45,6 +45,7 @@
         files = {
           enable = true;
           port = 8010;
+          users = ["dotboris"];
         };
 
         backups = {
@@ -68,6 +69,8 @@
           };
         };
       };
+
+      services.copyparty.groups.music = ["dotboris"];
 
       sops = {
         defaultSopsFile = ./secrets.sops.yaml;

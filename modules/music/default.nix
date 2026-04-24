@@ -5,6 +5,7 @@
     ...
   }: let
     cfg = config.homelab.music;
+    copypartyCfg = config.services.copyparty;
     navidromeCfg = config.services.navidrome;
     vhost = config.homelab.reverseProxy.vhosts.music;
   in {
@@ -33,6 +34,7 @@
       };
       users.groups.music = {
         members = [
+          copypartyCfg.user
           navidromeCfg.user
           "dotboris"
         ];
@@ -55,10 +57,20 @@
             service = "music";
             tls = config.homelab.reverseProxy.tls.value;
           };
-
           services.music = {
             loadBalancer = {
               servers = [{url = "http://localhost:${toString cfg.port}";}];
+            };
+          };
+        };
+        copyparty = {
+          groups.music = [];
+          volumes."/music" = {
+            path = cfg.musicDir;
+            access.rwmd = "@music";
+            flags = {
+              chmod_f = "0660";
+              chmod_d = "0770";
             };
           };
         };
