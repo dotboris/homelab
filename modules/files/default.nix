@@ -15,7 +15,9 @@
       };
       users = lib.mkOption {
         type = lib.types.listOf lib.types.str;
-        default = [];
+      };
+      groups = lib.mkOption {
+        type = lib.types.attrsOf (lib.types.listOf lib.types.str);
       };
     };
 
@@ -42,15 +44,36 @@
       ];
       services = {
         copyparty = {
+          inherit (cfg) groups;
           enable = true;
-          accounts = lib.pipe cfg.users [
-            (lib.map (user: {
-              ${user}.passwordFile = config.sops.secrets."copyparty/users/${user}/password".path;
-            }))
-            lib.mkMerge
-          ];
+          accounts =
+            lib.mkIf (cfg.users != [])
+            (lib.pipe cfg.users [
+              (lib.map (user: {
+                ${user}.passwordFile = config.sops.secrets."copyparty/users/${user}/password".path;
+              }))
+              lib.mkMerge
+            ]);
           settings = {
+            i = "127.0.0.1";
             p = cfg.port;
+            http-only = true; # reverse proxy does the tls termination
+            no-crt = true; # don't need a cert
+            usernames = true; # require usernames for auth
+            no-robots = true; # request no crawling in headers
+            dotpart = true; # hide partial upload from listing
+
+            # UI / Display settings
+            name = vhost.fqdn; # server name in top left
+            name-url = "https://${vhost.fqdn}"; # where the name links to
+            site = "https://${vhost.fqdn}"; # base url for sharing
+
+            # Reverse proxy settings
+            rproxy = 1;
+            xff-hdr = "x-forwarded-for";
+            xff-src = "lan";
+            xf-host = "x-forwarded-host";
+            xf-proto = "x-forwarded-proto";
           };
         };
         traefik.dynamicConfigOptions.http = {

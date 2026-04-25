@@ -35,6 +35,14 @@
           enable = true;
           port = 8009;
         };
+        files = {
+          enable = true;
+          port = 8010;
+          users = ["dotboris"];
+          groups = {
+            music = ["dotboris"];
+          };
+        };
 
         backups = {
           enable = true;
