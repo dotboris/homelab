@@ -42,6 +42,10 @@
           enable = true;
           port = 8009;
         };
+        files = {
+          enable = true;
+          port = 8010;
+        };
 
         backups = {
           enable = true;

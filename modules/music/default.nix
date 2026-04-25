@@ -31,6 +31,7 @@
             urlVhost = "music";
           }
         ];
+        files.groups.music = [];
       };
       users.groups.music = {
         members = [
@@ -64,7 +65,6 @@
           };
         };
         copyparty = {
-          groups.music = [];
           volumes."/music" = {
             path = cfg.musicDir;
             access.rwmd = "@music";

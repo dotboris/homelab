@@ -15,9 +15,11 @@
       };
       users = lib.mkOption {
         type = lib.types.listOf lib.types.str;
+        default = [];
       };
       groups = lib.mkOption {
         type = lib.types.attrsOf (lib.types.listOf lib.types.str);
+        default = {};
       };
     };
 
@@ -33,6 +35,12 @@
             urlVhost = "files";
           }
         ];
+        files = {
+          users = [
+            "dotboris" # always a user for ourselves
+          ];
+          groups.admin = [];
+        };
       };
       sops.secrets = lib.pipe cfg.users [
         (lib.map (user: {
@@ -44,7 +52,6 @@
       ];
       services = {
         copyparty = {
-          inherit (cfg) groups;
           enable = true;
           accounts =
             lib.mkIf (cfg.users != [])
@@ -54,6 +61,8 @@
               }))
               lib.mkMerge
             ]);
+          # Add ourselves to every group. Groups require at least one user.
+          groups = lib.mapAttrs (_: users: users ++ ["dotboris"]) cfg.groups;
           settings = {
             i = "127.0.0.1";
             p = cfg.port;
