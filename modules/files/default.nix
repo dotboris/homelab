@@ -44,7 +44,7 @@
       };
       sops.secrets = lib.pipe cfg.users [
         (lib.map (user: {
-          "copyparty/users/${user}/password" = {
+          "copyparty/users/${user}" = {
             owner = copypartyCfg.user;
           };
         }))
@@ -57,7 +57,7 @@
             lib.mkIf (cfg.users != [])
             (lib.pipe cfg.users [
               (lib.map (user: {
-                ${user}.passwordFile = config.sops.secrets."copyparty/users/${user}/password".path;
+                ${user}.passwordFile = config.sops.secrets."copyparty/users/${user}".path;
               }))
               lib.mkMerge
             ]);
