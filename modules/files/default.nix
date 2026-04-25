@@ -53,14 +53,12 @@
       services = {
         copyparty = {
           enable = true;
-          accounts =
-            lib.mkIf (cfg.users != [])
-            (lib.pipe cfg.users [
-              (lib.map (user: {
-                ${user}.passwordFile = config.sops.secrets."copyparty/users/${user}".path;
-              }))
-              lib.mkMerge
-            ]);
+          accounts = lib.pipe cfg.users [
+            (lib.map (user: {
+              ${user}.passwordFile = config.sops.secrets."copyparty/users/${user}".path;
+            }))
+            lib.mkMerge
+          ];
           # Add ourselves to every group. Groups require at least one user.
           groups = lib.mapAttrs (_: users: users ++ ["dotboris"]) cfg.groups;
           settings = {
