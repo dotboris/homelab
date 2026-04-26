@@ -1,18 +1,21 @@
-{inputs, ...}: {
+{
+  inputs,
+  self,
+  ...
+}: {
   perSystem = {
     pkgs,
     inputs',
     ...
   }: {
     packages.installer-iso = let
-      consts = import ../consts.nix;
       module = {...}: {
         imports = [
           inputs.nixos-images.nixosModules.image-installer
         ];
 
         # Bake in my SSH key so that I can ssh in without doing the password dance
-        users.users.root.openssh.authorizedKeys.keys = consts.dotboris.ssh.pubKeys;
+        users.users.root.openssh.authorizedKeys.keys = self.lib.sshKeys.dotboris;
 
         environment.systemPackages = [
           # Image alrady ships disko but it's the nipkgs version not the one from

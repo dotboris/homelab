@@ -1,11 +1,9 @@
-{...}: {
+{self, ...}: {
   flake.modules.nixos.default = {
     config,
     pkgs,
     ...
-  }: let
-    consts = import ../../consts.nix;
-  in {
+  }: {
     services.openssh = {
       enable = true;
       settings = {
@@ -26,7 +24,7 @@
       ];
       hashedPasswordFile = config.sops.secrets."users/dotboris".path;
       shell = pkgs.fish;
-      openssh.authorizedKeys.keys = consts.dotboris.ssh.pubKeys;
+      openssh.authorizedKeys.keys = self.lib.sshKeys.dotboris;
     };
     programs.fish.enable = true; # shell for dotboris
   };
