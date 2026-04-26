@@ -1,3 +1,10 @@
-disabled = ["empty_pattern"]
+disabled = [
+  # It's easier to setup start nix modules with `{...}:`. That way we can add
+  # args if we need them.
+  "empty_pattern",
+  # Sometimes, you want to order things around differently which this prevents.
+  # I'd rather be able to group code in logical blocks.
+  "repeated_keys",
+]
 nix_version = '2.4'
 ignore = ['.direnv']

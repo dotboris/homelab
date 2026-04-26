@@ -15,31 +15,10 @@
           vhostSuffix = "-test";
           tls.acme.enable = true;
         };
-        homepage.port = 8001;
-        monitoring = {
-          netdata.port = 8002;
-          traefik.exporterPort = 8003;
-          ntfy.port = 8006;
-        };
-        feeds.httpPort = 8004;
-        documents-archive.port = 8005;
-        nextcloud = {
-          enable = true;
-          port = 8007;
-        };
-        search = {
-          enable = true;
-          port = 8008;
-        };
-        music = {
-          enable = true;
-          port = 8009;
-        };
-        files = {
-          enable = true;
-          port = 8010;
-        };
-
+        nextcloud.enable = true;
+        search.enable = true;
+        music.enable = true;
+        files.enable = true;
         backups = {
           enable = true;
           destinations.local.enable = true;
