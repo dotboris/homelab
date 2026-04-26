@@ -25,59 +25,37 @@
       ;
     cfg = config.homelab.dns;
     yaml = pkgs.formats.yaml {};
-    hosts = {
-      homelab = {
-        name = "homelab.lan";
-        aliases = [
-          "archive.dotboris.io."
-          "cloud.dotboris.io."
-          "feeds.dotboris.io."
-          "files.dotboris.io."
-          "home.dotboris.io."
-          "music.dotboris.io."
-          "netdata.dotboris.io."
-          "ntfy.dotboris.io."
-          "search.dotboris.io."
-          "traefik.dotboris.io."
-        ];
+    hosts = let
+      mkHost = {
+        key,
+        ips,
+      }: let
+        inherit (self.nixosConfigurations.${key}) config;
+        host = self.hosts.${key};
+      in {
+        inherit ips;
+        name = host.hostname;
+        aliases =
+          lib.mapAttrsToList (_: vhost: "${vhost.fqdn}.")
+          config.homelab.reverseProxy.vhosts;
+      };
+    in {
+      homelab = mkHost {
+        key = "homelab";
         ips = {
           lan = "10.0.42.2";
           tailscale = "100.69.230.33";
         };
       };
-      homelab-test = {
-        name = "homelab-test.lan";
-        aliases = [
-          "archive-test.dotboris.io."
-          "cloud-test.dotboris.io."
-          "feeds-test.dotboris.io."
-          "files-test.dotboris.io."
-          "home-test.dotboris.io."
-          "music-test.dotboris.io."
-          "netdata-test.dotboris.io."
-          "ntfy-test.dotboris.io."
-          "search-test.dotboris.io."
-          "traefik-test.dotboris.io."
-        ];
+      homelab-test = mkHost {
+        key = "homelab-test";
         ips = {
           lan = "10.0.42.3";
           tailscale = "100.67.226.105";
         };
       };
-      homelab-test-foxtrot = {
-        name = "homelab-test-foxtrot.lan";
-        aliases = [
-          "archive-test-foxtrot.dotboris.io."
-          "cloud-test-foxtrot.dotboris.io."
-          "feeds-test-foxtrot.dotboris.io."
-          "files-test-foxtrot.dotboris.io."
-          "home-test-foxtrot.dotboris.io."
-          "music-test-foxtrot.dotboris.io."
-          "netdata-test-foxtrot.dotboris.io."
-          "ntfy-test-foxtrot.dotboris.io."
-          "search-test-foxtrot.dotboris.io."
-          "traefik-test-foxtrot.dotboris.io."
-        ];
+      homelab-test-foxtrot = mkHost {
+        key = "homelab-test-foxtrot";
         ips = {
           lan = "192.168.122.3";
           tailscale = "100.103.210.109";
