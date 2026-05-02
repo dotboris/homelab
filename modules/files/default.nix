@@ -75,6 +75,11 @@
             name-url = "https://${vhost.fqdn}"; # where the name links to
             site = "https://${vhost.fqdn}"; # base url for sharing
 
+            # Indexing
+            e2dsa = true; # index files (upload, scan on boot, incl readonly)
+            e2ts = true; # metadata indexing (upload, scan on boot)
+            e2vu = true; # validates integrity (on boot, fixes hashes)
+
             # Reverse proxy settings
             rproxy = 1;
             xff-hdr = "x-forwarded-for";
