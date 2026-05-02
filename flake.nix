@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOs/nixpkgs/nixos-25.11";
     copyparty = {
-      url = "github:9001/copyparty/v1.20.13";
+      url = "github:9001/copyparty/v1.20.14";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-parts.url = "github:hercules-ci/flake-parts";
