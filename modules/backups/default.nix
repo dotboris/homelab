@@ -33,9 +33,57 @@
           value is a string who's format is described by systemd.time(7)
         '';
       };
+      retentionProfiles = lib.mkOption {
+        type = lib.types.lazyAttrsOf (lib.types.submodule ({config, ...}: let
+          retentionOption = lib.mkOption {
+            type = lib.types.nullOr lib.types.int;
+            default = null;
+          };
+        in {
+          options = {
+            last = retentionOption;
+            daily = retentionOption;
+            weekly = retentionOption;
+            monthly = retentionOption;
+            yearly = retentionOption;
+            _valid = lib.mkOption {type = lib.types.bool;};
+            _name = lib.mkOption {type = lib.types.str;};
+            _forgetOption = lib.mkOption {type = lib.types.anything;};
+          };
+          config = let
+            anySet =
+              (config.last != null)
+              || (config.daily != null)
+              || (config.weekly != null)
+              || (config.monthly != null)
+              || (config.yearly != null);
+          in {
+            _valid = anySet;
+            _name = config._module.args.name;
+            _forgetOption = lib.mkIf anySet {
+              enable = true;
+              options = {
+                keep-last = config.last;
+                keep-daily = config.daily;
+                keep-weekly = config.weekly;
+                keep-monthly = config.monthly;
+                keep-yearly = config.yearly;
+              };
+            };
+          };
+        }));
+        default = {};
+      };
     };
 
     config = lib.mkIf cfg.enable {
+      assertions = lib.pipe cfg.retentionProfiles [
+        (lib.mapAttrsToList (key: value: {
+          assertion = value._valid;
+          message = "homelab.backups.retentionProfiles.${key}: at least one retention option must be set";
+        }))
+      ];
+
       services.standard-backups = {
         inherit (cfg) jobSchedules;
         enable = true;
