@@ -3,7 +3,7 @@
     defaults = {
       virtualisation.vlans = [1 2];
     };
-    nodes = {
+    containers = {
       server = {...}: {
         imports = [
           self.modules.nixos.dns
@@ -21,8 +21,8 @@
       };
     };
 
-    testScript = {nodes, ...}: let
-      serverIp = interface: (pkgs.lib.head nodes.server.networking.interfaces.${interface}.ipv4.addresses).address;
+    testScript = {containers, ...}: let
+      serverIp = interface: (pkgs.lib.head containers.server.networking.interfaces.${interface}.ipv4.addresses).address;
     in ''
       start_all()
       server.wait_for_unit("coredns.service")
