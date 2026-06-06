@@ -2,14 +2,17 @@
   description = "Home Lab / Home Server";
 
   inputs = {
-    nixpkgs.url = "github:NixOs/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOs/nixpkgs/nixos-26.05";
     copyparty = {
-      url = "github:9001/copyparty/v1.20.14";
+      url = "github:9001/copyparty/v1.20.16";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixos-images = {
       url = "github:nix-community/nixos-images";
       inputs = {
@@ -27,7 +30,6 @@
         nixpkgs.follows = "nixpkgs";
         nixos-stable.follows = "nixpkgs";
         nixos-images.follows = "nixos-images";
-        flake-parts.follows = "flake-parts";
         disko.follows = "disko";
       };
     };
