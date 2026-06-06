@@ -8,7 +8,7 @@
     inherit (lib) types mkEnableOption mkIf mkOption;
     cfg = config.homelab.nextcloud;
     vhost = config.homelab.reverseProxy.vhosts.cloud;
-    nextcloud = pkgs.nextcloud32;
+    nextcloud = pkgs.nextcloud33;
   in {
     options.homelab.nextcloud = {
       enable = mkEnableOption "NextCloud";
