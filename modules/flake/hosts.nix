@@ -48,7 +48,8 @@ in {
                 pkgs.nixos-rebuild-ng
               ];
               text = ''
-                nixos-rebuild-ng switch \
+                action="''${1:-switch}"
+                nixos-rebuild "$action" \
                   --flake ${lib.escapeShellArg ".#${name}"} \
                   --target-host ${lib.escapeShellArg host.hostname} \
                   --sudo \
