@@ -94,3 +94,23 @@ You can figure out what changed through the following steps:
 1. Run: `nix profile diff-closures --profile /nix/var/nix/profiles/system`
 
 If the packages mentioned above have been updated, you need to reboot.
+
+## Tests
+
+Some modules come with tests that either run in VMs or containers. Container tests are faster to run but come with limitations such as not being able to run SUID binaries like `sudo`.
+
+To run container tests you must be on Linux and have the following in your `/etc/nix/nix.conf`:
+
+```conf
+experimental-features = auto-allocate-uids cgroups
+extra-system-features = uid-range
+auto-allocate-uids = true
+```
+
+You can run individual tests through:
+
+```sh
+nix build -L .#checks.x86_64-linux.test-standard-backups
+```
+
+If the test has already passed and won't run, pass the `--rebuild` flag.

@@ -2,13 +2,13 @@
   perSystem = {pkgs, ...}: {
     packages.stevenblack-blocklist = pkgs.stdenv.mkDerivation rec {
       pname = "stevenblack-blocklist";
-      version = "3.16.77";
+      version = "3.16.87";
       # https://github.com/StevenBlack/hosts/releases
       src = pkgs.fetchFromGitHub {
         owner = "StevenBlack";
         repo = "hosts";
         rev = version;
-        sha256 = "sha256-n2ne22h6juJ4UN9I7o7/WNoYDB7Xa8AKB1mz2qJrwaQ=";
+        sha256 = "sha256-R/Q5obcebCN/YPjtuo+Fh1EVgNiGFPajJm8V4s7UQRo=";
       };
       # Clean up hosts file so that it's only a list of domains. We need to:
       # - Remove some generic host entries for localhost & the like

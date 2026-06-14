@@ -4,6 +4,8 @@
   ...
 }: {
   flake.modules.nixosTest.standard-backups = moduleWithSystem ({self', ...}: {pkgs, ...}: {
+    # We can't use container tests here because the `standard-backups` wrapper
+    # requires sudo and SUID binaries don't work in such containers.
     nodes.machine = {
       imports = [self.modules.nixos.standard-backups];
       services.standard-backups = {

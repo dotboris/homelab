@@ -1,14 +1,14 @@
 {self, ...}: {
   perSystem = {pkgs, ...}: {
     packages = let
-      version = "0.4.3";
+      version = "0.5.1";
       src = pkgs.fetchFromGitHub {
         owner = "dotboris";
         repo = "standard-backups";
         rev = "v${version}";
-        sha256 = "sha256-VvKn7ytCHrsd4tSpCP9Vy/jD1wekU3wRhKzxAsueW7k=";
+        sha256 = "sha256-3cDfJ2kUC622bo0IFvjBvoSpfsZqDZOx5Fzd8XXcZdU=";
       };
-      vendorHash = "sha256-Mxh/Yob4u+TLoIUzC62eZUJoheLL/4iiTvVgvRmU1TY=";
+      vendorHash = "sha256-okXa6p57MJcQTj/VcymXHFuRFOAbWIXbFcV/7NMxvwk=";
       generateBackendManifest = pkgs.writeShellApplication {
         name = "generateBackendManifest";
         text = ''
