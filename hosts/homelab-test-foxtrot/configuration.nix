@@ -32,7 +32,7 @@
             enable = true;
           };
           destinations.backblaze = {
-            enable = true;
+            enable = false;
             bucketName = "dotboris-homelab-test-backups";
           };
           github = {

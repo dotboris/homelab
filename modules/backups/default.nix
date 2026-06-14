@@ -7,8 +7,8 @@
   }: let
     cfg = config.homelab.backups;
     sbCfg = config.services.standard-backups;
-    destinationKeys = builtins.attrNames sbCfg.settings.destinations;
     ntfyTopic = "https://${config.homelab.reverseProxy.vhosts.ntfy.fqdn}/backups";
+    variants = lib.mapAttrs (_: value: {forget = value._forgetOption;}) cfg.retentionProfiles;
   in {
     options.homelab.backups = {
       enable = lib.mkEnableOption "homelab backups";
@@ -24,14 +24,28 @@
           backup user access to files they normally wouldn't have access to.
         '';
       };
-      # Copied from `services.standard-backups.jobSchedules` for convenience
-      jobSchedules = lib.mkOption {
-        type = lib.types.attrsOf lib.types.str;
+      jobs = lib.mkOption {
+        type = lib.types.attrsOf (lib.types.submodule {
+          options = {
+            retentionProfile = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+            };
+            schedule = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = ''
+                When to run the this backup job. Value is a string who's format 
+                is described by systemd.time(7)
+              '';
+            };
+          };
+        });
         default = {};
-        description = ''
-          When to run the different backup jobs. Key is the job name,
-          value is a string who's format is described by systemd.time(7)
-        '';
+      };
+      defaultRetentionProfile = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
       };
       retentionProfiles = lib.mkOption {
         type = lib.types.lazyAttrsOf (lib.types.submodule ({config, ...}: let
@@ -74,6 +88,9 @@
         }));
         default = {};
       };
+      _destinations = lib.mkOption {
+        type = lib.types.attrsOf lib.types.anything;
+      };
     };
 
     config = lib.mkIf cfg.enable {
@@ -85,29 +102,58 @@
       ];
 
       services.standard-backups = {
-        inherit (cfg) jobSchedules;
         enable = true;
         user = "backups";
         group = "backups";
         extraPackages =
           [self'.packages.standard-backups-restic-backend]
           ++ (builtins.attrValues cfg.recipes);
-        settings.jobs =
-          lib.mapAttrs (name: _: {
-            recipe = name;
-            backup-to = destinationKeys;
-            on-failure = {
-              shell = "bash";
-              command = ''
-                ${pkgs.curl}/bin/curl -s \
-                  -H "Title: Backup Failed" \
-                  -H "Priority: high" \
-                  -d "Backup job ${name} has failed." \
-                  ${ntfyTopic}
-              '';
-            };
-          })
-          cfg.recipes;
+        jobSchedules = lib.pipe cfg.jobs [
+          (lib.mapAttrsToList (k: v:
+            lib.mkIf (v.schedule != null) {
+              ${k} = v.schedule;
+            }))
+          lib.mkMerge
+        ];
+
+        settings = {
+          destinations = lib.mkMerge [
+            cfg._destinations
+            (lib.mapAttrs
+              (_: _: {
+                inherit variants;
+                backend = "restic";
+                default-variant = cfg.defaultRetentionProfile;
+              })
+              cfg._destinations)
+          ];
+          jobs =
+            lib.mapAttrs (name: _: {
+              recipe = name;
+              backup-to = let
+                inherit (cfg.jobs.${name} or {retentionProfile = null;}) retentionProfile;
+                suffix =
+                  if retentionProfile != null
+                  then "/${retentionProfile}"
+                  else "";
+              in
+                lib.pipe cfg._destinations [
+                  builtins.attrNames
+                  (builtins.map (key: key + suffix))
+                ];
+              on-failure = {
+                shell = "bash";
+                command = ''
+                  ${pkgs.curl}/bin/curl -s \
+                    -H "Title: Backup Failed" \
+                    -H "Priority: high" \
+                    -d "Backup job ${name} has failed." \
+                    ${ntfyTopic}
+                '';
+              };
+            })
+            cfg.recipes;
+        };
       };
       users = {
         users.backups = {
