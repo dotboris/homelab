@@ -8,7 +8,13 @@
     cfg = config.homelab.backups;
     sbCfg = config.services.standard-backups;
     ntfyTopic = "https://${config.homelab.reverseProxy.vhosts.ntfy.fqdn}/backups";
-    variants = lib.mapAttrs (_: value: {forget = value._forgetOption;}) cfg.retentionProfiles;
+    variants =
+      lib.mapAttrs (_: value: {
+        forget = lib.recursiveUpdate value._forgetOption {
+          options.prune = true;
+        };
+      })
+      cfg.retentionProfiles;
   in {
     options.homelab.backups = {
       enable = lib.mkEnableOption "homelab backups";
@@ -124,6 +130,8 @@
                 inherit variants;
                 backend = "restic";
                 default-variant = cfg.defaultRetentionProfile;
+                # sets the host and picks it up during operations like forget
+                options.env.RESTIC_HOST = config.networking.hostName;
               })
               cfg._destinations)
           ];
