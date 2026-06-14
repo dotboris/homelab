@@ -35,7 +35,7 @@
               type = lib.types.nullOr lib.types.str;
               default = null;
               description = ''
-                When to run the this backup job. Value is a string who's format 
+                When to run the this backup job. Value is a string who's format
                 is described by systemd.time(7)
               '';
             };
@@ -77,11 +77,11 @@
             _forgetOption = lib.mkIf anySet {
               enable = true;
               options = {
-                keep-last = config.last;
-                keep-daily = config.daily;
-                keep-weekly = config.weekly;
-                keep-monthly = config.monthly;
-                keep-yearly = config.yearly;
+                keep-last = lib.mkIf (config.last != null) config.last;
+                keep-daily = lib.mkIf (config.daily != null) config.daily;
+                keep-weekly = lib.mkIf (config.weekly != null) config.weekly;
+                keep-monthly = lib.mkIf (config.monthly != null) config.monthly;
+                keep-yearly = lib.mkIf (config.yearly != null) config.yearly;
               };
             };
           };
