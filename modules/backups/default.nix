@@ -8,19 +8,25 @@
     cfg = config.homelab.backups;
     sbCfg = config.services.standard-backups;
     ntfyTopic = "https://${config.homelab.reverseProxy.vhosts.ntfy.fqdn}/backups";
-    variants =
-      lib.mapAttrs (_: value: {
+    variants = lib.pipe cfg.retentionProfiles [
+      (lib.mapAttrs (_: value: {
         forget = lib.recursiveUpdate value._forgetOption {
           options.prune = true;
         };
-      })
-      cfg.retentionProfiles;
+      }))
+    ];
   in {
     options.homelab.backups = {
       enable = lib.mkEnableOption "homelab backups";
       recipes = lib.mkOption {
         type = lib.types.attrsOf lib.types.package;
         default = {};
+        description = ''
+          Recipes for backing up applications. These are in the
+          standard-backups format. Each recipe generates a corresponding job in
+          standard-backups. This should be used by modules to enable backing up
+          the apps they provision / manage.
+        '';
       };
       joinGroups = lib.mkOption {
         type = lib.types.listOf lib.types.str;
@@ -48,10 +54,18 @@
           };
         });
         default = {};
+        description = ''
+          Configurations for jobs. Jobs are automatically detected based on
+          reciped installed by other modules.
+        '';
       };
       defaultRetentionProfile = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = null;
+        description = ''
+          Which retention profile to use by default. If not specified a
+          retention profile will need to be specified for every job.
+        '';
       };
       retentionProfiles = lib.mkOption {
         type = lib.types.lazyAttrsOf (lib.types.submodule ({config, ...}: let
@@ -93,9 +107,19 @@
           };
         }));
         default = {};
+        description = ''
+          Profiles describing how long to keep backups around. This option
+          enables backups to be deleted automatically. Use with case.
+        '';
       };
       _destinations = lib.mkOption {
         type = lib.types.attrsOf lib.types.anything;
+        description = ''
+          Allows destination modules to register their destination
+          configuration. These will land in
+          `services.standard-backups.settings.destinations` with some defaults
+          applied.
+        '';
       };
     };
 
@@ -123,32 +147,32 @@
         ];
 
         settings = {
-          destinations = lib.mkMerge [
-            cfg._destinations
-            (lib.mapAttrs
-              (_: _: {
+          destinations = lib.pipe cfg._destinations [
+            (lib.mapAttrs (_: value:
+              lib.recursiveUpdate value {
                 inherit variants;
                 backend = "restic";
-                default-variant = cfg.defaultRetentionProfile;
+                default-variant =
+                  lib.mkIf
+                  (cfg.defaultRetentionProfile != null)
+                  cfg.defaultRetentionProfile;
                 # sets the host and picks it up during operations like forget
                 options.env.RESTIC_HOST = config.networking.hostName;
-              })
-              cfg._destinations)
+              }))
           ];
-          jobs =
-            lib.mapAttrs (name: _: {
+          jobs = lib.pipe cfg.recipes [
+            (lib.mapAttrs (name: _: let
+              job = cfg.jobs.${name} or {retentionProfile = null;};
+              suffix =
+                lib.optionalString
+                (job.retentionProfile != null)
+                "/${job.retentionProfile}";
+            in {
               recipe = name;
-              backup-to = let
-                inherit (cfg.jobs.${name} or {retentionProfile = null;}) retentionProfile;
-                suffix =
-                  if retentionProfile != null
-                  then "/${retentionProfile}"
-                  else "";
-              in
-                lib.pipe cfg._destinations [
-                  builtins.attrNames
-                  (builtins.map (key: key + suffix))
-                ];
+              backup-to = lib.pipe cfg._destinations [
+                builtins.attrNames
+                (builtins.map (key: key + suffix))
+              ];
               on-failure = {
                 shell = "bash";
                 command = ''
@@ -159,8 +183,8 @@
                     ${ntfyTopic}
                 '';
               };
-            })
-            cfg.recipes;
+            }))
+          ];
         };
       };
       users = {
