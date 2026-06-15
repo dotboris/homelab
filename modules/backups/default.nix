@@ -7,14 +7,6 @@
   }: let
     cfg = config.homelab.backups;
     sbCfg = config.services.standard-backups;
-    ntfyTopic = "https://${config.homelab.reverseProxy.vhosts.ntfy.fqdn}/backups";
-    variants = lib.pipe cfg.retentionProfiles [
-      (lib.mapAttrs (_: value: {
-        forget = lib.recursiveUpdate value._forgetOption {
-          options.prune = true;
-        };
-      }))
-    ];
   in {
     options.homelab.backups = {
       enable = lib.mkEnableOption "homelab backups";
@@ -80,30 +72,6 @@
             weekly = retentionOption;
             monthly = retentionOption;
             yearly = retentionOption;
-            _valid = lib.mkOption {type = lib.types.bool;};
-            _name = lib.mkOption {type = lib.types.str;};
-            _forgetOption = lib.mkOption {type = lib.types.anything;};
-          };
-          config = let
-            anySet =
-              (config.last != null)
-              || (config.daily != null)
-              || (config.weekly != null)
-              || (config.monthly != null)
-              || (config.yearly != null);
-          in {
-            _valid = anySet;
-            _name = config._module.args.name;
-            _forgetOption = lib.mkIf anySet {
-              enable = true;
-              options = {
-                keep-last = lib.mkIf (config.last != null) config.last;
-                keep-daily = lib.mkIf (config.daily != null) config.daily;
-                keep-weekly = lib.mkIf (config.weekly != null) config.weekly;
-                keep-monthly = lib.mkIf (config.monthly != null) config.monthly;
-                keep-yearly = lib.mkIf (config.yearly != null) config.yearly;
-              };
-            };
           };
         }));
         default = {};
@@ -126,7 +94,12 @@
     config = lib.mkIf cfg.enable {
       assertions = lib.pipe cfg.retentionProfiles [
         (lib.mapAttrsToList (key: value: {
-          assertion = value._valid;
+          assertion =
+            (value.last != null)
+            || (value.daily != null)
+            || (value.weekly != null)
+            || (value.monthly != null)
+            || (value.yearly != null);
           message = "homelab.backups.retentionProfiles.${key}: at least one retention option must be set";
         }))
       ];
@@ -150,14 +123,43 @@
           destinations = lib.pipe cfg._destinations [
             (lib.mapAttrs (_: value:
               lib.recursiveUpdate value {
-                inherit variants;
                 backend = "restic";
+                # sets the host and picks it up during operations like forget
+                options.env.RESTIC_HOST = config.networking.hostName;
                 default-variant =
                   lib.mkIf
                   (cfg.defaultRetentionProfile != null)
                   cfg.defaultRetentionProfile;
-                # sets the host and picks it up during operations like forget
-                options.env.RESTIC_HOST = config.networking.hostName;
+                variants = lib.pipe cfg.retentionProfiles [
+                  (lib.mapAttrs (_: value: {
+                    forget = {
+                      enable = true;
+                      options = {
+                        prune = true;
+                        keep-last =
+                          lib.mkIf
+                          (value.last != null)
+                          value.last;
+                        keep-daily =
+                          lib.mkIf
+                          (value.daily != null)
+                          value.daily;
+                        keep-weekly =
+                          lib.mkIf
+                          (value.weekly != null)
+                          value.weekly;
+                        keep-monthly =
+                          lib.mkIf
+                          (value.monthly != null)
+                          value.monthly;
+                        keep-yearly =
+                          lib.mkIf
+                          (value.yearly != null)
+                          value.yearly;
+                      };
+                    };
+                  }))
+                ];
               }))
           ];
           jobs = lib.pipe cfg.recipes [
@@ -180,7 +182,7 @@
                     -H "Title: Backup Failed" \
                     -H "Priority: high" \
                     -d "Backup job ${name} has failed." \
-                    ${ntfyTopic}
+                    https://${config.homelab.reverseProxy.vhosts.ntfy.fqdn}/backups
                 '';
               };
             }))
