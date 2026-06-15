@@ -36,11 +36,11 @@
             bucketName = "dotboris-homelab-backups";
             checkAt = "*-*-01 00:30:00 America/Toronto";
           };
-          jobSchedules = {
-            paperless = "01/6:00:00 America/Toronto";
-            freshrss = "01/6:15:00 America/Toronto";
-            github = "01:30:00 America/Toronto";
-            nextcloud = "01:45:00 America/Toronto";
+          jobs = {
+            paperless.schedule = "01/6:00:00 America/Toronto";
+            freshrss.schedule = "01/6:15:00 America/Toronto";
+            github.schedule = "01:30:00 America/Toronto";
+            nextcloud.schedule = "01:45:00 America/Toronto";
           };
           github = {
             enable = true;

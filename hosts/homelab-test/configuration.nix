@@ -23,7 +23,7 @@
           enable = true;
           destinations.local.enable = true;
           destinations.backblaze = {
-            enable = true;
+            enable = false;
             bucketName = "dotboris-homelab-test-backups";
           };
           github = {

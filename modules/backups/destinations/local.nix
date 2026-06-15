@@ -1,4 +1,4 @@
-{self, ...}: {
+{...}: {
   flake.modules.nixos.default = {
     lib,
     config,
@@ -38,16 +38,12 @@
             };
           };
         };
-        services.standard-backups.settings = {
-          secrets.localPassword.from-file = config.sops.secrets."backups/repos/local/password".path;
-          destinations.local = self.lib.mkResticDestination {
-            options = {
-              repo = cfg.path;
-              env = {
-                RESTIC_CACHE_DIR = "/var/cache/homelab-backups/restic";
-                RESTIC_PASSWORD = "{{ .Secrets.localPassword }}";
-              };
-            };
+        services.standard-backups.settings.secrets.localPassword.from-file = config.sops.secrets."backups/repos/local/password".path;
+        homelab.backups._destinations.local.options = {
+          repo = cfg.path;
+          env = {
+            RESTIC_CACHE_DIR = "/var/cache/homelab-backups/restic";
+            RESTIC_PASSWORD = "{{ .Secrets.localPassword }}";
           };
         };
       };

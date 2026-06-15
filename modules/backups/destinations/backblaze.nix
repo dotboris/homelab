@@ -1,4 +1,4 @@
-{self, ...}: {
+{...}: {
   flake.modules.nixos.default = {
     lib,
     config,
@@ -40,22 +40,19 @@
             OnCalendar = cfg.checkAt;
           };
         };
-        services.standard-backups.settings = {
-          secrets = {
-            backblazePassword.from-file = config.sops.secrets."backups/repos/backblaze/password".path;
-            backblazeKeyId.from-file = config.sops.secrets."backups/repos/backblaze/keyId".path;
-            backblazeKey.from-file = config.sops.secrets."backups/repos/backblaze/key".path;
-          };
-          destinations.backblaze = self.lib.mkResticDestination {
-            options = {
-              repo = "b2:${cfg.bucketName}";
-              env = {
-                RESTIC_CACHE_DIR = "/var/cache/homelab-backups/restic";
-                RESTIC_PASSWORD = "{{ .Secrets.backblazePassword }}";
-                B2_ACCOUNT_ID = "{{ .Secrets.backblazeKeyId }}";
-                B2_ACCOUNT_KEY = "{{ .Secrets.backblazeKey }}";
-              };
-            };
+
+        services.standard-backups.settings.secrets = {
+          backblazePassword.from-file = config.sops.secrets."backups/repos/backblaze/password".path;
+          backblazeKeyId.from-file = config.sops.secrets."backups/repos/backblaze/keyId".path;
+          backblazeKey.from-file = config.sops.secrets."backups/repos/backblaze/key".path;
+        };
+        homelab.backups._destinations.backblaze.options = {
+          repo = "b2:${cfg.bucketName}";
+          env = {
+            RESTIC_CACHE_DIR = "/var/cache/homelab-backups/restic";
+            RESTIC_PASSWORD = "{{ .Secrets.backblazePassword }}";
+            B2_ACCOUNT_ID = "{{ .Secrets.backblazeKeyId }}";
+            B2_ACCOUNT_KEY = "{{ .Secrets.backblazeKey }}";
           };
         };
       };
