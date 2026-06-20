@@ -72,13 +72,6 @@
             ];
           overlays = [
             copyparty.overlays.default
-            (final: prev: {
-              # HACK: `nixos-images` is not ready for 25.11 and still references
-              # the old zfsUnstable which has been removed. This works around
-              # the issue until the following PR gets merged:
-              # https://github.com/nix-community/nixos-images/pull/385
-              zfsUnstable = prev.zfs_unstable;
-            })
           ];
         };
         formatter = pkgs.writeShellApplication {

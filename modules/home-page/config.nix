@@ -74,7 +74,7 @@
           hideVersion = true;
           disableCollapse = true;
 
-          # Hack: homepage outputs to both the console and to the filesystem. Both
+          # HACK: homepage outputs to both the console and to the filesystem. Both
           # of these log transports are hard-coded in. See:
           # https://github.com/gethomepage/homepage/blob/4d6754e4a7258c46047d3cc2ca2e3fe63f6df76a/src/utils/logger.js#L41-L68
           #
