@@ -27,6 +27,7 @@
       jobs = {
         freshrss.retentionProfile = "short";
         paperless.retentionProfile = "long";
+        music.retentionProfile = "short";
       };
     };
   };

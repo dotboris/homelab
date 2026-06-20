@@ -37,10 +37,11 @@
             checkAt = "*-*-01 00:30:00 America/Toronto";
           };
           jobs = {
-            paperless.schedule = "01/6:00:00 America/Toronto";
-            freshrss.schedule = "01/6:15:00 America/Toronto";
-            github.schedule = "01:30:00 America/Toronto";
-            nextcloud.schedule = "01:45:00 America/Toronto";
+            paperless.schedule = "01/6:00:00 America/Toronto"; # 4x a day
+            freshrss.schedule = "01/6:15:00 America/Toronto"; # 4x a day
+            github.schedule = "01:30:00 America/Toronto"; # daily
+            nextcloud.schedule = "01:45:00 America/Toronto"; # daily
+            music.schedule = "02:00:00 America/Toronto"; # daily
           };
           github = {
             enable = true;
