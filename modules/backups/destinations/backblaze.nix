@@ -4,13 +4,13 @@
     config,
     ...
   }:
-    with lib; let
+    let
       cfg = config.homelab.backups.destinations.backblaze;
     in {
       options.homelab.backups.destinations.backblaze = {
-        enable = mkEnableOption "homelab backups backblaze backend";
-        bucketName = mkOption {
-          type = types.str;
+        enable = lib.mkEnableOption "homelab backups backblaze backend";
+        bucketName = lib.mkOption {
+          type = lib.types.str;
         };
         checkAt = lib.mkOption {
           type = lib.types.nullOr lib.types.str;
@@ -21,7 +21,7 @@
           '';
         };
       };
-      config = mkIf cfg.enable {
+      config = lib.mkIf cfg.enable {
         sops.secrets = {
           "backups/repos/backblaze/password" = {
             owner = "backups";
