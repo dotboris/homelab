@@ -25,6 +25,7 @@
           GHORG_SKIP_FORKS = boolToString cfg.skipForks;
           GHORG_ABSOLUTE_PATH_TO_CLONE_TO = cfg.syncDir;
           GHORG_IGNORE_PATH = "/dev/null";
+          GHORG_ONLY_PATH = "/dev/null";
         };
         text = ''
           cd /
