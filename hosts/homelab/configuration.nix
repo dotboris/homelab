@@ -33,6 +33,7 @@
           };
           destinations.backblaze = {
             enable = true;
+            region = "us-east-005";
             bucketName = "dotboris-homelab-backups";
             checkAt = "*-*-01 00:30:00 America/Toronto";
           };

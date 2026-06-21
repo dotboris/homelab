@@ -33,6 +33,7 @@
           };
           destinations.backblaze = {
             enable = false;
+            region = "us-east-005";
             bucketName = "dotboris-homelab-test-backups";
           };
           github = {

@@ -3,58 +3,60 @@
     lib,
     config,
     ...
-  }:
-    let
-      cfg = config.homelab.backups.destinations.backblaze;
-    in {
-      options.homelab.backups.destinations.backblaze = {
-        enable = lib.mkEnableOption "homelab backups backblaze backend";
-        bucketName = lib.mkOption {
-          type = lib.types.str;
+  }: let
+    cfg = config.homelab.backups.destinations.backblaze;
+  in {
+    options.homelab.backups.destinations.backblaze = {
+      enable = lib.mkEnableOption "homelab backups backblaze backend";
+      region = lib.mkOption {
+        type = lib.types.str;
+      };
+      bucketName = lib.mkOption {
+        type = lib.types.str;
+      };
+      checkAt = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = ''
+          When to check the integrity of the backblaze destination. Integrity
+          checks only run when this is set.
+        '';
+      };
+    };
+    config = lib.mkIf cfg.enable {
+      sops.secrets = {
+        "backups/repos/backblaze/password" = {
+          owner = "backups";
         };
-        checkAt = lib.mkOption {
-          type = lib.types.nullOr lib.types.str;
-          default = null;
-          description = ''
-            When to check the integrity of the backblaze destination. Integrity
-            checks only run when this is set.
-          '';
+        "backups/repos/backblaze/keyId" = {
+          owner = "backups";
+        };
+        "backups/repos/backblaze/key" = {
+          owner = "backups";
         };
       };
-      config = lib.mkIf cfg.enable {
-        sops.secrets = {
-          "backups/repos/backblaze/password" = {
-            owner = "backups";
-          };
-          "backups/repos/backblaze/keyId" = {
-            owner = "backups";
-          };
-          "backups/repos/backblaze/key" = {
-            owner = "backups";
-          };
+      systemd.timers.backups-check-backblaze = lib.mkIf (cfg.checkAt != null) {
+        wantedBy = ["timers.target"];
+        timerConfig = {
+          Unit = "backups-check@backblaze.service";
+          OnCalendar = cfg.checkAt;
         };
-        systemd.timers.backups-check-backblaze = lib.mkIf (cfg.checkAt != null) {
-          wantedBy = ["timers.target"];
-          timerConfig = {
-            Unit = "backups-check@backblaze.service";
-            OnCalendar = cfg.checkAt;
-          };
-        };
+      };
 
-        services.standard-backups.settings.secrets = {
-          backblazePassword.from-file = config.sops.secrets."backups/repos/backblaze/password".path;
-          backblazeKeyId.from-file = config.sops.secrets."backups/repos/backblaze/keyId".path;
-          backblazeKey.from-file = config.sops.secrets."backups/repos/backblaze/key".path;
-        };
-        homelab.backups._destinations.backblaze.options = {
-          repo = "b2:${cfg.bucketName}";
-          env = {
-            RESTIC_CACHE_DIR = "/var/cache/homelab-backups/restic";
-            RESTIC_PASSWORD = "{{ .Secrets.backblazePassword }}";
-            B2_ACCOUNT_ID = "{{ .Secrets.backblazeKeyId }}";
-            B2_ACCOUNT_KEY = "{{ .Secrets.backblazeKey }}";
-          };
+      services.standard-backups.settings.secrets = {
+        backblazePassword.from-file = config.sops.secrets."backups/repos/backblaze/password".path;
+        backblazeKeyId.from-file = config.sops.secrets."backups/repos/backblaze/keyId".path;
+        backblazeKey.from-file = config.sops.secrets."backups/repos/backblaze/key".path;
+      };
+      homelab.backups._destinations.backblaze.options = {
+        repo = "s3:https://s3.${cfg.region}.backblazeb2.com/${cfg.bucketName}";
+        env = {
+          RESTIC_CACHE_DIR = "/var/cache/homelab-backups/restic";
+          RESTIC_PASSWORD = "{{ .Secrets.backblazePassword }}";
+          AWS_ACCESS_KEY_ID = "{{ .Secrets.backblazeKeyId }}";
+          AWS_SECRET_ACCESS_KEY = "{{ .Secrets.backblazeKey }}";
         };
       };
     };
+  };
 }
