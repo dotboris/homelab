@@ -49,6 +49,9 @@
         backblazeKey.from-file = config.sops.secrets."backups/repos/backblaze/key".path;
       };
       homelab.backups._destinations.backblaze.options = {
+        # We use the Backblaze's S3 compatible API instead of the regular B2 API
+        # because the lib that restic uses under the hood for B2 doesn't do error 
+        # handling too well. While this is a little odd, it's for the better.
         repo = "s3:https://s3.${cfg.region}.backblazeb2.com/${cfg.bucketName}";
         env = {
           RESTIC_CACHE_DIR = "/var/cache/homelab-backups/restic";
