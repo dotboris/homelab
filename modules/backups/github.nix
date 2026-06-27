@@ -21,6 +21,7 @@
           # Options
           GHORG_CLONE_TYPE = toString cfg.cloneType;
           GHORG_CLONE_WIKI = boolToString cfg.cloneWiki;
+          GHORG_FETCH_GIT_LFS = boolToString cfg.fetchGitLfs;
           GHORG_SKIP_ARCHIVED = boolToString cfg.skipArchived;
           GHORG_SKIP_FORKS = boolToString cfg.skipForks;
           GHORG_ABSOLUTE_PATH_TO_CLONE_TO = cfg.syncDir;
@@ -63,6 +64,11 @@
           type = types.bool;
           description = "Include Wiki as part of the backup";
           default = false;
+        };
+        fetchGitLfs = lib.mkOption {
+          type = lib.types.bool;
+          description = "Backup Git LFS contents as well";
+          default = true;
         };
         skipArchived = mkOption {
           type = types.bool;
