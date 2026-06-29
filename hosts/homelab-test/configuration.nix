@@ -8,6 +8,7 @@
       system.stateVersion = "25.05";
 
       homelab = {
+        auth.enable = true;
         dns.enable = true;
         remote-access.enable = true;
         reverseProxy = {
