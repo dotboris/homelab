@@ -20,7 +20,7 @@
           {
             category = "system";
             title = "LDAP";
-            icon = "lldap.svg";
+            icon = "lldap-dark.svg";
             description = "lldap";
             urlVhost = "ldap";
           }
