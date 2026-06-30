@@ -47,14 +47,22 @@
         navidrome = {
           enable = true;
           settings = {
+            LogLevel = "debug";
             Port = cfg.port;
             EnableInsightsCollector = false;
             MusicFolder = cfg.musicDir;
+            EnableUserEditing = false; # Managed by SSO
+            ExtAuth = {
+              LogoutURL = "https://${config.homelab.reverseProxy.vhosts.auth.fqdn}/logout";
+              TrustedSources = "127.0.0.1/32";
+              UserHeader = "Remote-User";
+            };
           };
         };
         traefik.dynamicConfigOptions.http = {
           routers.music = {
             rule = "Host(`${vhost.fqdn}`)";
+            middlewares = ["authelia@file"];
             service = "music";
             tls = config.homelab.reverseProxy.tls.value;
           };

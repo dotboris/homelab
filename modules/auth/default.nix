@@ -62,10 +62,13 @@
               base_dn = "DC=dotboris,DC=io";
             };
             notifier.filesystem.filename = "/var/lib/authelia/notification.txt";
-            server.address = "tcp://127.0.0.1:${toString cfg.port}";
+            server = {
+              address = "tcp://127.0.0.1:${toString cfg.port}";
+              endpoints.authz.forward-auth.implementation = "ForwardAuth";
+            };
             session.cookies = [
               {
-                domain = vhost.fqdn;
+                domain = config.homelab.reverseProxy.baseDomain;
                 authelia_url = "https://${vhost.fqdn}";
               }
             ];
@@ -73,6 +76,17 @@
           };
         };
         traefik.dynamicConfigOptions.http = {
+          middlewares.authelia.forwardAuth = {
+            address = "http://localhost:${toString cfg.port}/api/authz/forward-auth";
+            trustForwardHeader = true;
+            maxResponseBodySize = 8192;
+            authResponseHeaders = [
+              "Remote-User"
+              "Remote-Groups"
+              "Remote-Email"
+              "Remote-Name"
+            ];
+          };
           routers.auth = {
             rule = "Host(`${vhost.fqdn}`)";
             service = "auth";
