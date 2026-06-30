@@ -51,15 +51,18 @@
           settings = {
             theme = "dark";
             log.format = "text";
-            access_control.default_policy = "one_factor"; # TODO: not sure
-            authentication_backend.ldap = {
-              address = let
-                host = lldapCfg.settings.ldap_host;
-                port = lldapCfg.settings.ldap_port;
-              in "ldap://${host}:${toString port}";
-              implementation = "lldap";
-              user = "UID=admin,OU=people,DC=dotboris,DC=io";
-              base_dn = "DC=dotboris,DC=io";
+            access_control.default_policy = "deny";
+            authentication_backend = {
+              refresh_interval = "1m";
+              ldap = {
+                address = let
+                  host = lldapCfg.settings.ldap_host;
+                  port = lldapCfg.settings.ldap_port;
+                in "ldap://${host}:${toString port}";
+                implementation = "lldap";
+                user = "UID=admin,OU=people,DC=dotboris,DC=io";
+                base_dn = "DC=dotboris,DC=io";
+              };
             };
             notifier.filesystem.filename = "/var/lib/authelia/notification.txt";
             server = {

@@ -51,7 +51,7 @@
             Port = cfg.port;
             EnableInsightsCollector = false;
             MusicFolder = cfg.musicDir;
-            EnableUserEditing = false; # Managed by SSO
+            EnableUserEditing = true; # Used for app access
             ExtAuth = {
               LogoutURL = "https://${config.homelab.reverseProxy.vhosts.auth.fqdn}/logout";
               TrustedSources = "127.0.0.1/32";
@@ -59,6 +59,24 @@
             };
           };
         };
+        authelia.instances.main.settings.access_control.rules = [
+          # For subsonic clients, we can't use SSO (protocol doesn't support it)
+          # Users will have to set a password in navidrome and use that.
+          {
+            domain = vhost.fqdn;
+            policy = "bypass";
+            resources = [
+              "^/share([/?].*)?$"
+              "^/rest([/?].*)?$"
+            ];
+          }
+          # Fall back to one factor for the rest
+          {
+            domain = vhost.fqdn;
+            policy = "one_factor";
+            subject = "group:music";
+          }
+        ];
         traefik.dynamicConfigOptions.http = {
           routers.music = {
             rule = "Host(`${vhost.fqdn}`)";
