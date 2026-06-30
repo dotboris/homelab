@@ -5,21 +5,12 @@
     ...
   }: let
     cfg = config.homelab.files;
-    copypartyCfg = config.services.copyparty;
     vhost = config.homelab.reverseProxy.vhosts.files;
   in {
     options.homelab.files = {
       enable = lib.mkEnableOption "file browser";
       port = lib.mkOption {
         type = lib.types.port;
-      };
-      users = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [];
-      };
-      groups = lib.mkOption {
-        type = lib.types.attrsOf (lib.types.listOf lib.types.str);
-        default = {};
       };
     };
 
@@ -35,32 +26,10 @@
             urlVhost = "files";
           }
         ];
-        files = {
-          users = [
-            "dotboris" # always a user for ourselves
-          ];
-          groups.admin = [];
-        };
       };
-      sops.secrets = lib.pipe cfg.users [
-        (lib.map (user: {
-          "copyparty/users/${user}" = {
-            owner = copypartyCfg.user;
-          };
-        }))
-        lib.mkMerge
-      ];
       services = {
         copyparty = {
           enable = true;
-          accounts = lib.pipe cfg.users [
-            (lib.map (user: {
-              ${user}.passwordFile = config.sops.secrets."copyparty/users/${user}".path;
-            }))
-            lib.mkMerge
-          ];
-          # Add ourselves to every group. Groups require at least one user.
-          groups = lib.mapAttrs (_: users: users ++ ["dotboris"]) cfg.groups;
           settings = {
             i = "127.0.0.1";
             p = cfg.port;
@@ -86,12 +55,25 @@
             xff-src = "lan";
             xf-host = "x-forwarded-host";
             xf-proto = "x-forwarded-proto";
+
+            # SSO
+            auth-ord = ["idp"];
+            idp-h-usr = "remote-user";
+            idp-h-grp = "remote-groups";
           };
         };
+        authelia.instances.main.settings.access_control.rules = [
+          {
+            domain = vhost.fqdn;
+            policy = "one_factor";
+            subject = "group:files";
+          }
+        ];
         traefik.dynamicConfigOptions.http = {
           routers.files = {
             rule = "Host(`${vhost.fqdn}`)";
             service = "files";
+            middlewares = ["authelia@file"];
             tls = config.homelab.reverseProxy.tls.value;
           };
           services.files = {

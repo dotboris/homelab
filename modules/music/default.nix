@@ -31,7 +31,6 @@
             urlVhost = "music";
           }
         ];
-        files.groups.music = [];
       };
       users.groups.music = {
         members = [
@@ -93,7 +92,7 @@
         copyparty = {
           volumes."/music" = {
             path = cfg.musicDir;
-            access.rwmd = "@music";
+            access.rwmd = "@music-manager";
             flags = {
               chmod_f = "0660";
               chmod_d = "0770";
