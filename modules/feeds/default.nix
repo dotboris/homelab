@@ -15,10 +15,6 @@
     };
 
     config = {
-      sops.secrets."freshrss/admin" = {
-        owner = user;
-      };
-
       homelab = {
         reverseProxy.vhosts.feeds = {};
         homepage.links = [
@@ -31,33 +27,34 @@
           }
         ];
       };
-
       services = {
         freshrss = {
           inherit user;
-
           enable = true;
-
-          authType = "form";
-          passwordFile = config.sops.secrets."freshrss/admin".path;
-
+          authType = "http_auth";
           baseUrl = "https://${vhost.fqdn}";
           virtualHost = vhost.fqdn;
         };
-
         nginx.virtualHosts.${vhost.fqdn}.listen = [
           {
             port = cfg.httpPort;
             addr = "127.0.0.1";
           }
         ];
+        authelia.instances.main.settings.access_control.rules = [
+          {
+            domain = vhost.fqdn;
+            policy = "one_factor";
+            subject = "group:feeds";
+          }
+        ];
         traefik.dynamicConfigOptions.http = {
           routers.feeds = {
             rule = "Host(`${vhost.fqdn}`)";
             service = "feeds";
+            middlewares = ["authelia@file"];
             tls = config.homelab.reverseProxy.tls.value;
           };
-
           services.feeds = {
             loadBalancer = {
               servers = [{url = "http://localhost:${toString cfg.httpPort}";}];
