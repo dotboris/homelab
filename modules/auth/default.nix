@@ -76,6 +76,8 @@
               }
             ];
             storage.local.path = "/var/lib/authelia/db.sqlite3";
+            totp.issuer = vhost.nameWithSuffix;
+            webauthn.display_name = vhost.nameWithSuffix;
           };
         };
         traefik.dynamicConfigOptions.http = {
