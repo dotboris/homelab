@@ -41,12 +41,14 @@
           enable = true;
           name = ""; # Makes this the "authelia" instance with no suffix
           environmentVariables = {
+            X_AUTHELIA_CONFIG_FILTERS = "template";
             AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE = secrets."lldap/admin-password".path;
           };
           secrets = {
             jwtSecretFile = "${secretsDir}/jwt-secret";
             storageEncryptionKeyFile = "${secretsDir}/storage-encryption-key";
             sessionSecretFile = "${secretsDir}/session-secret";
+            oidcIssuerPrivateKeyFile = "${secretsDir}/jwks-private.pem";
           };
           settings = {
             theme = "dark";
@@ -131,6 +133,11 @@
                   echo "Generated $secretsDir/$s"
                 fi
               done
+              jwksPrivatePath="$secretsDir/jwks-private.pem"
+              if [ ! -f "$jwksPrivatePath" ]; then
+                openssl genrsa -out "$jwksPrivatePath" 2048
+                echo "Generated $jwksPrivatePath"
+              fi
               echo '[stop] authelia-generate-secrets'
             '';
           }
