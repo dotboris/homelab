@@ -24,7 +24,7 @@
         homepage.links = [
           {
             category = "system";
-            title = "SSO";
+            title = "Single Sign-On (SSO)";
             icon = "authelia.svg";
             description = "Authelia";
             urlVhost = "auth";
