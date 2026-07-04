@@ -108,36 +108,39 @@
       };
 
       homelab = {
-        auth.oidcClients.paperless = {
-          group = "paperless";
-          beforeUnits = ["paperless-envfile.service"];
-          authorizationPolicy = {
-            default_policy = "deny";
-            rules = [
-              {
-                subject = "group:documents-archive";
-                policy = "two_factor";
-              }
-            ];
-          };
-          settings = {
-            public = false;
-            require_pkce = true;
-            pkce_challenge_method = "S256";
-            redirect_uris = [
-              "https://${vhost.fqdn}/accounts/oidc/authelia/login/callback/"
-            ];
-            scopes = [
-              "openid"
-              "profile"
-              "email"
-              "groups"
-            ];
-            response_types = ["code"];
-            grant_types = ["authorization_code"];
-            access_token_signed_response_alg = "none";
-            userinfo_signed_response_alg = "none";
-            token_endpoint_auth_method = "client_secret_basic";
+        auth = {
+          groups = ["documents-archive"];
+          oidcClients.paperless = {
+            group = "paperless";
+            beforeUnits = ["paperless-envfile.service"];
+            authorizationPolicy = {
+              default_policy = "deny";
+              rules = [
+                {
+                  subject = "group:documents-archive";
+                  policy = "two_factor";
+                }
+              ];
+            };
+            settings = {
+              public = false;
+              require_pkce = true;
+              pkce_challenge_method = "S256";
+              redirect_uris = [
+                "https://${vhost.fqdn}/accounts/oidc/authelia/login/callback/"
+              ];
+              scopes = [
+                "openid"
+                "profile"
+                "email"
+                "groups"
+              ];
+              response_types = ["code"];
+              grant_types = ["authorization_code"];
+              access_token_signed_response_alg = "none";
+              userinfo_signed_response_alg = "none";
+              token_endpoint_auth_method = "client_secret_basic";
+            };
           };
         };
         reverseProxy.vhosts.archive = {};

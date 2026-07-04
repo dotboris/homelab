@@ -2,6 +2,7 @@
   flake.modules.nixos.default = {
     config,
     lib,
+    pkgs,
     ...
   }: let
     inherit (config.sops) secrets;
@@ -11,6 +12,9 @@
     options.homelab.auth = {
       ldapAdminPort = lib.mkOption {
         type = lib.types.port;
+      };
+      groups = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
       };
     };
     config = lib.mkIf cfg.enable {
@@ -69,6 +73,28 @@
             };
           };
         };
+      };
+      systemd.services.lldap-provision-groups = {
+        wantedBy = ["multi-user.target"];
+        requires = ["lldap.service"];
+        unitConfig.After = ["lldap.service"];
+        serviceConfig = {
+          Type = "oneshot";
+          User = "lldap";
+          Group = "lldap";
+        };
+        environment = {
+          GROUPS = builtins.toJSON cfg.groups;
+          BASE_URL = "http://localhost:${toString cfg.ldapAdminPort}";
+          USERNAME = "admin";
+          PASSWORD_FILE = secrets."lldap/admin-password".path;
+        };
+        path = [
+          (pkgs.python3.withPackages (p: [p.requests]))
+        ];
+        script = ''
+          python ${./lldap-provision-groups.py}
+        '';
       };
     };
   };

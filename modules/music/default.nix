@@ -21,6 +21,7 @@
     };
     config = lib.mkIf cfg.enable {
       homelab = {
+        auth.groups = ["music" "music-manager"];
         reverseProxy.vhosts.music = {};
         homepage.links = [
           {

@@ -17,39 +17,42 @@
     };
     config = mkIf cfg.enable {
       homelab = {
-        auth.oidcClients.nextcloud = {
-          group = "nextcloud";
-          beforeUnits = [
-            "nextcloud-setup.service"
-            "phpfpm-nextcloud.service"
-          ];
-          authorizationPolicy = {
-            default_policy = "deny";
-            rules = [
-              {
-                subject = "group:nextcloud";
-                policy = "one_factor";
-              }
+        auth = {
+          groups = ["nextcloud"];
+          oidcClients.nextcloud = {
+            group = "nextcloud";
+            beforeUnits = [
+              "nextcloud-setup.service"
+              "phpfpm-nextcloud.service"
             ];
-          };
-          settings = {
-            public = false;
-            require_pkce = true;
-            pkce_challenge_method = "S256";
-            redirect_uris = [
-              "https://${vhost.fqdn}/apps/oidc_login/oidc"
-            ];
-            scopes = [
-              "openid"
-              "profile"
-              "email"
-              "groups"
-            ];
-            response_types = ["code"];
-            grant_types = ["authorization_code"];
-            access_token_signed_response_alg = "none";
-            userinfo_signed_response_alg = "none";
-            token_endpoint_auth_method = "client_secret_basic";
+            authorizationPolicy = {
+              default_policy = "deny";
+              rules = [
+                {
+                  subject = "group:nextcloud";
+                  policy = "one_factor";
+                }
+              ];
+            };
+            settings = {
+              public = false;
+              require_pkce = true;
+              pkce_challenge_method = "S256";
+              redirect_uris = [
+                "https://${vhost.fqdn}/apps/oidc_login/oidc"
+              ];
+              scopes = [
+                "openid"
+                "profile"
+                "email"
+                "groups"
+              ];
+              response_types = ["code"];
+              grant_types = ["authorization_code"];
+              access_token_signed_response_alg = "none";
+              userinfo_signed_response_alg = "none";
+              token_endpoint_auth_method = "client_secret_basic";
+            };
           };
         };
         reverseProxy.vhosts.cloud = {};

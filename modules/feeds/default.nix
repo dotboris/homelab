@@ -16,6 +16,7 @@
 
     config = {
       homelab = {
+        auth.groups = ["feeds"];
         reverseProxy.vhosts.feeds = {};
         homepage.links = [
           {

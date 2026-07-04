@@ -16,6 +16,7 @@
 
     config = lib.mkIf cfg.enable {
       homelab = {
+        auth.groups = ["files"];
         reverseProxy.vhosts.files = {};
         homepage.links = [
           {
