@@ -103,7 +103,7 @@
                 }
               }'
           )"
-          echo "PAPERLESS_SOCIALACCOUNT_PROVIDERS=$res" > "$dataDir/generated.env";
+          echo "PAPERLESS_SOCIALACCOUNT_PROVIDERS='$res'" > "$dataDir/generated.env";
         '';
       };
 
