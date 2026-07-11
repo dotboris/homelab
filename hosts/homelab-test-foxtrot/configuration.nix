@@ -12,6 +12,7 @@
       system.stateVersion = "25.05";
 
       homelab = {
+        auth.enable = true;
         dns = {
           enable = true;
           lanCidr = "192.168.122.0/24";
