@@ -44,6 +44,7 @@
             github.schedule = "01:30:00 America/Toronto"; # daily
             nextcloud.schedule = "01:45:00 America/Toronto"; # daily
             music.schedule = "02:00:00 America/Toronto"; # daily
+            lldap.schedule = "02/6:15:00 America/Toronto"; # 4x a day
           };
           github = {
             enable = true;
