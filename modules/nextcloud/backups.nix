@@ -22,7 +22,9 @@
       security.sudo.extraRules = [
         {
           users = ["backups"];
-          runAs = "nextcloud:nextcloud";
+          # We run these as root because the `nextcloud-occ` wrapper switches
+          # the nextcloud user either through sudo or systemd-run
+          runAs = "root:root";
           commands = [
             {
               command = toString enableMaintenanceMode;
@@ -46,11 +48,11 @@
           ];
           before = {
             shell = "bash";
-            command = "${sudo} -u nextcloud -g nextcloud ${enableMaintenanceMode}";
+            command = "${sudo} -u root -g root ${enableMaintenanceMode}";
           };
           after = {
             shell = "bash";
-            command = "${sudo} -u nextcloud -g nextcloud ${disableMaintenanceMode}";
+            command = "${sudo} -u root -g root ${disableMaintenanceMode}";
           };
         };
         joinGroups = ["nextcloud"];
