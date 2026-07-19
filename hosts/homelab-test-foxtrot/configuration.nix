@@ -17,6 +17,7 @@
           enable = true;
           lanCidr = "192.168.122.0/24";
         };
+        mail.enable = true;
         remote-access.enable = true;
         reverseProxy = {
           baseDomain = "dotboris.io";
