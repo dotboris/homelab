@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOs/nixpkgs/nixos-26.05";
+    nixpkgs-grimmory.url = "github:alvr/nixpkgs/701771cebf259c3208345e222b1f08693581fce7"; # branch: grimmory
     copyparty = {
       url = "github:9001/copyparty/v1.20.16";
       inputs.nixpkgs.follows = "nixpkgs";
