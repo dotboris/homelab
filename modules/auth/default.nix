@@ -66,7 +66,12 @@
                 base_dn = "DC=dotboris,DC=io";
               };
             };
-            notifier.filesystem.filename = "/var/lib/authelia/notification.txt";
+            notifier.smtp = {
+              address = "smtp://127.0.0.1:25";
+              disable_starttls = true; # localhost; who cares
+              disable_require_tls = true; # localhost; who cares
+              sender = "Authelia <noreply@${config.homelab.reverseProxy.baseDomain}>";
+            };
             server = {
               address = "tcp://127.0.0.1:${toString cfg.port}";
               endpoints.authz.forward-auth.implementation = "ForwardAuth";

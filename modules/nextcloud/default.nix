@@ -124,6 +124,15 @@
             oidc_login_well_known_caching_time = 86400;
             oidc_login_update_avatar = false;
             oidc_login_code_challenge_method = "S256";
+
+            # mail
+            mail_smtpmode = "smtp";
+            mail_smtphost = "127.0.0.1";
+            mail_smtpport = 25;
+            mail_smtptimeout = 10;
+            mail_smtpsecure = "";
+            mail_smtpauth = false;
+            mail_domain = config.homelab.reverseProxy.baseDomain;
           };
           phpOptions = {
             # In /settings/admin/overview, there's a warning complaining about
