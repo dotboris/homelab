@@ -10,6 +10,7 @@
       homelab = {
         auth.enable = true;
         dns.enable = true;
+        mail.enable = true;
         remote-access.enable = true;
         reverseProxy = {
           baseDomain = "dotboris.io";
