@@ -54,7 +54,8 @@
             theme = "dark";
             log = {
               format = "text";
-              level = "info";
+              # Info logs auth failures which leaks some browsing patterns
+              level = "warn";
             };
             access_control.default_policy = "deny";
             authentication_backend = {
