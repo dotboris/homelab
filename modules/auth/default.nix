@@ -52,7 +52,10 @@
           };
           settings = {
             theme = "dark";
-            log.format = "text";
+            log = {
+              format = "text";
+              level = "info";
+            };
             access_control.default_policy = "deny";
             authentication_backend = {
               refresh_interval = "1m";

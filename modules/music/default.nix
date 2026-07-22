@@ -47,7 +47,7 @@
         navidrome = {
           enable = true;
           settings = {
-            LogLevel = "debug";
+            LogLevel = "info";
             Port = cfg.port;
             EnableInsightsCollector = false;
             MusicFolder = cfg.musicDir;
