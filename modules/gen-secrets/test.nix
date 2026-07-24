@@ -22,7 +22,7 @@
       t.assertEqual(default_stat, "400 root root")
 
       _, default_value = machine.execute(f"cat {SECRETS_DIR}/default")
-      t.assertNotEqual(default_value.strip(), "")
+      t.assertEqual(len(default_value), 64)
 
       machine.start_job("gen-secrets-default.service")
       machine.wait_until_succeeds("systemctl --no-pager list-jobs --full | grep 'No jobs'")
