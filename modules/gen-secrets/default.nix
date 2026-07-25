@@ -33,6 +33,14 @@
               type = lib.types.str;
               default = "0400";
             };
+            owner = lib.mkOption {
+              type = lib.types.str;
+              default = "root";
+            };
+            group = lib.mkOption {
+              type = lib.types.str;
+              default = "root";
+            };
 
             # Outputs
             unit = lib.mkOption {type = lib.types.str;};
