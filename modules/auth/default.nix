@@ -47,7 +47,6 @@
           secrets = {
             jwtSecretFile = "${secretsDir}/jwt-secret";
             storageEncryptionKeyFile = "${secretsDir}/storage-encryption-key";
-            sessionSecretFile = "${secretsDir}/session-secret";
             oidcIssuerPrivateKeyFile = "${secretsDir}/jwks-private.pem";
           };
           settings = {
@@ -80,12 +79,6 @@
               address = "tcp://127.0.0.1:${toString cfg.port}";
               endpoints.authz.forward-auth.implementation = "ForwardAuth";
             };
-            session.cookies = [
-              {
-                domain = config.homelab.reverseProxy.baseDomain;
-                authelia_url = "https://${vhost.fqdn}";
-              }
-            ];
             storage.local.path = "/var/lib/authelia/db.sqlite3";
             totp.issuer = vhost.nameWithSuffix;
             webauthn.display_name = vhost.nameWithSuffix;
@@ -134,7 +127,6 @@
               secrets=(
                 jwt-secret
                 storage-encryption-key
-                session-secret
               )
               for s in "''${secrets[@]}"; do
                 if [ ! -f "$secretsDir/$s" ]; then

@@ -21,6 +21,7 @@
       secrets = lib.mkOption {
         type = lib.types.attrsOf (lib.types.submodule ({config, ...}: {
           options = {
+            # Secret spec
             type = lib.mkOption {
               type = lib.types.enum ["password"];
               default = "password";
@@ -40,6 +41,20 @@
             group = lib.mkOption {
               type = lib.types.str;
               default = "root";
+            };
+
+            # Systemd deps
+            wantedBy = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              default = [];
+            };
+            requiredBy = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              default = [];
+            };
+            before = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              default = [];
             };
 
             # Outputs
@@ -65,6 +80,7 @@
         lib.mapAttrs' (name: secret: {
           name = secret.unitName;
           value = {
+            inherit (secret) wantedBy requiredBy before;
             description = "Generate ${name} secret";
             serviceConfig = {
               Type = "oneshot";
