@@ -19,6 +19,8 @@
         appendOnly = true;
       };
       systemd.services.authelia = {
+        requires = ["redis-authelia-sessions.service"];
+        after = ["redis-authelia-sessions.service"];
         environment = {
           AUTHELIA_SESSION_SECRET_FILE = "%d/session";
         };
