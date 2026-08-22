@@ -12,6 +12,13 @@
           enable = true;
           lanCidr = "192.168.1.0/24"; # eth1
           tailscaleCidr = "192.168.2.0/24"; # eth2
+          extraHosts = {
+            "local-only.lan".lan = "192.168.0.42";
+            "both.lan" = {
+              lan = "192.168.0.69";
+              tailscale = "100.0.0.69";
+            };
+          };
         };
       };
       client = {...}: {
@@ -32,16 +39,19 @@
         client.wait_for_unit("network.target")
 
         with subtest("internal ips (lan)"):
-          assert "10.0.42.2" in client.succeed("nslookup homelab.lan ${serverIp "eth1"}")
-          assert "10.0.42.2" in client.succeed("nslookup home.dotboris.io ${serverIp "eth1"}")
-          assert "10.0.42.3" in client.succeed("nslookup homelab-test.lan ${serverIp "eth1"}")
-          assert "10.0.42.3" in client.succeed("nslookup home-test.dotboris.io ${serverIp "eth1"}")
+          t.assertIn("10.0.42.2", client.succeed("nslookup homelab.lan ${serverIp "eth1"}"))
+          t.assertIn("10.0.42.2", client.succeed("nslookup home.dotboris.io ${serverIp "eth1"}"))
+          t.assertIn("10.0.42.3", client.succeed("nslookup homelab-test.lan ${serverIp "eth1"}"))
+          t.assertIn("10.0.42.3", client.succeed("nslookup home-test.dotboris.io ${serverIp "eth1"}"))
+          t.assertIn("192.168.0.42", client.succeed("nslookup local-only.lan ${serverIp "eth1"}"))
+          t.assertIn("192.168.0.69", client.succeed("nslookup both.lan ${serverIp "eth1"}"))
 
         with subtest("internal ips (tailscale)"):
-          assert "100.69.230.33" in client.succeed("nslookup homelab.lan ${serverIp "eth2"}")
-          assert "100.69.230.33" in client.succeed("nslookup home.dotboris.io ${serverIp "eth2"}")
-          assert "100.67.226.105" in client.succeed("nslookup homelab-test.lan ${serverIp "eth2"}")
-          assert "100.67.226.105" in client.succeed("nslookup home-test.dotboris.io ${serverIp "eth2"}")
+          t.assertIn("100.69.230.33", client.succeed("nslookup homelab.lan ${serverIp "eth2"}"))
+          t.assertIn("100.69.230.33", client.succeed("nslookup home.dotboris.io ${serverIp "eth2"}"))
+          t.assertIn("100.67.226.105", client.succeed("nslookup homelab-test.lan ${serverIp "eth2"}"))
+          t.assertIn("100.67.226.105", client.succeed("nslookup home-test.dotboris.io ${serverIp "eth2"}"))
+          t.assertIn("100.0.0.69", client.succeed("nslookup both.lan ${serverIp "eth2"}"))
 
         with subtest("adblock (lan)"):
           assert "NXDOMAIN" in client.fail("nslookup doubleclick.net ${serverIp "eth1"}")

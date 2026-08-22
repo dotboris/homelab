@@ -9,20 +9,6 @@
     pkgs,
     ...
   }: let
-    inherit
-      (lib)
-      concatStringsSep
-      mkIf
-      mkEnableOption
-      mkOption
-      types
-      ;
-    inherit
-      (self'.packages)
-      coredns
-      anudeepnd-allowlist
-      stevenblack-blocklist
-      ;
     cfg = config.homelab.dns;
     yaml = pkgs.formats.yaml {};
     hosts = let
@@ -64,37 +50,58 @@
     };
   in {
     options.homelab.dns = {
-      enable = mkEnableOption "dns server";
-      port = mkOption {
-        type = types.port;
+      enable = lib.mkEnableOption "dns server";
+      port = lib.mkOption {
+        type = lib.types.port;
         default = 53;
       };
-      lanCidr = mkOption {
-        type = types.str;
+      lanCidr = lib.mkOption {
+        type = lib.types.str;
         description = "CIDR for the local network";
         default = "10.0.42.0/24";
       };
-      tailscaleCidr = mkOption {
-        type = types.str;
+      tailscaleCidr = lib.mkOption {
+        type = lib.types.str;
         description = "CIDR for the tailscale network";
         default = "100.0.0.0/8";
       };
+      extraHosts = lib.mkOption {
+        type = lib.types.attrsOf (lib.types.submodule {
+          options = {
+            lan = lib.mkOption {type = lib.types.str;};
+            tailscale = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+            };
+          };
+        });
+        default = {};
+      };
     };
 
-    config = mkIf cfg.enable {
+    config = lib.mkIf cfg.enable {
       services = {
         coredns = {
           enable = true;
           extraArgs = ["-dns.port=${toString cfg.port}"];
-          package = coredns;
+          package = self'.packages.coredns;
           config = let
             hostLine = host: variant: (
-              concatStringsSep " " ([host.ips.${variant} host.name] ++ host.aliases)
+              lib.concatStringsSep " " ([host.ips.${variant} host.name] ++ host.aliases)
+            );
+            extraHostLines = extraHosts: attr: (
+              lib.pipe extraHosts [
+                (lib.mapAttrsToList (host: ips: let
+                  ip = ips.${attr};
+                in
+                  lib.optionalString (ip != null) "${ip} ${host}"))
+                lib.concatLines
+              ]
             );
           in ''
             (adblock) {
-              blocklist ${stevenblack-blocklist}/blocklist.txt {
-                allowlist ${anudeepnd-allowlist}/domains/whitelist.txt
+              blocklist ${self'.packages.stevenblack-blocklist}/blocklist.txt {
+                allowlist ${self'.packages.anudeepnd-allowlist}/domains/whitelist.txt
               }
             }
 
@@ -115,6 +122,7 @@
                 ${hostLine hosts.homelab "lan"}
                 ${hostLine hosts.homelab-test "lan"}
                 ${hostLine hosts.homelab-test-foxtrot "lan"}
+                ${extraHostLines cfg.extraHosts "lan"}
                 fallthrough
               }
               import common
@@ -130,6 +138,7 @@
                 ${hostLine hosts.homelab "tailscale"}
                 ${hostLine hosts.homelab-test "tailscale"}
                 ${hostLine hosts.homelab-test-foxtrot "tailscale"}
+                ${extraHostLines cfg.extraHosts "tailscale"}
                 fallthrough
               }
               import common

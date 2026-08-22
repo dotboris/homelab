@@ -58,6 +58,7 @@
             installationId = "56188691";
           };
         };
+        externalHosts.pixie.enable = true;
       };
 
       sops = {
