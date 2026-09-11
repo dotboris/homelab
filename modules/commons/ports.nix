@@ -16,6 +16,7 @@
       files.port = 8010;
       auth.port = 8011;
       auth.ldapAdminPort = 8012;
+      books.port = 8013;
     };
   };
 }
