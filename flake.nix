@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOs/nixpkgs/nixos-26.05";
+    nixpkgs-unstable.url = "github:NixOs/nixpkgs/nixos-unstable";
     copyparty = {
       url = "github:9001/copyparty/v1.20.23";
       inputs.nixpkgs.follows = "nixpkgs";
