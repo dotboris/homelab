@@ -9,6 +9,7 @@
 
       homelab = {
         auth.enable = true;
+        code.enable = true;
         dns.enable = true;
         mail.enable = true;
         remote-access.enable = true;
