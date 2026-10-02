@@ -45,6 +45,15 @@
           session = {
             COOKIE_SECURE = true;
           };
+          actions.ENABLED = false;
+          repository = {
+            DISABLED_REPO_UNITS = lib.concatStringsSep "," [
+              "repo.wiki"
+              "repo.ext_wiki"
+              "repo.packages"
+              "repo.actions"
+            ];
+          };
         };
       };
       homelab.reverseProxy.vhosts.code = {};
