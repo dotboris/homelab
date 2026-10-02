@@ -13,6 +13,7 @@
 
       homelab = {
         auth.enable = true;
+        code.enable = true;
         dns = {
           enable = true;
           lanCidr = "192.168.122.0/24";

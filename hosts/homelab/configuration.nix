@@ -16,6 +16,7 @@
 
       homelab = {
         auth.enable = true;
+        code.enable = true;
         dns.enable = true;
         mail.enable = true;
         remote-access.enable = true;
@@ -46,6 +47,7 @@
             nextcloud.schedule = "01:45:00 America/Toronto"; # daily
             music.schedule = "02:00:00 America/Toronto"; # daily
             lldap.schedule = "02/6:15:00 America/Toronto"; # 4x a day
+            forgejo.schedule = "02:30:00 America/Toronto"; # daily
           };
           github = {
             enable = true;
