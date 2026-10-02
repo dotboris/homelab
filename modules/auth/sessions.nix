@@ -38,6 +38,8 @@
               {
                 domain = config.homelab.reverseProxy.baseDomain;
                 authelia_url = "https://${vhost.fqdn}";
+                # Ensure that test authelia doesn't fight with prod one
+                name = "authelia_session${config.homelab.reverseProxy.vhostSuffix}";
               }
             ];
             redis.host = redisCfg.unixSocket;
