@@ -51,7 +51,7 @@
           environmentFile = config.sops.templates."searx.env".path;
           settings = {
             server = {
-              port = cfg.port;
+              inherit (cfg) port;
               base_url = "https://${vhost.fqdn}";
               secret_key = "$SECRET_KEY";
               method = "GET";
