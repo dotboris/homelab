@@ -51,7 +51,7 @@ Once you're done remember to comment out the entries in your hosts file.
 ### Procedure
 
 - Update flake lock
-- Check if input follows are correct with `inputs.{...}.follows = ...` with `flake metadata show`
+- Check if input follows are correct with `inputs.{...}.follows = ...` with `nix flake metadata`
 - Update local packages
 - `nix flake check -L --keep-going`
 - Ship to test vm and test
