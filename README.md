@@ -48,6 +48,15 @@ Once you're done remember to comment out the entries in your hosts file.
 
 ## Updates
 
+### Procedure
+
+- Update flake lock
+- Check if input follows are correct with `inputs.{...}.follows = ...` with `flake metadata show`
+- Update local packages
+- `nix flake check -L --keep-going`
+- Ship to test vm and test
+- Ship to prod
+
 ### Local Packages
 
 There are custom package in this repo. Some of these packages pull source from other places like GitHub. These are pinned to specific versions and hashes. Updating those packages means updating those versions and hashes. There's tooling in place to automate this:
@@ -73,6 +82,12 @@ If you want to update a package, add the following to the derivation.
 
 You can also update a single package by running `nix run .#{pname}.updateScript`.
 
+### Pinned flake inputs
+
+Some inputs in `flake.nix` are pinned to specific versions, those need manual
+updating. So you'll need to got find the repo and the latest version. Then, you
+can bump the pin.
+
 ### Flake lock
 
 ```sh
@@ -80,6 +95,9 @@ nix flake update -L
 ```
 
 ### Do I need to reboot?
+
+> [!TIP]
+> You can opt to take the reboot path right away with `nix run .#deploy-homelab -- boot` and then rebooting the machine.
 
 Most of the time you don't need to reboot. Services with new versions gets rebooted automatically and other programs get the the update when they're closed and re-opened.
 
